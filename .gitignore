@@ -1,0 +1,34 @@
+# Project Specific
+/data/
+/statics/
+/db.sqlite3
+/.*env*
+/keys
+/logs
+/ssh/*
+!/ssh/README.md
+/letsencrypt-webroot/
+
+# Ignore temporary files
+docker-compose.override.yml
+__pycache__
+*.pyc
+._*
+.coverage
+.husky/
+.python-version
+
+# Ignore npm logs file
+yarn-debug.log*
+yarn-error.log*
+
+.DS_Store
+
+# Ignore all the installed packages
+node_modules
+
+# Ignore all js dists
+gen_flow-ui/build
+
+# produced by prepare in the root package.json script
+.husky

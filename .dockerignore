@@ -1,0 +1,9 @@
+/.git
+/.venv
+/.vscode
+/.github
+/.husky
+/data
+/keys
+**/node_modules
+/statics

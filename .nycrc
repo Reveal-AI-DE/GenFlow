@@ -1,0 +1,16 @@
+{
+    "all": true,
+    "compact": false,
+    "extension": [
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx"
+    ],
+    "exclude": [
+        "**/tests/*"
+    ],
+    "parser-plugins": [
+        "typescript"
+    ]
+}
