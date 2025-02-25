@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: GenFlow REST API
+  version: 1.0.0
+  description: REST API for GenFlow project
+  termsOfService: https://www.google.com/policies/terms/
+  contact:
+    name: Reveal AI team
+    url: https://github.com/Reveal-AI-DE/GenFlow
+    email: support@revealai.de
+  license:
+    name: MIT License
+    url: https://en.wikipedia.org/wiki/MIT_License
+paths: {}
+components: {}
+externalDocs:
+  description: GenFlow documentation
+  url: https://genflow.github.io/genflow/docs/
