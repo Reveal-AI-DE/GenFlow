@@ -1,0 +1,37 @@
+{
+    "eslint.probe": [
+        "javascript",
+        "typescript",
+        "typescriptreact"
+    ],
+    "eslint.onIgnoredFiles": "warn",
+    "eslint.workingDirectories": [
+        {
+            "directory": "${cwd}",
+        },
+        {
+            "pattern": "gen_flow-*"
+        },
+        {
+            "directory": "tests",
+            "!cwd": true
+        }
+    ],
+    "npm.exclude": "**/.venv/**",
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "licenser.license": "Custom",
+    "licenser.customHeader": "Copyright (C) @YEAR@ Reveal AI\n\nSPDX-License-Identifier: MIT",
+    "files.trimTrailingWhitespace": true,
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/",
+    "python.testing.pytestArgs": [
+        "--rootdir",
+        "${workspaceFolder}/tests/"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "${workspaceFolder}/.env/bin/pytest",
+    "python.testing.cwd": "${workspaceFolder}/tests",
+    "git.enableCommitSigning": true,
+}
