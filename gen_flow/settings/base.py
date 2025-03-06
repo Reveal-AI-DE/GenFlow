@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'corsheaders',
     'allauth.socialaccount',
+    'gen_flow.apps.team',
     'gen_flow.apps.iam',
     'gen_flow.apps.core',
 ]
