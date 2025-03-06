@@ -25,3 +25,6 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if apps.is_installed('gen_flow.apps.iam'):
+    urlpatterns.append(path('api/', include('gen_flow.apps.iam.urls')))

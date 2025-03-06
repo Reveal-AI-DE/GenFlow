@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'corsheaders',
     'allauth.socialaccount',
+    'gen_flow.apps.iam',
     'gen_flow.apps.core',
 ]
 
@@ -122,7 +123,6 @@ REST_FRAMEWORK = {
         'anon': '100/minute',
     },
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
-    'DEFAULT_SCHEMA_CLASS': 'gen_flow.apps.iam.schema.CustomAutoSchema',
 }
 
 MIDDLEWARE = [
@@ -166,7 +166,12 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'gen_flow.asgi.application'
 
-
+# IAM settings
+IAM_TYPE = 'BASIC'
+IAM_DEFAULT_ROLE = 'user'
+IAM_ADMIN_ROLE = 'admin'
+# Index in the list below corresponds to the priority (0 has highest priority)
+IAM_ROLES = [IAM_ADMIN_ROLE, 'user']
 LOGIN_URL = 'rest_login'
 LOGIN_REDIRECT_URL = '/'
 
