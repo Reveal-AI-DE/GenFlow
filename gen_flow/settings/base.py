@@ -126,6 +126,10 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
 }
 
+REST_AUTH = {
+    "REGISTER_SERIALIZER": "gen_flow.apps.iam.serializers.RegisterSerializerEx",
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

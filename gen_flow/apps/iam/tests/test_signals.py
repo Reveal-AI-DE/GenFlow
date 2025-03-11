@@ -8,16 +8,16 @@ from django.conf import settings
 from django.apps import apps
 from allauth.account.models import EmailAddress
 from django.db.models.signals import post_migrate
-from gen_flow.apps.iam.signals import register_groups
+from gen_flow.apps.iam.signals import create_groups
 
 
 class PostMigrateSignalTest(TestCase):
-    def test_register_groups_signal(self):
+    def test_create_groups_signal(self):
         # Disconnect the signal to avoid side effects from other tests
-        post_migrate.disconnect(register_groups, sender=apps.get_app_config('iam'))
+        post_migrate.disconnect(create_groups, sender=apps.get_app_config('iam'))
 
         # Reconnect the signal for this test
-        post_migrate.connect(register_groups, sender=apps.get_app_config('iam'))
+        post_migrate.connect(create_groups, sender=apps.get_app_config('iam'))
 
         # Trigger the post_migrate signal
         post_migrate.send(sender=apps.get_app_config('iam'), app_config=apps.get_app_config('iam'))
@@ -27,7 +27,7 @@ class PostMigrateSignalTest(TestCase):
         self.assertTrue(Group.objects.filter(name=settings.IAM_ADMIN_ROLE).exists())
 
         # Disconnect the signal after the test
-        post_migrate.disconnect(register_groups, sender=apps.get_app_config('iam'))
+        post_migrate.disconnect(create_groups, sender=apps.get_app_config('iam'))
 
 
 class CreateUserSignalTest(TestCase):
@@ -54,7 +54,7 @@ class CreateUserSignalTest(TestCase):
         # Check if the user is added to the default group
         self.assertIn(self.default_group, user.groups.all())
 
-    # ToDo: Fix this test, find a way to patch User.save method
+    # TODO: Fix this test, find a way to patch User.save method
     # to add skip_group_assigning attribute
     def test_create_user_with_skip_group_assigning(self):
         # Create a regular user with skip_group_assigning attribute

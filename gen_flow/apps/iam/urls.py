@@ -9,7 +9,7 @@ from dj_rest_auth.views import (
     LoginView, LogoutView, PasswordChangeView,
     PasswordResetView, PasswordResetConfirmView
 )
-from dj_rest_auth.registration.views import RegisterView
+from gen_flow.apps.iam.views import RegisterViewEx
 
 BASIC_LOGIN_PATH_NAME = 'rest_login'
 BASIC_REGISTER_PATH_NAME = "rest_register"
@@ -21,7 +21,7 @@ urlpatterns = [
 
 if settings.IAM_TYPE == 'BASIC':
     urlpatterns += [
-        path('register', RegisterView.as_view(), name=BASIC_REGISTER_PATH_NAME),
+        path('register', RegisterViewEx.as_view(), name=BASIC_REGISTER_PATH_NAME),
         # password
         path('password/reset', PasswordResetView.as_view(),
             name='rest_password_reset'),
