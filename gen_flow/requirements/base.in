@@ -12,3 +12,6 @@ dj-rest-auth[with_social]==5.0.2
 django-allauth[saml]==0.57.2
 
 channels[daphne]==4.2.0
+
+pycryptodome==3.21.0
+gmpy2==2.2.1
