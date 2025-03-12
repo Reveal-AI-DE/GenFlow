@@ -100,7 +100,7 @@ class Invitation(UserOwnedModel):
     created_date = models.DateTimeField(auto_now_add=True)
     sent_date = models.DateTimeField(null=True)
     membership = models.OneToOneField(Membership, on_delete=models.CASCADE,
-        related_name='invitations')
+        related_name='invitation')
 
     class Meta:
         default_permissions = ()

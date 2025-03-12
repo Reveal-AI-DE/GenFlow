@@ -8,5 +8,6 @@ import gen_flow.apps.team.views as views
 
 router = DefaultRouter(trailing_slash=False)
 router.register('teams', views.TeamViewSet)
+router.register('memberships', views.MembershipViewSet)
 
 urlpatterns = router.urls

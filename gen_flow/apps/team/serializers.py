@@ -84,7 +84,8 @@ class TeamReadSerializer(serializers.ModelSerializer):
         Returns:
             str: The role of the user in the team if the user is a member, otherwise None.
         '''
-
+        if 'request' not in self.context:
+            return None
         membership = models.Membership.objects.filter(
             team=obj, user=self.context['request'].user).first()
         return membership.role if membership else None
@@ -133,4 +134,39 @@ class TeamWriteSerializer(serializers.ModelSerializer):
         '''
 
         serializer = TeamReadSerializer(instance, context=self.context)
+        return serializer.data
+
+
+class MembershipReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Membership model, where all fields are read-only.
+    To be used for GET requests.
+    '''
+    user = BasicUserSerializer()
+
+    class Meta:
+        model = models.Membership
+        fields = ['id', 'user', 'team', 'is_active', 'joined_date', 'role',
+                  'invitation', 'created_date', 'updated_date']
+        read_only_fields = fields
+        extra_kwargs = {
+            'invitation': {
+                'allow_null': True, # owner of a team does not have an invitation
+            }
+        }
+
+class MembershipWriteSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Membership model, to be used for POST requests.
+    It uses the MembershipReadSerializer for the representation of the instance data.
+    '''
+
+    class Meta:
+        model = models.Membership
+        fields = ['id', 'user', 'team',
+                  'is_active', 'joined_date', 'role']
+        read_only_fields = ['user', 'team', 'joined_date'] # 'is_active'
+
+    def to_representation(self, instance):
+        serializer = MembershipReadSerializer(instance, context=self.context)
         return serializer.data

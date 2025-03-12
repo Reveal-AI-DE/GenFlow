@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from gen_flow.apps.team.models import Team
+from gen_flow.apps.team.serializers import TeamReadSerializer
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users, USERS
 
 
@@ -17,12 +18,8 @@ class TeamAPITestCase(APITestCase):
     def check_response(self, response, status_code, data=None):
         self.assertEqual(response.status_code, status_code)
         if data:
-            if isinstance(data, dict):
-                self.assertEqual(response.data['name'], data['name'])
-                self.assertEqual(response.data['description'], data['description'])
-            else:
-                self.assertEqual(response.data['name'], data.name)
-                self.assertEqual(response.data['description'], data.description)
+            self.assertEqual(response.data['name'], data['name'])
+            self.assertEqual(response.data['description'], data['description'])
 
 
 class TeamListAPITestCase(TeamAPITestCase):
@@ -69,7 +66,9 @@ class TeamRetrieveAPITestCase(TeamAPITestCase):
             for team_membership in user['teams']:
                 team = team_membership['team']
                 response = self.retrieve_team(self.admin_user, team.id)
-                self.check_response(response, status.HTTP_200_OK, data=team)
+                # no request in TeamReadSerializer context => team['user_role'] is None
+                data = TeamReadSerializer(team).data
+                self.check_response( response, status.HTTP_200_OK, data=data)
 
 
 class TeamUpdateAPITestCase(TeamAPITestCase):
