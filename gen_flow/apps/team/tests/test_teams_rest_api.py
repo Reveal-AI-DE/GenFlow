@@ -26,6 +26,8 @@ class TeamListAPITestCase(TeamAPITestCase):
     def setUp(self):
         super().setUp()
         self.created_teams_count = sum([len(user['teams']) for user in self.regular_users])
+        # each user also has a default team
+        self.created_teams_count += len(self.regular_users)
 
     def list_teams(self, user):
         with ForceLogin(user, self.client):

@@ -8,4 +8,5 @@ class TeamConfig(AppConfig):
     name = 'gen_flow.apps.team'
 
     def ready(self):
-        pass
+        from gen_flow.apps.team.signals import register_signals
+        register_signals(self)

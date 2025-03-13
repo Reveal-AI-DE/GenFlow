@@ -183,6 +183,9 @@ IAM_ROLES = [IAM_ADMIN_ROLE, 'user']
 LOGIN_URL = 'rest_login'
 LOGIN_REDIRECT_URL = '/'
 
+# TEAM settings
+USER_DEFAULT_TEAM_NAME = 'Personal'
+
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
