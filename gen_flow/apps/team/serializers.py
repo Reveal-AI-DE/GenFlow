@@ -137,6 +137,59 @@ class TeamWriteSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
+class InvitationReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Invitation model, where all fields are read-only.
+    To be used for GET requests.
+    '''
+
+    id = serializers.CharField(source='key')
+    role = serializers.ChoiceField(models.Membership.role.field.choices, source='membership.role')
+    user = BasicUserSerializer(source='membership.user')
+    team = serializers.PrimaryKeyRelatedField(queryset=models.Team.objects.all(), source='membership.team')
+    owner = BasicUserSerializer(allow_null=True)
+
+    class Meta:
+        model = models.Invitation
+        fields = ['id', 'created_date', 'owner',
+                  'role', 'user', 'team']
+        read_only_fields = fields
+
+
+class InvitationWriteSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for Invitation model, to be used for POST requests.
+    It uses the TeamReadSerializer for the representation of the instance data.
+    '''
+
+    role = serializers.ChoiceField(models.Membership.role.field.choices,
+                                   source='membership.role')
+    email = serializers.EmailField(source='membership.user.email')
+    team = serializers.PrimaryKeyRelatedField(
+        source='membership.team', read_only=True)
+
+    class Meta:
+        model = models.Invitation
+        fields = ['key', 'created_date', 'owner',
+                  'role', 'team', 'email']
+        read_only_fields = ['key', 'created_date', 'owner', 'team']
+
+    def update(self, instance, validated_data):
+        '''
+        Updates the given instance with the validated data.
+        '''
+
+        return super().update(instance, {})
+
+    def to_representation(self, instance):
+        '''
+        Returns the serialized data for the given instance using InvitationReadSerializer.
+        '''
+
+        serializer = InvitationReadSerializer(instance, context=self.context)
+        return serializer.data
+
+
 class MembershipReadSerializer(serializers.ModelSerializer):
     '''
     Serializer for Membership model, where all fields are read-only.

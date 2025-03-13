@@ -25,6 +25,13 @@ import gen_flow.apps.team.serializers as serializers
         responses={
             '200': serializers.TeamReadSerializer,
         }),
+    create=extend_schema(
+        summary='Create a team',
+        description='Create a new team with the provided details.',
+        request=serializers.TeamWriteSerializer,
+        responses={
+            '201': serializers.TeamReadSerializer,
+        }),
     partial_update=extend_schema(
         summary='Updates a team',
         description='Partially update the details of a specific team.'
@@ -32,13 +39,6 @@ import gen_flow.apps.team.serializers as serializers
         request= serializers.TeamWriteSerializer(partial=True),
         responses={
             '200': serializers.TeamReadSerializer,
-        }),
-    create=extend_schema(
-        summary='Create a team',
-        description='Create a new team with the provided details.',
-        request=serializers.TeamWriteSerializer,
-        responses={
-            '201': serializers.TeamReadSerializer,
         }),
     destroy=extend_schema(
         summary='Delete a team',
@@ -80,18 +80,18 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=['memberships'])
 @extend_schema_view(
-    retrieve=extend_schema(
-        summary='Get membership details',
-        description='Retrieve detailed information about a specific membership by its ID.',
-        responses={
-            '200': serializers.MembershipReadSerializer,
-        }),
     list=extend_schema(
         summary='List memberships',
         description='Retrieve a list of all memberships.'
             'Supports filtering and searching by user username and role.',
         responses={
             '200': serializers.MembershipReadSerializer(many=True),
+        }),
+    retrieve=extend_schema(
+        summary='Get membership details',
+        description='Retrieve detailed information about a specific membership by its ID.',
+        responses={
+            '200': serializers.MembershipReadSerializer,
         }),
     partial_update=extend_schema(
         summary='Update a membership',
@@ -135,3 +135,74 @@ class MembershipViewSet(
             return serializers.MembershipReadSerializer
         else:
             return serializers.MembershipWriteSerializer
+
+
+@extend_schema(tags=['invitations'])
+@extend_schema_view(
+    list=extend_schema(
+        summary='List invitations',
+        description='Retrieve a list of all invitations. Supports filtering and '
+            'searching by owner username, membership user ID, and membership active status.',
+        responses={
+            '200': serializers.InvitationReadSerializer(many=True),
+        }),
+    retrieve=extend_schema(
+        summary='Get invitation details',
+        description='Retrieve detailed information about a specific invitation by its ID.',
+        responses={
+            '200': serializers.InvitationReadSerializer,
+        }),
+    create=extend_schema(
+        summary='Create an invitation',
+        description='Create a new invitation with the provided details.',
+        request=serializers.InvitationWriteSerializer(),
+        responses={
+            '201': serializers.InvitationReadSerializer,
+        }),
+    partial_update=extend_schema(
+        summary='Update an invitation',
+        description='Partially update the details of a specific invitation. '
+            'Only the provided fields will be updated.',
+        request=serializers.InvitationWriteSerializer(partial=True),
+        responses={
+            '200': serializers.InvitationReadSerializer,
+        }),
+)
+class InvitationViewSet(
+    viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+):
+    '''
+    InvitationViewSet is a viewset for handling CRUD operations on the Invitation model.
+    '''
+
+    queryset = models.Invitation.objects.select_related('owner').all()
+    http_method_names = ['get', 'patch', 'head', 'options']
+    iam_team_field = 'membership__team'
+
+    search_fields = ('owner__username', 'membership__user__id', 'membership__is_active')
+    filterset_fields = list(search_fields)
+    ordering_fields = list(filterset_fields) + ['created_date']
+    ordering = '-created_date'
+
+    def get_serializer_class(self):
+        '''
+        Returns the appropriate serializer class based on the request method.
+        '''
+
+        if self.request.method in SAFE_METHODS:
+            return serializers.InvitationReadSerializer
+        else:
+            return serializers.InvitationWriteSerializer
+
+    def perform_update(self, serializer):
+        '''
+        Updates the invitation instance.
+        '''
+
+        if 'accepted' in self.request.query_params:
+            serializer.instance.accept()
+        else:
+            super().perform_update(serializer)
