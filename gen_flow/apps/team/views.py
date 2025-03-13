@@ -2,9 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, status
+from django.utils.crypto import get_random_string
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework.response import Response
+from django.core.exceptions import ImproperlyConfigured
 
 import gen_flow.apps.team.models as models
 import gen_flow.apps.team.serializers as serializers
@@ -173,13 +176,14 @@ class InvitationViewSet(
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
     mixins.UpdateModelMixin,
+    mixins.CreateModelMixin
 ):
     '''
     InvitationViewSet is a viewset for handling CRUD operations on the Invitation model.
     '''
 
     queryset = models.Invitation.objects.select_related('owner').all()
-    http_method_names = ['get', 'patch', 'head', 'options']
+    http_method_names = ['get', 'post', 'patch', 'head', 'options']
     iam_team_field = 'membership__team'
 
     search_fields = ('owner__username', 'membership__user__id', 'membership__is_active')
@@ -196,6 +200,32 @@ class InvitationViewSet(
             return serializers.InvitationReadSerializer
         else:
             return serializers.InvitationWriteSerializer
+
+    def create(self, request):
+        '''
+        Handles the creation of a new invitation.
+        '''
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            self.perform_create(serializer)
+        except ImproperlyConfigured:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data='Email backend is not configured.')
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        '''
+        Saves the serializer with additional keyword arguments.
+        '''
+
+        serializer.save(
+            owner=self.request.user,
+            key=get_random_string(length=64),
+            team=self.request.iam_context['team'],
+            request=self.request,
+        )
 
     def perform_update(self, serializer):
         '''

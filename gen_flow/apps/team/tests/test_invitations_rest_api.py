@@ -54,6 +54,39 @@ class InvitationRetrieveAPITestCase(InvitationAPITestCase):
                 self.check_response(response, status.HTTP_200_OK, data=InvitationReadSerializer(invitation).data)
 
 
+class InvitationCreateAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
+
+    def create_invitation(self, user, data, team_id):
+        with ForceLogin(user, self.client):
+            response = self.client.post(f'/api/invitations?team={team_id}', data, format='json')
+        return response
+
+    def test_create_invitation_with_existent_membership(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                data = {
+                    'email': user['user'].email,
+                    'role': TeamRole.MEMBER,
+                }
+                response = self.create_invitation(self.admin_user, data, team_membership['team'].id)
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_invitation_new_user_admin(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                email = f'new_user_{team_membership["team"].id}@example.com'
+                data = {
+                    'email': email,
+                    'role': TeamRole.MEMBER,
+                }
+                response = self.create_invitation(self.admin_user, data, team_membership['team'].id)
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                self.assertEqual(response.data['user']['email'], email)
+
+
 class InvitationUpdateAPITestCase(InvitationAPITestCase):
     def accept_invitation(self, user, invitation_id):
         with ForceLogin(user, self.client):

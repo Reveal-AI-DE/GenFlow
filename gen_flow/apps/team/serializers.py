@@ -2,8 +2,14 @@
 #
 # SPDX-License-Identifier: MIT
 
+from distutils.util import strtobool
+
+from django.conf import settings
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth import get_user_model
+from allauth.account.models import EmailAddress
 
 from gen_flow.apps.common.security.rsa import generate_key_pair
 from gen_flow.apps.team import models as models
@@ -165,14 +171,51 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(models.Membership.role.field.choices,
                                    source='membership.role')
     email = serializers.EmailField(source='membership.user.email')
-    team = serializers.PrimaryKeyRelatedField(
-        source='membership.team', read_only=True)
 
     class Meta:
         model = models.Invitation
         fields = ['key', 'created_date', 'owner',
-                  'role', 'team', 'email']
-        read_only_fields = ['key', 'created_date', 'owner', 'team']
+                  'role', 'email']
+        read_only_fields = ['key', 'created_date', 'owner']
+
+    def create(self, validated_data):
+        '''
+        Creates a new invitation and membership for a user.
+
+        This method handles the creation of a new user if the user does not already exist,
+        and associates the user with a team through a membership. If the user is already
+        a member of the team, a validation error is raised.
+
+        Raises:
+            serializers.ValidationError: If the user is already a member of the team.
+        '''
+
+        membership_data = validated_data.pop('membership')
+        team = validated_data.pop('team')
+        try:
+            user = get_user_model().objects.get(
+                email__iexact=membership_data['user']['email'])
+            del membership_data['user']
+        except ObjectDoesNotExist:
+            user_email = membership_data['user']['email']
+            user = User.objects.create_user(username=user_email, email=user_email)
+            user.set_unusable_password()
+            # User.objects.create_user(...) normalizes passed email and user.email can be different from original user_email
+            email = EmailAddress.objects.create(user=user, email=user.email, primary=True, verified=False)
+            user.save()
+            email.save()
+            del membership_data['user']
+
+        membership, created = models.Membership.objects.get_or_create(
+            defaults=membership_data,
+            user=user, team=team)
+        if not created:
+            raise serializers.ValidationError({'message':'The user is a member of '
+                                              'the team already.'})
+        invitation = models.Invitation.objects.create(**validated_data,
+                                               membership=membership)
+
+        return invitation
 
     def update(self, instance, validated_data):
         '''
@@ -180,6 +223,19 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
         '''
 
         return super().update(instance, {})
+
+    def save(self, request, **kwargs):
+        '''
+        Save the invitation instance and handle its acceptance or sending based on settings.
+        '''
+
+        invitation = super().save(**kwargs)
+        if not strtobool(settings.TEAM_INVITATION_CONFIRM):
+            invitation.accept(invitation.created_date)
+        else:
+            invitation.send(request)
+
+        return invitation
 
     def to_representation(self, instance):
         '''

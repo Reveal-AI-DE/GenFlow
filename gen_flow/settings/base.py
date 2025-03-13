@@ -143,6 +143,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dj_pagination.middleware.PaginationMiddleware',
+    'gen_flow.apps.team.middleware.ContextMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -185,6 +186,7 @@ LOGIN_REDIRECT_URL = '/'
 
 # TEAM settings
 USER_DEFAULT_TEAM_NAME = 'Personal'
+TEAM_INVITATION_CONFIRM = 'No'
 
 
 AUTHENTICATION_BACKENDS = [
