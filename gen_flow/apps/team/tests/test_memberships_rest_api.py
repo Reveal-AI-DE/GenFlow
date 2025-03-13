@@ -33,15 +33,25 @@ class MembershipListAPITestCase(MembershipAPITestCase):
         # each user also has a default team
         self.created_memberships_count += len(self.regular_users)
 
-    def list_memberships(self, user):
+    def list_memberships(self, user, team_id: int=None):
         with ForceLogin(user, self.client):
-            response = self.client.get('/api/memberships')
+            url = '/api/memberships' if not team_id else f'/api/memberships?team={team_id}'
+            response = self.client.get(url)
         return response
 
     def test_list_memberships_admin(self):
         response = self.list_memberships(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), self.created_memberships_count)
+
+    def test_list_memberships_by_team_admin(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                team_id = team_membership['team'].id
+                response = self.list_memberships(self.admin_user, team_id)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                # we have one membership per team, for team owner
+                self.assertEqual(len(response.data), 1)
 
 
 class MembershipRetrieveAPITestCase(MembershipAPITestCase):

@@ -61,6 +61,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     ordering_fields = list(filterset_fields)
     ordering = '-id'
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+    iam_team_field = None
 
     def get_serializer_class(self):
         '''
@@ -128,6 +129,7 @@ class MembershipViewSet(
     filterset_fields = list(search_fields) + ['id']
     ordering_fields = list(filterset_fields)
     ordering = '-joined_date'
+    iam_team_field = 'team'
 
     def get_serializer_class(self):
         '''

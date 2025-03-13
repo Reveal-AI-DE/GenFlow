@@ -29,15 +29,25 @@ class InvitationListAPITestCase(InvitationAPITestCase):
         super().setUp()
         self.created_invitations_count = sum([len(user['teams']) for user in self.regular_users])
 
-    def list_invitations(self, user):
+    def list_invitations(self, user, team_id: int=None):
         with ForceLogin(user, self.client):
-            response = self.client.get('/api/invitations')
+            url = '/api/invitations' if not team_id else f'/api/invitations?team={team_id}'
+            response = self.client.get(url)
         return response
 
     def test_list_invitations_admin(self):
         response = self.list_invitations(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), self.created_invitations_count)
+
+    def test_list_invitations_by_team_admin(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                team_id = team_membership['team'].id
+                response = self.list_invitations(self.admin_user, team_id)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                # we have one membership per team, for team member
+                self.assertEqual(len(response.data), 1)
 
 
 class InvitationRetrieveAPITestCase(InvitationAPITestCase):
