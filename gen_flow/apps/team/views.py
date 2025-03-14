@@ -11,6 +11,8 @@ from django.core.exceptions import ImproperlyConfigured
 
 import gen_flow.apps.team.models as models
 import gen_flow.apps.team.serializers as serializers
+import gen_flow.apps.team.permissions as perms
+
 
 
 @extend_schema(tags=['teams'])
@@ -72,6 +74,18 @@ class TeamViewSet(viewsets.ModelViewSet):
             return serializers.TeamReadSerializer
         else:
             return serializers.TeamWriteSerializer
+
+    def get_queryset(self):
+        '''
+        Retrieves the queryset for the view, applying necessary filters based on the action.
+        '''
+
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            perm = perms.TeamPermission.create_scope_list(self.request)
+            queryset = perm.filter(queryset)
+        return queryset
 
     def perform_create(self, serializer):
         '''

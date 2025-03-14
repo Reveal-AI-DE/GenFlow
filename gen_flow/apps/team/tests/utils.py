@@ -79,7 +79,9 @@ def create_dummy_team(owner, team_data, team_role: TeamRole=TeamRole.OWNER):
     membership = Membership.objects.create(user=owner, team=team, role=team_role)
     if team_role != TeamRole.OWNER:
         create_dummy_invitation(membership, owner)
-
+    else:
+        membership.is_active = True
+        membership.save()
     return team, membership
 
 def create_dummy_invitation(membership, owner):

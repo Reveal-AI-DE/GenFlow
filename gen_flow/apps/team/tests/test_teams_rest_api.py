@@ -5,7 +5,7 @@
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from gen_flow.apps.team.models import Team
+from gen_flow.apps.team.models import Team, TeamRole
 from gen_flow.apps.team.serializers import TeamReadSerializer
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users, USERS
 
@@ -39,6 +39,13 @@ class TeamListAPITestCase(TeamAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), self.created_teams_count)
 
+    def test_list_teams_user(self):
+        for user in self.regular_users:
+            response = self.list_teams(user['user'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            # each user also has a default team
+            self.assertEqual(len(response.data), len(user['teams']) + 1)
+
 
 class TeamCreateAPITestCase(TeamAPITestCase):
     def setUp(self):
@@ -54,6 +61,12 @@ class TeamCreateAPITestCase(TeamAPITestCase):
         for user in USERS['users']:
             for team in user['teams']:
                 response = self.create_team(self.admin_user, team)
+                self.check_response(response, status.HTTP_201_CREATED, data=team)
+
+    def test_create_team_user(self):
+        for user in USERS['users']:
+            for team in user['teams']:
+                response = self.create_team(self.regular_users[0]['user'], team)
                 self.check_response(response, status.HTTP_201_CREATED, data=team)
 
 
@@ -72,6 +85,24 @@ class TeamRetrieveAPITestCase(TeamAPITestCase):
                 data = TeamReadSerializer(team).data
                 self.check_response( response, status.HTTP_200_OK, data=data)
 
+    def test_retrieve_team_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                response = self.retrieve_team(user['user'], team_membership['team'].id)
+                data = TeamReadSerializer(team_membership['team']).data
+                if team_membership['membership'].is_active:
+                    self.check_response(response, status.HTTP_200_OK, data=data)
+                else:
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_retrieve_team_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        response = self.retrieve_team(user['user'], team_membership['team'].id)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class TeamUpdateAPITestCase(TeamAPITestCase):
     def update_team(self, user, team_id, data):
@@ -82,14 +113,51 @@ class TeamUpdateAPITestCase(TeamAPITestCase):
     def test_update_team_admin(self):
         for user in self.regular_users:
             for team_membership in user['teams']:
-                team = team_membership['team']
                 updated_team = {
                     'name': 'Updated name',
                     'description': 'Updated description'
                 }
-                response = self.update_team(self.admin_user, team.id, updated_team)
+                response = self.update_team(self.admin_user, team_membership['team'].id, updated_team)
                 self.check_response(response, status.HTTP_200_OK, data=updated_team)
 
+    def test_update_team_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                updated_team = {
+                    'name': 'Updated name',
+                    'description': 'Updated description'
+                }
+                response = self.update_team(user['user'], team_membership['team'].id, updated_team)
+                if team_membership['membership'].is_active and \
+                    team_membership['membership'].role in [TeamRole.OWNER.value, TeamRole.ADMIN.value]:
+                    self.check_response(response, status.HTTP_200_OK, data=updated_team)
+                else:
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_team_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        updated_team = {
+                            'name': 'Updated name',
+                            'description': 'Updated description'
+                        }
+                        response = self.update_team(user['user'], team_membership['team'].id, updated_team)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_team_use_not_owner_or_admin(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                if team_membership['membership'].is_active:
+                    team_membership['membership'].role = TeamRole.MEMBER.value
+                    team_membership['membership'].save()
+                    updated_team = {
+                        'name': 'Updated name',
+                        'description': 'Updated description'
+                    }
+                    response = self.update_team(user['user'], team_membership['team'].id, updated_team)
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 class TeamDeleteAPITestCase(TeamAPITestCase):
     def delete_team(self, user, team_id):
@@ -104,3 +172,32 @@ class TeamDeleteAPITestCase(TeamAPITestCase):
                 response = self.delete_team(self.admin_user, team.id)
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertFalse(Team.objects.filter(id=team.id).exists())
+
+    def test_delete_team_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                response = self.delete_team(user['user'], team_membership['team'].id)
+                if team_membership['membership'].is_active and \
+                    team_membership['membership'].role in [TeamRole.OWNER.value]:
+                    self.assertEqual(response.status_code, status.HTTP_200_OK)
+                    self.assertFalse(Team.objects.filter(id=team_membership['team'].id).exists())
+                else:
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_team_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        response = self.delete_team(user['user'], team_membership['team'].id)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_team_use_not_owner(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                if team_membership['membership'].is_active:
+                    team_membership['membership'].role = TeamRole.MEMBER.value
+                    team_membership['membership'].save()
+                    response = self.delete_team(user['user'], team_membership['team'].id)
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+                    self.assertTrue(Team.objects.filter(id=team_membership['team'].id).exists())

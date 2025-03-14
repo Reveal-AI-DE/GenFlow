@@ -102,6 +102,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'gen_flow.apps.iam.permissions.PermissionEnforcer',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -184,6 +185,8 @@ IAM_ADMIN_ROLE = 'admin'
 IAM_ROLES = [IAM_ADMIN_ROLE, 'user']
 LOGIN_URL = 'rest_login'
 LOGIN_REDIRECT_URL = '/'
+
+OBJECTS_NOT_RELATED_WITH_TEAM = ['user']
 
 # TEAM settings
 USER_DEFAULT_TEAM_NAME = 'Personal'
