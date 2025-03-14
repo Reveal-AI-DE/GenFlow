@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'corsheaders',
     'allauth.socialaccount',
+    'gen_flow.apps.team',
     'gen_flow.apps.iam',
     'gen_flow.apps.core',
 ]
@@ -101,8 +102,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'gen_flow.apps.iam.permissions.PermissionEnforcer',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
@@ -112,7 +116,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend',
-        'rest_framework.filters.OrderingFilter',),
+        'rest_framework.filters.OrderingFilter',
+        'gen_flow.apps.team.filters.TeamFilterBackend'),
     'SEARCH_PARAM': 'search',
     # Disable default handling of the 'format' query parameter by REST framework
     'URL_FORMAT_OVERRIDE': 'scheme',
@@ -123,6 +128,11 @@ REST_FRAMEWORK = {
         'anon': '100/minute',
     },
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+REST_AUTH = {
+    "REGISTER_SERIALIZER": "gen_flow.apps.iam.serializers.RegisterSerializerEx",
 }
 
 MIDDLEWARE = [
@@ -135,6 +145,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'dj_pagination.middleware.PaginationMiddleware',
+    'gen_flow.apps.team.middleware.ContextMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -174,6 +185,12 @@ IAM_ADMIN_ROLE = 'admin'
 IAM_ROLES = [IAM_ADMIN_ROLE, 'user']
 LOGIN_URL = 'rest_login'
 LOGIN_REDIRECT_URL = '/'
+
+OBJECTS_NOT_RELATED_WITH_TEAM = ['user']
+
+# TEAM settings
+USER_DEFAULT_TEAM_NAME = 'Personal'
+TEAM_INVITATION_CONFIRM = 'No'
 
 
 AUTHENTICATION_BACKENDS = [

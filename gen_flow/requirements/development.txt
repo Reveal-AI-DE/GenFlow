@@ -6,7 +6,7 @@
 #    pip-compile-multi
 #
 -r base.txt
-astroid==3.3.8
+astroid==3.3.9
     # via pylint
 autopep8==2.3.2
     # via django-silk

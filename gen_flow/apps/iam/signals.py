@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save, post_migrate
 
-def register_groups(sender, **kwargs):
+def create_groups(sender, **kwargs):
     '''
     The `post_migrate` signal handler to create groups corresponding to system roles.
 
@@ -19,7 +19,7 @@ def register_groups(sender, **kwargs):
         Group.objects.get_or_create(name=role)
 
 if settings.IAM_TYPE == 'BASIC':
-    def create_user(sender, instance, created, **kwargs):
+    def add_group(sender, instance, created, **kwargs):
         '''
         Signal receiver that handles the creation of a user.
 
@@ -57,7 +57,7 @@ def register_signals(app_config):
     Args:
         app_config (AppConfig): The IAM app configuration instance.
     '''
-    post_migrate.connect(register_groups, sender=app_config)
+    post_migrate.connect(create_groups, sender=app_config)
     if settings.IAM_TYPE == 'BASIC':
         # Add default groups and add admin rights to super users.
-        post_save.connect(create_user, sender=User)
+        post_save.connect(add_group, sender=User)
