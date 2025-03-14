@@ -49,6 +49,21 @@ class InvitationListAPITestCase(InvitationAPITestCase):
                 # we have one membership per team, for team member
                 self.assertEqual(len(response.data), 1)
 
+    def test_list_invitations_user(self):
+        for user in self.regular_users:
+            response = self.list_invitations(user['user'])
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            # each user also has a default team
+            self.assertEqual(len(response.data), len(user['teams']))
+
+    def test_list_invitations_by_team_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                response = self.list_invitations(user['user'], team_id=team_membership['team'].id)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                # we have one membership per team, for team member
+                self.assertEqual(len(response.data), 1)
+
 
 class InvitationRetrieveAPITestCase(InvitationAPITestCase):
     def retrieve_invitation(self, user, invitation_id):
@@ -62,6 +77,22 @@ class InvitationRetrieveAPITestCase(InvitationAPITestCase):
                 invitation = team_membership['membership'].invitation
                 response = self.retrieve_invitation(self.admin_user, invitation.key)
                 self.check_response(response, status.HTTP_200_OK, data=InvitationReadSerializer(invitation).data)
+
+    def test_retrieve_invitation_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                invitation = team_membership['membership'].invitation
+                response = self.retrieve_invitation(user['user'], invitation.key)
+                self.check_response(response, status.HTTP_200_OK, data=InvitationReadSerializer(invitation).data)
+
+    def test_retrieve_invitation_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        invitation = team_membership['membership'].invitation
+                        response = self.retrieve_invitation(user['user'], invitation.key)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class InvitationCreateAPITestCase(APITestCase):
@@ -96,6 +127,35 @@ class InvitationCreateAPITestCase(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_201_CREATED)
                 self.assertEqual(response.data['user']['email'], email)
 
+    def test_create_invitation_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                email = f'new_user_{team_membership["team"].id}@example.com'
+                data = {
+                    'email': email,
+                    'role': TeamRole.MEMBER,
+                }
+                response = self.create_invitation(user['user'], data, team_membership['team'].id)
+                if team_membership['membership'].is_active and \
+                    team_membership['membership'].role in [TeamRole.OWNER.value, TeamRole.ADMIN.value]:
+                    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                    self.assertEqual(response.data['user']['email'], email)
+                else:
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_invitation_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        email = f'new_user_{team_membership["team"].id}@example.com'
+                        data = {
+                            'email': email,
+                            'role': TeamRole.MEMBER,
+                        }
+                        response = self.create_invitation(user['user'], data, team_membership['team'].id)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
 
 class InvitationUpdateAPITestCase(InvitationAPITestCase):
     def accept_invitation(self, user, invitation_id):
@@ -112,3 +172,25 @@ class InvitationUpdateAPITestCase(InvitationAPITestCase):
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 updated_invitation = Invitation.objects.get(key=invitation.key)
                 self.assertTrue(updated_invitation.accepted)
+
+    def test_update_invitation_user(self):
+        for user in self.regular_users:
+            for team_membership in user['teams']:
+                invitation = team_membership['membership'].invitation
+                self.assertFalse(invitation.accepted)
+                response = self.accept_invitation(user['user'], invitation.key)
+                if team_membership['membership'].is_active:
+                    self.assertEqual(response.status_code, status.HTTP_200_OK)
+                    updated_invitation = Invitation.objects.get(key=invitation.key)
+                    self.assertTrue(updated_invitation.accepted)
+                else:
+                    self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_invitation_user_not_member(self):
+        for user in self.regular_users:
+            for other_user in self.regular_users:
+                if user['user'].id != other_user['user'].id:
+                    for team_membership in other_user['teams']:
+                        invitation = team_membership['membership'].invitation
+                        response = self.accept_invitation(user['user'], invitation.key)
+                        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

@@ -96,3 +96,182 @@ class TeamPermission(GenFLowBasePermission):
                 Q(owner_id=self.user_id) |
                 (Q(members__user_id=self.user_id) & Q(members__is_active=True))
             ).distinct()
+
+
+class MembershipPermission(GenFLowBasePermission):
+    '''
+    Handles the permissions for membership-related actions.
+    '''
+
+    class Scopes(StrEnum):
+        '''
+        Defines various permission scopes.
+        '''
+
+        LIST = 'list'
+        DELETE = 'delete'
+        UPDATE = 'update'
+        VIEW = 'view'
+
+    @staticmethod
+    def get_scopes(request, view, obj):
+        '''
+        Gets the scope based on the view action.
+        '''
+
+        Scopes = __class__.Scopes
+        return [{
+            'list': Scopes.LIST,
+            'destroy': Scopes.DELETE,
+            'partial_update': Scopes.UPDATE,
+            'retrieve': Scopes.VIEW,
+        }.get(view.action, None)]
+
+    @classmethod
+    def create(cls, request, view, obj, iam_context):
+        '''
+        Creates permissions based on the request, view, and object.
+        '''
+
+        permissions = []
+        if view.basename == 'membership':
+            for scope in cls.get_scopes(request, view, obj):
+                self = cls.create_base_perm(request, view, scope, iam_context, obj)
+                permissions.append(self)
+
+        return permissions
+
+    def check_access(self) -> bool:
+        '''
+        Check if the user has access based on their role and the scope.
+        '''
+
+        team_owner_or_admin = self.team_role and(
+            self.team_role == TeamRole.OWNER.value or \
+            self.team_role == TeamRole.ADMIN.value
+        )
+
+        # admin users have full control
+        # filter method will be used to filter queryset in list method
+        if self.group_name == settings.IAM_ADMIN_ROLE or \
+            self.scope == self.Scopes.LIST:
+            return True
+        # team owner or admin can delete its memberships
+        elif self.scope == self.Scopes.DELETE:
+            if team_owner_or_admin:
+                return True
+        # team owner or admin can change the membership's data
+        elif self.scope == self.Scopes.UPDATE:
+            if team_owner_or_admin:
+                return True
+        # team member can view its membership, in addition to team owner and admin
+        elif self.scope == self.Scopes.VIEW:
+            if self.obj.user.id == self.user_id or team_owner_or_admin:
+                return True
+        return False
+
+    def filter(self, queryset):
+        '''
+        Filters the queryset based on the user's role and membership status.
+        '''
+
+        # Don't filter queryset for admin
+        if self.group_name == settings.IAM_ADMIN_ROLE:
+            return queryset
+        # get memberships where the user is the owner or a member with active membership
+        else:
+            # user can list their membership in current team
+            # in addition to memberships of teams he owns
+            if self.team_id:
+                return queryset.filter(
+                    Q(team_id=self.team_id) &
+                    (Q(user_id=self.user_id) | Q(team__owner_id=self.user_id))
+                ).distinct()
+            # if team_id is not provided, user can list all memberships of teams he owns
+            return queryset.filter(
+                Q(team__owner_id=self.user_id)
+            ).distinct()
+
+
+class InvitationPermission(GenFLowBasePermission):
+    '''
+    Handles the permissions for invitation-related actions.
+    '''
+
+    class Scopes(StrEnum):
+        '''
+        Defines various permission scopes.
+        '''
+
+        LIST = 'list'
+        CREATE = 'create'
+        UPDATE = 'update'
+        VIEW = 'view'
+
+    @staticmethod
+    def get_scopes(request, view, obj):
+        '''
+        Gets the scope based on the view action.
+        '''
+
+        Scopes = __class__.Scopes
+        return [{
+            'list': Scopes.LIST,
+            'create': Scopes.CREATE,
+            'partial_update': Scopes.UPDATE,
+            'retrieve': Scopes.VIEW,
+        }.get(view.action, None)]
+
+    @classmethod
+    def create(cls, request, view, obj, iam_context):
+        '''
+        Creates permissions based on the request, view, and object.
+        '''
+
+        permissions = []
+        if view.basename == 'invitation':
+            for scope in cls.get_scopes(request, view, obj):
+                self = cls.create_base_perm(request, view, scope, iam_context, obj)
+                permissions.append(self)
+
+        return permissions
+
+    def check_access(self) -> bool:
+        '''
+        Check if the user has access based on their role and the scope.
+        '''
+
+        team_owner_or_admin = self.team_role and(
+            self.team_role == TeamRole.OWNER.value or \
+            self.team_role == TeamRole.ADMIN.value
+        )
+
+        # admin users have full control
+        # filter method will be used to filter queryset in list method
+        if self.group_name == settings.IAM_ADMIN_ROLE or \
+            self.scope == self.Scopes.LIST:
+            return True
+        # team owner or admin can create an invitation
+        # team owner or admin can change the invitation's data
+        elif self.scope == self.Scopes.CREATE or \
+            self.scope == self.Scopes.UPDATE:
+            if team_owner_or_admin:
+                return True
+        # team member can view its invitation, in addition to team owner and admin
+        elif self.scope == self.Scopes.VIEW:
+            if self.obj.membership.user.id == self.user_id or team_owner_or_admin:
+                return True
+        return False
+
+    def filter(self, queryset):
+        '''
+        Filters the queryset based on the user's role and membership status.
+        '''
+
+        # Don't filter queryset for admin
+        if self.group_name == settings.IAM_ADMIN_ROLE:
+            return queryset
+        # get invitations where the user is the owner or a member with active membership
+        else:
+            # user can list all invitations he owns or of teams he owns
+            return queryset.filter(Q(owner_id=self.user_id) | Q(membership__team__owner_id=self.user_id)).distinct()

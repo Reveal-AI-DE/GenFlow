@@ -155,6 +155,18 @@ class MembershipViewSet(
         else:
             return serializers.MembershipWriteSerializer
 
+    def get_queryset(self):
+        '''
+        Retrieves the queryset for the view, applying necessary filters based on the action.
+        '''
+
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            perm = perms.MembershipPermission.create_scope_list(self.request)
+            queryset = perm.filter(queryset)
+        return queryset
+
 
 @extend_schema(tags=['invitations'])
 @extend_schema_view(
@@ -216,6 +228,18 @@ class InvitationViewSet(
             return serializers.InvitationReadSerializer
         else:
             return serializers.InvitationWriteSerializer
+
+    def get_queryset(self):
+        '''
+        Retrieves the queryset for the view, applying necessary filters based on the action.
+        '''
+
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            perm = perms.InvitationPermission.create_scope_list(self.request)
+            queryset = perm.filter(queryset)
+        return queryset
 
     def create(self, request):
         '''
