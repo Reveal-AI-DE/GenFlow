@@ -1,0 +1,30 @@
+temperature:
+  label:
+    en_US: Temperature
+    de_DE: Temperature
+  type: float
+  help:
+    en_US: 'Controls randomness. Lower temperature results in less random completions.
+      As the temperature approaches zero, the model will become deterministic and repetitive.
+      Higher temperature results in more random completions.'
+    de_DE: 'Kontrolliert die Zufälligkeit.
+      Eine niedrigere Temperatur führt zu weniger zufälligen Vervollständigungen.
+      Wenn sich die Temperatur dem Wert Null nähert, wird das Modell deterministisch und repetitiv.
+      Höhere Temperatur führt zu mehr zufälligen Vervollständigungen.'
+  default: 0.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+top_p:
+  label:
+    en_US: Top P
+    de_DE: Top P
+  type: float
+  help:
+    en_US: 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.'
+    de_DE: 'Steuert die Vielfalt über die Kernstichprobe: 0.5 bedeutet, dass die Hälfte aller wahrscheinlichkeitsgewichteten Optionen berücksichtigt werden.'
+  default: 1.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+  advanced: true

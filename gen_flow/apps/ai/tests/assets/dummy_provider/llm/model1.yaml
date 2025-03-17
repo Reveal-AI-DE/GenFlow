@@ -1,0 +1,12 @@
+id: model1
+label:
+  en_US: model1
+  de_DE: model1
+type: llm
+features:
+  - multi-tool-call
+  - agent-thought
+  - stream-tool-call
+properties:
+  mode: chat
+  context_size: 8192

@@ -9,9 +9,12 @@ django-cors-headers==4.7.0
 # to avoid possible further versions conflicts (we use registration functionality)
 # https://dj-rest-auth.readthedocs.io/en/latest/installation.html#registration-optional
 dj-rest-auth[with_social]==5.0.2
-django-allauth[saml]==0.57.2
+django-allauth==0.57.2
 
 channels[daphne]==4.2.0
 
 pycryptodome==3.21.0
 gmpy2==2.2.1
+
+openai==1.66.3
+tiktoken==0.9.0

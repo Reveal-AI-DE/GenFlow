@@ -1,0 +1,52 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+from collections.abc import Sequence
+from typing import Optional
+
+from pydantic import ConfigDict
+
+from gen_flow.apps.common.entities import BaseYamlEntityWithIcons, ConfigurationEntity, HelpEntity
+from gen_flow.apps.ai.base.entities.shared import ModelType
+from gen_flow.apps.ai.base.entities.model import CommonModelEntity
+
+class CommonAIProviderEntity(BaseYamlEntityWithIcons):
+    '''
+    Represents a common AI provider entity with associated metadata.
+    '''
+
+    id: str
+    supported_model_types: Sequence[ModelType]
+
+
+class SimpleAIProviderEntity(CommonAIProviderEntity):
+    '''
+    A subclass of CommonAIProviderEntity with a list of models.
+    '''
+
+    models: list[CommonModelEntity] = []
+
+
+class AIProviderEntity(SimpleAIProviderEntity):
+    '''
+    Represents an AI provider entity with additional attributes and methods.
+    '''
+
+    background: Optional[str] = None
+    help: Optional[HelpEntity] = None
+    credential_form_schemas: Optional[list[ConfigurationEntity]] = []
+
+    # pydantic configs
+    model_config = ConfigDict(protected_namespaces=())
+
+
+    def to_simple_provider(self) -> SimpleAIProviderEntity:
+        return SimpleAIProviderEntity(
+            id=self.id,
+            label=self.label,
+            icon_small=self.icon_small,
+            icon_large=self.icon_large,
+            supported_model_types=self.supported_model_types,
+            models=self.models,
+        )
