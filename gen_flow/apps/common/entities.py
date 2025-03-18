@@ -139,6 +139,72 @@ class ConfigurationEntity(CommonConfigurationEntity):
     # used to generate nested forms
     parameters: Optional[List['ConfigurationEntity']] = None
 
+    def option_values(self):
+        return [option.name for option in self.options]
+
+    def validate(self, parameter_value: Any, prefix: str = ''):
+        # validate value type
+        if self.type == ConfigurationType.INT:
+            if not isinstance(parameter_value, int):
+                raise ValueError(f'{prefix} {self.name} should be int.')
+            # validate value range
+            if self.min is not None and parameter_value < self.min:
+                raise ValueError(
+                    f'{prefix} {self.name} should be greater than or equal to {self.min}.'
+                )
+            if self.max is not None and parameter_value > self.max:
+                raise ValueError(
+                    f'{prefix} {self.name} should be less than or equal to {self.max}.'
+                )
+        elif self.type == ConfigurationType.FLOAT:
+            if not isinstance(parameter_value, float | int):
+                raise ValueError(f'{prefix} {self.name} should be float.')
+            # validate value precision
+            if self.precision is not None:
+                if self.precision == 0:
+                    if parameter_value != int(parameter_value):
+                        raise ValueError(f'{prefix} {self.name} should be int.')
+                else:
+                    if parameter_value != round(parameter_value, self.precision):
+                        raise ValueError(
+                            f'{prefix} {self.name} should be round to {self.precision}'
+                            f' decimal places.'
+                        )
+            # validate value range
+            if self.min is not None and parameter_value < self.min:
+                raise ValueError(
+                    f'{prefix} {self.name} should be greater than or equal to {self.min}.'
+                )
+            if self.max is not None and parameter_value > self.max:
+                raise ValueError(
+                    f'{prefix} {self.name} should be less than or equal to {self.max}.'
+                )
+        elif self.type == ConfigurationType.BOOLEAN:
+            if not isinstance(parameter_value, bool):
+                raise ValueError(f'{prefix} {self.name} should be bool.')
+        elif self.type == ConfigurationType.STRING:
+            if not isinstance(parameter_value, str):
+                raise ValueError(f'{prefix} {self.name} should be string.')
+            # validate options
+            if self.options and parameter_value not in self.option_values():
+                raise ValueError(f'{prefix} {self.name} should be one of {self.option_values()}.')
+        elif self.type == ConfigurationType.TEXT:
+            if not isinstance(parameter_value, str):
+                raise ValueError(f'{prefix} {self.name} should be text.')
+            # validate options
+            if self.options and parameter_value not in self.option_values():
+                raise ValueError(f'{prefix} {self.name} should be one of {self.option_values()}.')
+        elif self.type == ConfigurationType.OBJECT:
+            if not isinstance(parameter_value, dict):
+                raise ValueError(f'{prefix} {self.name} should be object.')
+            for param in self.parameters:
+                param.validate(parameter_value.get(param.name), f'{prefix} {self.name}')
+        elif self.type == ConfigurationType.SECRET:
+            if not isinstance(parameter_value, str):
+                raise ValueError(f'{prefix} {self.name} should be string.')
+        else:
+            raise ValueError(f'{prefix} {self.name} type {self.type} is not supported.')
+
 
 class FileEntity(BaseModel):
     '''
