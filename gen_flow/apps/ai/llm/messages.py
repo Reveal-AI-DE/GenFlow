@@ -4,8 +4,9 @@
 
 from abc import ABC
 from enum import Enum
+from typing import cast, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, field_serializer
 
 
 class MessageRole(Enum):
@@ -45,13 +46,9 @@ class MessageContent(BaseModel):
     type: MessageContentType
     data: str
 
-    class Config:
-        # use_enum_values=True not working when setting
-        # the default value for enum field because the validation does not happen.
-        # validate_default=True solves the problem.
-        validate_default=True
-        use_enum_values = True
-
+    @field_serializer('type')
+    def get_type_value(self, type: MessageContentType,) -> str:
+        return str(type.value)
 
 class TextMessageContent(MessageContent):
     '''
@@ -68,13 +65,24 @@ class Message(ABC, BaseModel):
 
     role: MessageRole
     content: str | list[MessageContent]
+    name: Optional[str] = None
 
-    class Config:
-        # use_enum_values=True not working when setting
-        # the default value for enum field because the validation does not happen.
-        # validate_default=True solves the problem.
-        validate_default=True
-        use_enum_values = True
+    @field_serializer('role')
+    def get_type_value(self, role: MessageRole,) -> str:
+        return str(role.value)
+
+    def to_dict(self) -> dict:
+        '''
+        Dumps the model to a dictionary.
+        '''
+
+        data = self.model_dump(exclude={'name'})
+
+        if self.name:
+            data['name'] = self.name
+
+        return data
+
 
 class UserMessage(Message):
     '''
@@ -83,6 +91,20 @@ class UserMessage(Message):
 
     role: MessageRole = MessageRole.USER
 
+    @field_serializer('content')
+    def get_content_value(self, content: str | list[MessageContent],) -> str | list[dict]:
+        if isinstance(content, str):
+            return content
+        else:
+            data = []
+            for item in content:
+                if item.type == MessageContentType.TEXT:
+                    item = cast(TextMessageContent, item)
+                    data.append({'type': 'text', 'text': item.data})
+                else:
+                    # TODO: add support for other content types
+                    raise ValueError(f'invalid content type {item.type}')
+            return data
 
 class AssistantMessage(Message):
     '''

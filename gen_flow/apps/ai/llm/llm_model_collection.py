@@ -3,15 +3,26 @@
 # SPDX-License-Identifier: MIT
 
 import time
+import re
+from enum import Enum
 from abc import abstractmethod
 from typing import Optional, Union, Generator
 
 from gen_flow.apps.common.entities import ConfigurationEntity
 from gen_flow.apps.ai.base.entities.shared import ModelType
-from gen_flow.apps.ai.base.entities.model import PricingType
+from gen_flow.apps.ai.base.entities.model import PricingType, PropertyKey
 from gen_flow.apps.ai.base.model_collection import ModelCollection
 from gen_flow.apps.ai.llm.messages import Message
 from gen_flow.apps.ai.llm.entities import Result, Usage
+
+
+class LLMMode(Enum):
+    '''
+    Enum class for large language model mode.
+    '''
+
+    COMPLETION = 'completion'
+    CHAT = 'chat'
 
 
 class LLMModelCollection(ModelCollection):
@@ -22,10 +33,9 @@ class LLMModelCollection(ModelCollection):
     model_type: ModelType = ModelType.LLM
 
     @abstractmethod
-    def get_tokens_counts(
+    def get_tokens_count(
         self,
         model: str,
-        credentials: dict,
         messages: list[Message],
     ) -> int:
         '''
@@ -51,6 +61,18 @@ class LLMModelCollection(ModelCollection):
         '''
 
         raise NotImplementedError
+
+    def get_model_mode(self, model: str) -> LLMMode:
+        '''
+        Returns model mode
+        '''
+        model_schema = self.get_model_schema(model)
+
+        mode = LLMMode.CHAT
+        if model_schema and model_schema.properties.get(PropertyKey.MODE):
+            mode = LLMMode(model_schema.properties[PropertyKey.MODE])
+
+        return mode
 
     def get_parameter_configs(self, model: str) -> list[ConfigurationEntity]:
         ''''
@@ -163,3 +185,16 @@ class LLMModelCollection(ModelCollection):
             raise e
 
         return result
+
+    def truncate_at_stop_tokens(self, text: str, stop: list[str]) -> str:
+        '''
+        Truncates the given text at the first occurrence of any stop tokens.
+
+        This function splits the input text at the first occurrence of any of the stop tokens
+        provided in the stop list and returns the portion of the text before the stop token.
+
+        Returns:
+            str: The portion of the text before the first stop token.
+        '''
+
+        return re.split('|'.join(stop), text, maxsplit=1)[0]

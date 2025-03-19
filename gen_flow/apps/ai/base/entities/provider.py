@@ -35,7 +35,7 @@ class AIProviderEntity(SimpleAIProviderEntity):
 
     background: Optional[str] = None
     help: Optional[HelpEntity] = None
-    credential_form_schemas: Optional[list[ConfigurationEntity]] = []
+    credential_form: Optional[list[ConfigurationEntity]] = []
 
     # pydantic configs
     model_config = ConfigDict(protected_namespaces=())
@@ -50,3 +50,33 @@ class AIProviderEntity(SimpleAIProviderEntity):
             supported_model_types=self.supported_model_types,
             models=self.models,
         )
+
+    def validate_credential_form(self, credentials: dict) -> dict:
+        '''
+        Validates the credential form for the AI provider.
+        '''
+
+        validated_credentials = {}
+        for configuration_entity in self.credential_form:
+            #  If the variable does not exist in credentials
+            if configuration_entity.name not in credentials or not credentials[configuration_entity.name]:
+                # If required is True, an exception is thrown
+                if configuration_entity.required:
+                    raise ValueError(f'Variable {configuration_entity.name} is required')
+                else:
+                    # Get the value of default
+                    if configuration_entity.default:
+                        # If it exists, add it to validated_credentials
+                        validated_credentials[configuration_entity.name]=configuration_entity.default
+                        continue
+                    else:
+                        # If default does not exist, skip
+                        continue
+
+            # If the variable exists in credentials
+            # Validate the value
+            configuration_entity.validate(credentials[configuration_entity.name], prefix='Variable')
+            # Add the value to validated_credentials
+            validated_credentials[configuration_entity.name] = credentials[configuration_entity.name]
+
+        return validated_credentials

@@ -21,14 +21,14 @@ class MessageTest(TestCase):
         '''
 
         user_message = UserMessage(content='hello')
-        self.assertEqual(user_message.model_dump(), {'content': 'hello', 'role': 'user'})
+        self.assertEqual(user_message.to_dict(), {'content': 'hello', 'role': 'user'})
 
         message_content1 = TextMessageContent(data='hello')
         message_content2 = TextMessageContent(data='world')
         user_message = UserMessage(content=[message_content1, message_content2])
         self.assertEqual(
-            user_message.model_dump(),
-            {'content': [message_content1.model_dump(), message_content2.model_dump()], 'role': 'user'}
+            user_message.to_dict(),
+            {'content': [{'type': 'text', 'text': 'hello'}, {'type': 'text', 'text': 'world'}], 'role': 'user'}
         )
 
     def test_assistant_message_to_dict(self):
@@ -36,30 +36,26 @@ class MessageTest(TestCase):
         Test the AssistantMessage class.
         '''
 
-        user_message = AssistantMessage(content='hello')
-        self.assertEqual(user_message.model_dump(), {'content': 'hello', 'role': 'assistant'})
+        assistant_message = AssistantMessage(content='hello')
+        self.assertEqual(assistant_message.to_dict(), {'content': 'hello', 'role': 'assistant'})
 
-        message_content1 = TextMessageContent(data='hello')
-        message_content2 = TextMessageContent(data='world')
-        user_message = AssistantMessage(content=[message_content1, message_content2])
-        self.assertEqual(
-            user_message.model_dump(),
-            {'content': [message_content1.model_dump(), message_content2.model_dump()], 'role': 'assistant'}
-        )
+        assistant_message = AssistantMessage(content='hello', name='assistant')
+        self.assertEqual(assistant_message.to_dict(), {'content': 'hello', 'role': 'assistant', 'name': 'assistant'})
+
 
     def test_system_message_to_dict(self):
         '''
         Test the SystemMessage class.
         '''
 
-        user_message = SystemMessage(content='hello')
-        self.assertEqual(user_message.model_dump(), {'content': 'hello', 'role': 'system'})
+        system_message = SystemMessage(content='hello')
+        self.assertEqual(system_message.to_dict(), {'content': 'hello', 'role': 'system'})
 
         message_content1 = TextMessageContent(data='hello')
         message_content2 = TextMessageContent(data='world')
-        user_message = SystemMessage(content=[message_content1, message_content2])
+        system_message = SystemMessage(content=[message_content1, message_content2])
         self.assertEqual(
-            user_message.model_dump(),
+            system_message.to_dict(),
             {'content': [message_content1.model_dump(), message_content2.model_dump()], 'role': 'system'}
         )
 
@@ -130,8 +126,8 @@ class LLMModelCollectionTest(TestCase):
                 UserMessage(content='hello'),
                 AssistantMessage(content='world'),
             ]
-            input = self.llm_model_collection.get_tokens_counts(model.id, {}, messages)
-            output = self.llm_model_collection.get_tokens_counts(model.id, {}, [self.llm_model_collection.RESPONSE])
+            input = self.llm_model_collection.get_tokens_count(model.id, {}, messages)
+            output = self.llm_model_collection.get_tokens_count(model.id, {}, [self.llm_model_collection.RESPONSE])
             result = self.llm_model_collection.call(model.id, {}, messages, {})
             self.assertIsNotNone(result)
             self.assertIsNotNone(result.usage)

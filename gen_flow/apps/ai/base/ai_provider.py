@@ -19,6 +19,14 @@ class AIProvider(ABC):
     schema: Optional[AIProviderEntity] = None
     model_collections_map: dict[str, ModelCollection] = {}
 
+    @abstractmethod
+    def validate_credentials(self, credentials: dict) -> None:
+        '''
+        Validate provider credentials
+        '''
+
+        raise NotImplementedError
+
     def get_schema(self) -> AIProviderEntity:
         '''
         Retrieves the AI provider schema.
@@ -120,11 +128,3 @@ class AIProvider(ABC):
             return self.model_collections_map[f'{provider_name}.{model_type}']
         else:
             raise Exception(f'ModelCollection instance not found for {provider_name}.{model_type}')
-
-    @abstractmethod
-    def validate_credentials(self, credentials: dict) -> None:
-        '''
-        Validate provider credentials
-        '''
-
-        raise NotImplementedError

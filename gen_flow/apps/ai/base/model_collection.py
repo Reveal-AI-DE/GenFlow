@@ -5,7 +5,8 @@
 import os
 import decimal
 from os import path as osp
-from typing import Optional
+from typing import Optional, Mapping
+from abc import ABC, abstractmethod
 
 from gen_flow.apps.common.utils.yaml_utils import load_yaml_file
 from gen_flow.apps.ai.base.entities.shared import ModelType
@@ -13,7 +14,7 @@ from gen_flow.apps.ai.base.entities.model import (ConfigurationEntity, ModelEnti
     DefaultParameterName, PricingConfig, PricingType, PricingDetails)
 
 
-class ModelCollection:
+class ModelCollection(ABC):
     '''
     Represents a collection of models of the same type and same provider.
     '''
@@ -25,6 +26,13 @@ class ModelCollection:
     config_path: str = ''
     schemas: Optional[list[ModelEntity]] = None
     default_parameter_configs: Optional[dict] = None
+
+    @abstractmethod
+    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+        '''
+        Validate model credentials
+        '''
+        raise NotImplementedError
 
     def get_models(self) -> list[ModelEntity]:
         '''

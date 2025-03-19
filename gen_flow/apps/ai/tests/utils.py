@@ -4,7 +4,7 @@
 
 import os
 from os import path as osp
-from typing import Optional, Union, Generator
+from typing import Optional, Union, Generator, Mapping
 
 from django.conf import settings
 
@@ -32,14 +32,26 @@ class DummyModelCollection(ModelCollection):
     Dummy Model Collection class.
     '''
 
+    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+        '''
+        Validate model credentials
+        '''
+        pass
+
 class DummyLLMModelCollection(LLMModelCollection):
     '''
     Dummy LLM Model Collection class.
     '''
 
+    def validate_credentials(self, model: str, credentials: Mapping) -> None:
+        '''
+        Validate model credentials
+        '''
+        pass
+
     RESPONSE = AssistantMessage(content='result')
 
-    def get_tokens_counts(
+    def get_tokens_count(
         self,
         model: str,
         credentials: dict,
@@ -70,8 +82,8 @@ class DummyLLMModelCollection(LLMModelCollection):
         '''
         Calls the model with the given parameters and messages.
         '''
-        input_tokens = self.get_tokens_counts(model, credentials, messages)
-        output_tokens = self.get_tokens_counts(model, credentials, [self.RESPONSE])
+        input_tokens = self.get_tokens_count(model, credentials, messages)
+        output_tokens = self.get_tokens_count(model, credentials, [self.RESPONSE])
         usage = self._calculate_usage(model, input_tokens, output_tokens)
         return Result(model=model, messages=messages, message=self.RESPONSE, usage=usage)
 
