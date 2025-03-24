@@ -8,7 +8,7 @@ from unittest import TestCase
 from django.conf import settings
 
 from gen_flow.apps.ai.llm.messages import UserMessage, AssistantMessage, SystemMessage, TextMessageContent
-from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyLLMModelCollection, create_dummy_model_config
+from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyLLMModelCollection, create_dummy_model_config, remove_dummy_model_config
 
 class MessageTest(TestCase):
     '''
@@ -70,6 +70,10 @@ class LLMModelCollectionTest(TestCase):
             DummyAIProvider.PROVIDER_FOLDER,
             cls.model_type
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_dummy_model_config()
 
     def test_get_parameter_configs(self):
         models = self.llm_model_collection.get_models()

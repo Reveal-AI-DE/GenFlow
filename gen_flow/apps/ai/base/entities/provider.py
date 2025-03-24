@@ -5,8 +5,6 @@
 from collections.abc import Sequence
 from typing import Optional
 
-from pydantic import ConfigDict
-
 from gen_flow.apps.common.entities import BaseYamlEntityWithIcons, ConfigurationEntity, HelpEntity
 from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.entities.model import CommonModelEntity
@@ -37,18 +35,14 @@ class AIProviderEntity(SimpleAIProviderEntity):
     help: Optional[HelpEntity] = None
     credential_form: Optional[list[ConfigurationEntity]] = []
 
-    # pydantic configs
-    model_config = ConfigDict(protected_namespaces=())
-
-
-    def to_simple_provider(self) -> SimpleAIProviderEntity:
+    def to_common_ai_provider(self) -> CommonAIProviderEntity:
         return SimpleAIProviderEntity(
             id=self.id,
             label=self.label,
+            description=self.description,
             icon_small=self.icon_small,
             icon_large=self.icon_large,
             supported_model_types=self.supported_model_types,
-            models=self.models,
         )
 
     def validate_credential_form(self, credentials: dict) -> dict:

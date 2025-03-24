@@ -8,7 +8,6 @@ from collections.abc import Sequence
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.base.ai_provider import AIProvider
 from gen_flow.apps.ai.providers.registry import AI_PROVIDERS, AIProviderExtension
-# from gen_flow.apps.ai.schema_validators.provider_credential_schema_validator import ProviderCredentialSchemaValidator
 
 class AIProviderFactory:
     '''

@@ -14,10 +14,11 @@ from gen_flow.apps.ai.base.model_collection import ModelCollection
 
 class AIProvider(ABC):
 
-    # .../provider/provider.yaml
-    config_path: str = ''
-    schema: Optional[AIProviderEntity] = None
-    model_collections_map: dict[str, ModelCollection] = {}
+    def __init__(self) -> None:
+        # .../provider/provider.yaml
+        self.config_path: str = ''
+        self.schema: Optional[AIProviderEntity] = None
+        self.model_collections_map: dict[str, ModelCollection] = {}
 
     @abstractmethod
     def validate_credentials(self, credentials: dict) -> None:
@@ -100,7 +101,7 @@ class AIProvider(ABC):
 
         provider_name = config_path.split('/')[-2]
 
-        if not issubclass(model_cls, ModelCollection):
+        if  model_cls.__abstractmethods__ or not issubclass(model_cls, ModelCollection):
             raise Exception(f'Missing ModelCollection class for model type {model_type} in {provider_name}')
 
         model_collection_instance = model_cls()

@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 
-from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyModelCollection, create_dummy_model_config
+from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyModelCollection, create_dummy_model_config, remove_dummy_model_config
 from gen_flow.apps.ai.base.entities.shared import ModelType
 
 
@@ -23,6 +23,10 @@ class AIProviderTest(TestCase):
             DummyAIProvider.PROVIDER_FOLDER
         )
         cls.model_type = 'llm'
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_dummy_model_config()
 
     def test_get_schema(self):
         schema = self.dummy_provider.get_schema()

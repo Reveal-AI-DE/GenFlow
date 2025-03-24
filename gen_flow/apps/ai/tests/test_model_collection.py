@@ -8,7 +8,7 @@ from unittest import TestCase
 
 from django.conf import settings
 
-from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyModelCollection, create_dummy_model_config
+from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyModelCollection, create_dummy_model_config, remove_dummy_model_config
 from gen_flow.apps.ai.base.entities.model import PricingType
 
 
@@ -22,6 +22,10 @@ class ModelCollectionTest(TestCase):
             DummyAIProvider.PROVIDER_FOLDER,
             cls.model_type
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        remove_dummy_model_config()
 
     def test_get_models(self):
         model_collection = DummyModelCollection()
