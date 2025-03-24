@@ -110,16 +110,32 @@ class ProviderViewSet(
     viewsets.mixins.DestroyModelMixin,
     viewsets.mixins.UpdateModelMixin,
 ):
+    '''
+    ProviderViewSet is a view set for managing Provider instances. It supports
+    creating, retrieving, updating, and destroying Provider objects.
+    '''
+
+
     queryset = Provider.objects.all()
     iam_team_field = 'team'
 
     def get_serializer_class(self, *args, **kwargs):
+        '''
+        Returns the appropriate serializer class based on the request method.
+        Uses ProviderReadSerializer for safe methods (GET, HEAD, OPTIONS) and
+            ProviderWriteSerializer for other methods (POST, PUT, PATCH, DELETE).
+        '''
         if self.request.method in SAFE_METHODS:
             return ProviderReadSerializer
         else:
             return ProviderWriteSerializer
 
     def perform_create(self, serializer):
+        '''
+        Saves the serializer with additional context, including the owner
+            (current user) and team (from IAM context).
+        '''
+
         extra_kwargs = {
             'owner': self.request.user,
             'team': self.request.iam_context['team']

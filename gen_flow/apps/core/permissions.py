@@ -8,7 +8,15 @@ from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.iam.permissions import StrEnum, GenFLowBasePermission
 
 class ProviderPermission(GenFLowBasePermission):
+    '''
+    Handles the permissions for provider-related actions.
+    '''
+
     class Scopes(StrEnum):
+        '''
+        Defines the possible scopes of actions.
+        '''
+
         CREATE = 'create'
         RETRIEVE = 'retrieve'
         DELETE = 'delete'
@@ -16,6 +24,10 @@ class ProviderPermission(GenFLowBasePermission):
 
     @staticmethod
     def get_scopes(request, view, obj):
+        '''
+        Returns the scope of the action being performed based on the view's action.
+        '''
+
         Scopes = __class__.Scopes
         return [{
             'create': Scopes.CREATE,
@@ -26,6 +38,10 @@ class ProviderPermission(GenFLowBasePermission):
 
     @classmethod
     def create(cls, request, view, obj, iam_context):
+        '''
+        Creates and returns a list of permissions based on the request, view, and object.
+        '''
+
         permissions = []
         if view.basename == 'provider':
             for scope in cls.get_scopes(request, view, obj):
@@ -35,6 +51,10 @@ class ProviderPermission(GenFLowBasePermission):
         return permissions
 
     def check_access(self) -> bool:
+        '''
+        Checks if the user has access based on their group name and team role.
+        '''
+
         # admin users have full control
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
@@ -53,4 +73,8 @@ class ProviderPermission(GenFLowBasePermission):
         return False
 
     def filter(self, queryset):
+        ''''
+        Filters the queryset based on the permissions
+        '''
+
         return queryset
