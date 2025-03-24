@@ -43,7 +43,7 @@ class MembershipListAPITestCase(MembershipAPITestCase):
     def test_list_memberships_admin(self):
         response = self.list_memberships(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), self.created_memberships_count)
+        self.assertEqual(response.data['count'], self.created_memberships_count)
 
     def test_list_memberships_by_team_admin(self):
         for user in self.regular_users:
@@ -51,14 +51,14 @@ class MembershipListAPITestCase(MembershipAPITestCase):
                 response = self.list_memberships(self.admin_user, team_id=team_membership['team'].id)
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 # we have one membership per team, for team owner
-                self.assertEqual(len(response.data), 1)
+                self.assertEqual(response.data['count'], 1)
 
     def test_list_memberships_user(self):
         for user in self.regular_users:
             response = self.list_memberships(user['user'])
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             # each user also has a default team
-            self.assertEqual(len(response.data), len(user['teams']) + 1)
+            self.assertEqual(response.data['count'], len(user['teams']) + 1)
 
     def test_list_memberships_by_team_user(self):
         for user in self.regular_users:
@@ -66,7 +66,7 @@ class MembershipListAPITestCase(MembershipAPITestCase):
                 response = self.list_memberships(user['user'], team_id=team_membership['team'].id)
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 # we have one membership per team, for team owner
-                self.assertEqual(len(response.data), 1)
+                self.assertEqual(response.data['count'], 1)
 
 
 class MembershipRetrieveAPITestCase(MembershipAPITestCase):
@@ -168,7 +168,7 @@ class MembershipDeleteAPITestCase(MembershipAPITestCase):
             for team_membership in user['teams']:
                 membership = team_membership['membership']
                 response = self.delete_membership(self.admin_user, membership.id)
-                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
                 self.assertFalse(Membership.objects.filter(id=membership.id).exists())
 
     def test_delete_membership_user(self):
@@ -178,7 +178,7 @@ class MembershipDeleteAPITestCase(MembershipAPITestCase):
                 response = self.delete_membership(user['user'], membership.id)
                 if membership.is_active and \
                     membership.role in [TeamRole.OWNER.value]:
-                    self.assertEqual(response.status_code, status.HTTP_200_OK)
+                    self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
                     self.assertFalse(Membership.objects.filter(id=membership.id).exists())
                 else:
                     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

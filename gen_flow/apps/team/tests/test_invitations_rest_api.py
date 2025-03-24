@@ -38,7 +38,7 @@ class InvitationListAPITestCase(InvitationAPITestCase):
     def test_list_invitations_admin(self):
         response = self.list_invitations(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), self.created_invitations_count)
+        self.assertEqual(response.data['count'], self.created_invitations_count)
 
     def test_list_invitations_by_team_admin(self):
         for user in self.regular_users:
@@ -47,14 +47,14 @@ class InvitationListAPITestCase(InvitationAPITestCase):
                 response = self.list_invitations(self.admin_user, team_id)
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 # we have one membership per team, for team member
-                self.assertEqual(len(response.data), 1)
+                self.assertEqual(response.data['count'], 1)
 
     def test_list_invitations_user(self):
         for user in self.regular_users:
             response = self.list_invitations(user['user'])
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             # each user also has a default team
-            self.assertEqual(len(response.data), len(user['teams']))
+            self.assertEqual(response.data['count'], len(user['teams']))
 
     def test_list_invitations_by_team_user(self):
         for user in self.regular_users:
@@ -62,7 +62,7 @@ class InvitationListAPITestCase(InvitationAPITestCase):
                 response = self.list_invitations(user['user'], team_id=team_membership['team'].id)
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 # we have one membership per team, for team member
-                self.assertEqual(len(response.data), 1)
+                self.assertEqual(response.data['count'], 1)
 
 
 class InvitationRetrieveAPITestCase(InvitationAPITestCase):
