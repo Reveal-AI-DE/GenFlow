@@ -21,6 +21,7 @@ class ProviderPermission(GenFLowBasePermission):
         RETRIEVE = 'retrieve'
         DELETE = 'delete'
         UPDATE = 'update'
+        LIST = 'list'
 
     @staticmethod
     def get_scopes(request, view, obj):
@@ -33,7 +34,8 @@ class ProviderPermission(GenFLowBasePermission):
             'create': Scopes.CREATE,
             'retrieve': Scopes.RETRIEVE,
             'destroy': Scopes.DELETE,
-            'partial_update': Scopes.UPDATE
+            'partial_update': Scopes.UPDATE,
+            'list': Scopes.LIST
         }.get(view.action, None)]
 
     @classmethod
@@ -66,7 +68,8 @@ class ProviderPermission(GenFLowBasePermission):
         if self.scope == self.Scopes.CREATE or \
             self.scope == self.Scopes.RETRIEVE or \
             self.scope == self.Scopes.DELETE or \
-            self.scope == self.Scopes.UPDATE:
+            self.scope == self.Scopes.UPDATE or \
+            self.scope == self.Scopes.LIST:
             if self.team_role == TeamRole.OWNER.value:
                 return True
 

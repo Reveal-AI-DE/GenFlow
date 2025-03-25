@@ -50,7 +50,7 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         ]
 
     @property
-    def is_enabled(self):
+    def is_enabled(self) -> bool:
         '''
         Returns if the provider is valid.
         '''
@@ -58,32 +58,6 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         return self.is_valid
 
     @property
-    def system_configuration(self) -> SystemConfiguration:
-        '''
-        Returns the system configuration for the provider.
-        '''
-
-        # TODO: for now, all providers are enabled by default at system level
-        return SystemConfiguration(enabled=self.is_enabled)
-
-    def fix_encrypted_config(self):
-        '''
-        Fixes and returns the decrypted configuration details.
-        '''
-
-        try:
-            if self.encrypted_config:
-                if not self.encrypted_config.startswith('{'):
-                    original_credentials = {'openai_api_key': self.encrypted_config}
-                else:
-                    original_credentials = json_loads(self.encrypted_config)
-            else:
-                original_credentials = {}
-        except JSONDecodeError:
-            original_credentials = {}
-
-        return original_credentials
-
     def user_provider_configuration(self) -> UserProviderConfiguration:
         '''
         Returns the user provider configuration if enabled.
@@ -111,6 +85,33 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
                         pass
 
             return UserProviderConfiguration(provider_id=str(self.id), credentials=provider_credentials)
+
+    @property
+    def system_configuration(self) -> SystemConfiguration:
+        '''
+        Returns the system configuration for the provider.
+        '''
+
+        # TODO: for now, all providers are enabled by default at system level
+        return SystemConfiguration(enabled=self.is_enabled)
+
+    def fix_encrypted_config(self):
+        '''
+        Fixes and returns the decrypted configuration details.
+        '''
+
+        try:
+            if self.encrypted_config:
+                if not self.encrypted_config.startswith('{'):
+                    original_credentials = {'openai_api_key': self.encrypted_config}
+                else:
+                    original_credentials = json_loads(self.encrypted_config)
+            else:
+                original_credentials = {}
+        except JSONDecodeError:
+            original_credentials = {}
+
+        return original_credentials
 
     def obfuscated_credentials(self) -> dict:
         # Get provider credential secret variables

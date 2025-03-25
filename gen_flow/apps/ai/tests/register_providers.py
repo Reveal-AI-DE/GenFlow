@@ -8,10 +8,10 @@ from gen_flow.apps.ai.tests.utils import create_dummy_model_config, DummyAIProvi
 
 create_dummy_model_config()
 
-@register_ai_provider('dummy_provider')
+@register_ai_provider('dummy')
 class RegisteredDummyAIProvider(DummyAIProvider):
     pass
 
-@register_model_collection('dummy_provider', 'llm')
+@register_model_collection('dummy', 'llm')
 class RegisteredDummyLLMModelCollection(DummyLLMModelCollection):
     pass

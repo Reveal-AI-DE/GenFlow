@@ -28,10 +28,11 @@ class AIProviderFactory:
         Retrieves and returns a list of AI provider schemas with their supported models.
         '''
 
-        if self.schemas is not None:
-            return self.schemas
-
         ai_provider_extensions = self._get_ai_provider_map()
+
+        if self.schemas is not None and \
+            len(self.schemas) == len(ai_provider_extensions.items()):
+            return self.schemas
 
         ai_provider_schemas = []
         for ai_provider_extension in ai_provider_extensions.values():

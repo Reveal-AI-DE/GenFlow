@@ -15,7 +15,9 @@ from rest_framework.permissions import SAFE_METHODS
 
 from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.core.models import AboutSystem, Provider
-from gen_flow.apps.core.serializers import ProviderReadSerializer, ProviderWriteSerializer
+from gen_flow.apps.core.serializers import ProviderReadSerializer, ProviderWriteSerializer, AIProviderConfigurationSerializer
+from gen_flow.apps.core.config.entities import AIProviderConfiguration
+from gen_flow.apps.core.config.provider_service import AIProviderConfigurationService
 import gen_flow.apps.core.permissions as perms
 
 
@@ -91,7 +93,7 @@ class SystemViewSet(viewsets.ViewSet):
         summary='Disable an AI provider',
         description='Allows the user to disable an AI provider',
         responses={
-            204: 'No Content',
+            204: OpenApiResponse(description='Provider disabled successfully'),
         }
     ),
     partial_update=extend_schema(
@@ -101,6 +103,13 @@ class SystemViewSet(viewsets.ViewSet):
         responses={
             200: ProviderReadSerializer,
         }
+    ),
+    list=extend_schema(
+        summary='List AI provider configurations',
+        description='Allows the user to list all available (enabled/disabled) AI providers with their configurations',
+        responses={
+            200: AIProviderConfigurationSerializer(many=True),
+        }
     )
 )
 class ProviderViewSet(
@@ -109,6 +118,7 @@ class ProviderViewSet(
     viewsets.mixins.RetrieveModelMixin,
     viewsets.mixins.DestroyModelMixin,
     viewsets.mixins.UpdateModelMixin,
+    viewsets.mixins.ListModelMixin,
 ):
     '''
     ProviderViewSet is a view set for managing Provider instances. It supports
@@ -130,6 +140,19 @@ class ProviderViewSet(
         else:
             return ProviderWriteSerializer
 
+    def get_queryset(self):
+        '''
+        Retrieves the queryset for the view, applying necessary filters based on the action.
+        '''
+
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            perm = perms.ProviderPermission.create_scope_list(self.request)
+            queryset = perm.filter(queryset)
+        return queryset
+
+
     def perform_create(self, serializer):
         '''
         Saves the serializer with additional context, including the owner
@@ -141,3 +164,15 @@ class ProviderViewSet(
             'team': self.request.iam_context['team']
         }
         serializer.save(**extra_kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        try:
+            provider_configurations = AIProviderConfigurationService.get_configuration(
+                queryset=queryset
+            ).values()
+        except Exception as e:
+            return Response({'message': str(e)}, status=400)
+
+        serializer = AIProviderConfigurationSerializer(provider_configurations, many=True)
+        return Response({'results': serializer.data, 'count': len(serializer.data)})

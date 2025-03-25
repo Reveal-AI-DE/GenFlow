@@ -19,7 +19,7 @@ class DummyAIProvider(AIProvider):
     Dummy AI provider class.
     '''
 
-    PROVIDER_FOLDER = 'dummy_provider'
+    PROVIDER_FOLDER = 'dummy'
 
     def validate_credentials(self, credentials: dict) -> None:
         '''

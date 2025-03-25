@@ -8,6 +8,7 @@ def enable_provider(team, owner, data) -> Provider:
     provider = Provider.objects.create(
         team=team,
         owner=owner,
+        is_valid=True,
         **data
     )
     return provider

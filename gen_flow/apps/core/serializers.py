@@ -19,11 +19,10 @@ from gen_flow.apps.core.models import Provider
 from gen_flow.apps.core.config.entities import ModelWithProviderEntity, AIProviderConfiguration
 
 
-class CommonAIProviderEntitySerializer:
-    def __init__(self, instance: CommonAIProviderEntity) -> None:
-        self.instance = instance
+class CommonAIProviderEntitySerializer(serializers.BaseSerializer):
+    fields = {}
 
-    def serialize_icon_entity(self, icon: TranslationEntity) -> dict[str, str] | None:
+    def serialize_icon_entity(self, provider_name: str, icon: TranslationEntity) -> dict[str, str] | None:
         if not icon:
             return None
 
@@ -31,58 +30,49 @@ class CommonAIProviderEntitySerializer:
 
         icons = {}
         for key, value in data.items():
-            icons[key] = osp.join(settings.PROVIDERS_URL, self.id, 'icons', osp.basename(value))
+            icons[key] = osp.join(settings.PROVIDERS_URL, provider_name, 'icons', osp.basename(value))
 
         return icons
 
-    @property
-    def data(self) -> dict[str, Any]:
+    def to_representation(self, instance: CommonAIProviderEntity) -> dict[str, Any]:
         '''
         Serializes CommonAIProviderEntity into json
         '''
 
-        if not self.instance.id.isalnum():
+        if not instance.id.isalnum():
             raise ValueError('Invalid provider name')
 
         # Create media paths
-        provider_icons_path = osp.join(settings.MODEL_CONFIG_ROOT, self.id, 'icons')
-        provider_icons_media_path = osp.join(settings.PROVIDERS_ROOT, self.id, 'icons')
+        provider_icons_path = osp.join(settings.MODEL_CONFIG_ROOT, instance.id, 'icons')
+        provider_icons_media_path = osp.join(settings.PROVIDERS_ROOT, instance.id, 'icons')
         create_media_symbolic_links(provider_icons_path, provider_icons_media_path)
 
-        data = self.instance.model_dump(mode='json')
-        data['icon_small'] = self.serialize_icon_entity(self.instance.icon_small)
-        data['icon_large'] = self.serialize_icon_entity(self.instance.icon_large)
+        data = instance.model_dump(mode='json')
+        data['icon_small'] = self.serialize_icon_entity(instance.id, instance.icon_small)
+        data['icon_large'] = self.serialize_icon_entity(instance.id, instance.icon_large)
 
         return data
 
 
-class ModelWithProviderEntitySerializer:
-    def __init__(self, instance: ModelWithProviderEntity) -> None:
-        self.instance = instance
-
-    @property
-    def data(self) -> dict[str, Any]:
+class ModelWithProviderEntitySerializer(serializers.BaseSerializer):
+    def to_representation(self, instance: ModelWithProviderEntity) -> dict[str, Any]:
         '''
         Serializes ModelWithProviderEntity into json
         '''
 
-        data = self.instance.model_dump(mode='json')
-        data['provider'] = CommonAIProviderEntitySerializer(self.instance.provider).data
+        data = instance.model_dump(mode='json')
+        data['provider'] = CommonAIProviderEntitySerializer(instance.provider).data
 
         return data
 
 class AIProviderConfigurationSerializer(CommonAIProviderEntitySerializer):
-    def __init__(self, instance: AIProviderConfiguration) -> None:
-        self.instance = instance
-
-    @property
-    def data(self) -> dict[str, Any]:
+    def to_representation(self, instance: AIProviderConfiguration) -> dict[str, Any]:
         '''
         Serializes AIProviderConfiguration into json
         '''
 
-        common_data = super().data
-        data = self.instance.model_dump(mode='json')
+        common_data = super().to_representation(instance)
+        data = instance.model_dump(mode='json')
         data['icon_small'] = common_data['icon_small']
         data['icon_large'] = common_data['icon_large']
 

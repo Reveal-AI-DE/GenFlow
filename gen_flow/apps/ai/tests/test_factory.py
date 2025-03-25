@@ -21,7 +21,7 @@ class RegisteredAIProviderTest(TestCase):
         self.assertEqual(len(ai_provider_schemas[0].models), 2)
 
     def test_get_ai_provider_instance(self):
-        ai_provider_instance = self.ai_provider_factory.get_ai_provider_instance('dummy_provider')
+        ai_provider_instance = self.ai_provider_factory.get_ai_provider_instance('dummy')
         self.assertIsNotNone(ai_provider_instance)
 
     def test_get_ai_provider_instance_invalid(self):
