@@ -14,3 +14,11 @@ def create_prompt_group(team: Team, owner: User, data: dict) -> PromptGroup:
         **data
     )
     return prompt_group
+
+def create_prompt(team: Team, owner: User, data: dict) -> Prompt:
+    prompt = Prompt.objects.create(
+        team=team,
+        owner=owner,
+        **data
+    )
+    return prompt

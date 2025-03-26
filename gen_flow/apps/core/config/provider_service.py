@@ -138,7 +138,7 @@ class AIProviderConfigurationService:
     def get_model(
         model_name: str,
         provider_name: Optional[str],
-        queryset: Optional[QuerySet[AIProviderConfiguration]],
+        queryset: Optional[QuerySet[AIProviderConfiguration]] = None,
         db_provider: Optional[Provider] = None,
         model_type:  Optional[str] = None,
         enabled_only:  Optional[bool] = False,

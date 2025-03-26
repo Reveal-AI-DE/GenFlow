@@ -72,11 +72,19 @@ class PromptWriteSerializer(serializers.ModelSerializer):
     Serializer for writing Prompt data, to be used by post/patch actions.
     '''
 
-    related_model = ProviderModelConfigReadSerializer()
+    related_model = ProviderModelConfigWriteSerializer()
     group_id = serializers.PrimaryKeyRelatedField(
-        queryset=PromptGroup.objects.all(),
+        queryset=PromptGroup.objects.none(),  # Default to none
         source='group'
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get('request')
+        team = request.iam_context.get('team')
+        if team:
+            # Filter queryset based on the iam_context
+            self.fields['group_id'].queryset = PromptGroup.objects.filter(team=team)
 
     class Meta:
         model = Prompt
