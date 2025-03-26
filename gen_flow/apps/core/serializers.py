@@ -55,6 +55,8 @@ class CommonAIProviderEntitySerializer(serializers.BaseSerializer):
 
 
 class ModelWithProviderEntitySerializer(serializers.BaseSerializer):
+    fields = {}
+
     def to_representation(self, instance: ModelWithProviderEntity) -> dict[str, Any]:
         '''
         Serializes ModelWithProviderEntity into json
@@ -101,6 +103,8 @@ class ProviderReadSerializer(serializers.ModelSerializer):
 
 
 class ConfigurationEntitySerializer(serializers.BaseSerializer):
+    fields = {}
+
     def to_representation(self, instance: ConfigurationEntity) -> dict[str, Any]:
         '''
         Serializes ConfigurationEntity into json
