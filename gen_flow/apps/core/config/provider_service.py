@@ -6,6 +6,7 @@ from typing import Optional, Dict, List, cast
 
 from django.db.models.query import QuerySet
 
+from gen_flow.apps.common.entities import ConfigurationEntity
 from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
@@ -169,13 +170,26 @@ class AIProviderConfigurationService:
         return model
 
     @staticmethod
-    def get_model_parameter_configs(provider_name: str, model_name: str):
+    def get_model_parameter_configs(provider_name: str, model_name: str) -> list[ConfigurationEntity]:
         '''
         Retrieves the parameter configuration for a specific model from a given provider.
         '''
-
+        # Get model instance of LLM
         provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=provider_name)
         model_collection_instance = provider_instance.get_model_collection_instance(model_type=ModelType.LLM.value)
         model_collection_instance = cast(LLMModelCollection, model_collection_instance)
-
+        # Get parameter configurations
         return model_collection_instance.get_parameter_configs(model_name)
+
+    @staticmethod
+    def process_model_parameters(provider_name: str, model_name: str, model_parameters: dict) -> dict:
+        '''
+        Validates and filters the model parameters for a specific model from a given provider.
+        '''
+
+        # Get model instance of LLM
+        provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=provider_name)
+        model_collection_instance = provider_instance.get_model_collection_instance(model_type=ModelType.LLM.value)
+        model_collection_instance = cast(LLMModelCollection, model_collection_instance)
+        # Process model parameters
+        return model_collection_instance._process_model_parameters(model_name, model_parameters)

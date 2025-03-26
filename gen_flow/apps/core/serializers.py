@@ -15,8 +15,9 @@ from gen_flow.apps.common.file_utils import create_media_symbolic_links
 from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity
 from gen_flow.apps.team.models import Team
-from gen_flow.apps.core.models import Provider
+from gen_flow.apps.core.models import Provider, ProviderModelConfig
 from gen_flow.apps.core.config.entities import ModelWithProviderEntity, AIProviderConfiguration
+from gen_flow.apps.core.config.provider_service import AIProviderConfigurationService
 
 
 class CommonAIProviderEntitySerializer(serializers.BaseSerializer):
@@ -214,3 +215,131 @@ class ProviderWriteSerializer(serializers.ModelSerializer):
 
         serializer = ProviderReadSerializer(instance, context=self.context)
         return serializer.data
+
+
+def get_model(request, model_name: str, provider_name: str) -> ModelWithProviderEntity:
+    '''
+    Returns the model entity for the given model name and provider name.
+    '''
+    try:
+        db_provider = Provider.objects.get(
+            provider_name=provider_name,
+            is_valid=True,
+            team=request.iam_context.get('team'),
+        )
+    except Provider.DoesNotExist:
+        raise serializers.ValidationError(f'AI Provider {provider_name} not enabled')
+
+    model = AIProviderConfigurationService.get_model(
+        model_name=model_name,
+        provider_name=provider_name,
+        db_provider=db_provider,
+        enabled_only=True
+    )
+    return model
+
+
+class ProviderModelConfigReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for reading ProviderModelConfig data, to be used by get actions.
+    '''
+
+    def get_entity(self, instance: ProviderModelConfig) -> ModelWithProviderEntity:
+        '''
+        Retrieves a model entity based on the provided instance and request context.
+        '''
+
+        return get_model(
+            request=self.context.get('request'),
+            model_name=instance.model_name,
+            provider_name=instance.provider_name
+        )
+
+    def get_model_parameter_configs(self, instance: ProviderModelConfig) -> list[ConfigurationEntity]:
+        '''
+        Retrieves the model parameter configurations for a given provider model instance.
+        '''
+
+        parameter_configs = AIProviderConfigurationService.get_model_parameter_configs(
+            provider_name=instance.provider_name,
+            model_name=instance.model_name,
+        )
+        return parameter_configs
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = ProviderModelConfig
+        fields = ('provider_name', 'model_name', 'config',)
+
+    def to_representation(self, instance):
+        '''
+        Converts the given instance into its serialized representation.
+        '''
+
+        data = super().to_representation(instance)
+
+        model_entity = self.get_entity(instance)
+        if model_entity:
+            model_data = ModelWithProviderEntitySerializer(model_entity).data
+            data['entity'] = model_data
+            parameter_configs = self.get_model_parameter_configs(instance)
+            parameter_configs_data = [ConfigurationEntitySerializer(parameter_config).data for parameter_config in parameter_configs]
+            data['entity']['parameter_rules'] = parameter_configs_data
+
+        return data
+
+
+class ProviderModelConfigWriteSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for writing ProviderModelConfig data, to be used by post/patch actions.
+    '''
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = ProviderModelConfig
+        fields = ('provider_name', 'model_name', 'config')
+
+    def validate(self, data: dict):
+        '''
+        Validates the input data for the serializer.
+        '''
+        data = super().validate(data)
+
+        provider_name = data.get('provider_name')
+        model_name = data.get('model_name')
+        config = data.get('config', None)
+        if config is None:
+            config = {}
+
+        # Retrieves the AI model using the provided `provider_name` and `model_name`.
+        # Raises a `ValidationError` if the model is not found.
+        model = get_model(
+            request=self.context.get('request'),
+            model_name=model_name,
+            provider_name=provider_name
+        )
+        if not model:
+            raise serializers.ValidationError(f'AI Model {model_name} not found for provider {provider_name}')
+
+
+        # Validates and processes the `config` field in the data. If `config` is not
+        # provided, it initializes it as an empty dictionary.
+
+        # Ensures that the `parameters` key exists in the `config`
+        if 'parameters' not in config:
+            config['parameters'] = {}
+
+        # Processes the model parameters sing the `AIProviderConfigurationService`.
+        config['parameters'] = AIProviderConfigurationService.process_model_parameters(
+            provider_name=provider_name,
+            model_name=model_name,
+            model_parameters=config['parameters']
+        )
+        data['config'] = config
+        return data
