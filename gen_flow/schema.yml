@@ -632,6 +632,446 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/prompt-groups:
+    get:
+      operationId: prompt_groups_list
+      description: List all prompt groups
+      summary: List prompt groups
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPromptGroupReadList'
+          description: ''
+    post:
+      operationId: prompt_groups_create
+      description: Create a new prompt group
+      summary: Create a prompt group
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PromptGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptGroupRead'
+          description: ''
+  /api/prompt-groups/{id}:
+    get:
+      operationId: prompt_groups_retrieve
+      description: Get details of a prompt group
+      summary: Get prompt group details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt group.
+        required: true
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptGroupRead'
+          description: ''
+    put:
+      operationId: prompt_groups_update
+      description: Provides CRUD operations for the PromptGroup model.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt group.
+        required: true
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PromptGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptGroupWrite'
+          description: ''
+    patch:
+      operationId: prompt_groups_partial_update
+      description: Update an existing prompt group
+      summary: Update a prompt group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt group.
+        required: true
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPromptGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPromptGroupWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptGroupRead'
+          description: ''
+    delete:
+      operationId: prompt_groups_destroy
+      description: Delete an existing prompt group
+      summary: Delete a prompt group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt group.
+        required: true
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The prompt group has been deleted
+  /api/prompts:
+    get:
+      operationId: prompts_list
+      description: List all prompts
+      summary: List prompts
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - in: query
+        name: group__id
+        schema:
+          type: integer
+      - in: query
+        name: is_pinned
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - drafted
+          - published
+        description: |-
+          * `drafted` - Drafted
+          * `published` - Published
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - advanced
+          - simple
+        description: |-
+          * `simple` - Simple
+          * `advanced` - Advanced
+      tags:
+      - prompts
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPromptReadList'
+          description: ''
+    post:
+      operationId: prompts_create
+      description: Create a new prompt
+      summary: Create a prompt
+      tags:
+      - prompts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptRead'
+          description: ''
+  /api/prompts/{id}:
+    get:
+      operationId: prompts_retrieve
+      description: Get details of a prompt
+      summary: Get prompt details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt.
+        required: true
+      tags:
+      - prompts
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptRead'
+          description: ''
+    put:
+      operationId: prompts_update
+      description: |-
+        Provides CRUD operations and additional functionality
+        for managing Prompt objects..
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt.
+        required: true
+      tags:
+      - prompts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptWrite'
+          description: ''
+    patch:
+      operationId: prompts_partial_update
+      description: Update an existing prompt
+      summary: Update a prompt
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt.
+        required: true
+      tags:
+      - prompts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPromptWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPromptWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptRead'
+          description: ''
+    delete:
+      operationId: prompts_destroy
+      description: Delete an existing prompt
+      summary: Delete a prompt
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt.
+        required: true
+      tags:
+      - prompts
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The prompt has been deleted
+  /api/prompts/{id}/upload_avatar:
+    post:
+      operationId: prompts_upload_avatar_create
+      description: Upload a new avatar image for the prompt
+      summary: Upload a prompt avatar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this prompt.
+        required: true
+      tags:
+      - prompts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PromptWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PromptRead'
+          description: ''
   /api/providers:
     get:
       operationId: providers_list
@@ -1338,6 +1778,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MembershipRead'
+    PaginatedPromptGroupReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromptGroupRead'
+    PaginatedPromptReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PromptRead'
     PaginatedTeamReadList:
       type: object
       required:
@@ -1430,6 +1916,48 @@ components:
           type: boolean
         role:
           $ref: '#/components/schemas/RoleEnum'
+    PatchedPromptGroupWriteRequest:
+      type: object
+      description: Serializer for writing PromptGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+          maxLength: 9
+    PatchedPromptWriteRequest:
+      type: object
+      description: Serializer for writing Prompt data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        pre_prompt:
+          type: string
+          minLength: 1
+        suggested_questions:
+          nullable: true
+        is_pinned:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        group_id:
+          type: integer
     PatchedProviderWriteRequest:
       type: object
       description: Serializer for writing provider details.
@@ -1451,6 +1979,218 @@ components:
           maxLength: 255
         description:
           type: string
+    PromptGroupRead:
+      type: object
+      description: Serializer for reading PromptGroup data, to be used by get actions.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        color:
+          type: string
+          maxLength: 9
+      required:
+      - color
+      - description
+      - name
+    PromptGroupWrite:
+      type: object
+      description: Serializer for writing PromptGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        color:
+          type: string
+          maxLength: 9
+      required:
+      - color
+      - description
+      - name
+    PromptGroupWriteRequest:
+      type: object
+      description: Serializer for writing PromptGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+          maxLength: 9
+      required:
+      - color
+      - description
+      - name
+    PromptRead:
+      type: object
+      description: Serializer for reading Prompt data, to be used by get actions.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        pre_prompt:
+          type: string
+        is_pinned:
+          type: boolean
+        suggested_questions:
+          nullable: true
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigRead'
+        group:
+          $ref: '#/components/schemas/PromptGroupRead'
+        group_id:
+          type: integer
+          readOnly: true
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        related_test_session:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+      required:
+      - description
+      - group
+      - name
+      - pre_prompt
+      - related_model
+    PromptWrite:
+      type: object
+      description: Serializer for writing Prompt data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        pre_prompt:
+          type: string
+        suggested_questions:
+          nullable: true
+        is_pinned:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWrite'
+        group_id:
+          type: integer
+      required:
+      - description
+      - group_id
+      - name
+      - pre_prompt
+      - related_model
+    PromptWriteRequest:
+      type: object
+      description: Serializer for writing Prompt data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        pre_prompt:
+          type: string
+          minLength: 1
+        suggested_questions:
+          nullable: true
+        is_pinned:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/TypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        group_id:
+          type: integer
+      required:
+      - description
+      - group_id
+      - name
+      - pre_prompt
+      - related_model
+    ProviderModelConfigRead:
+      type: object
+      description: Serializer for reading ProviderModelConfig data, to be used by
+        get actions.
+      properties:
+        provider_name:
+          type: string
+          maxLength: 255
+        model_name:
+          type: string
+          maxLength: 255
+        config:
+          nullable: true
+      required:
+      - model_name
+      - provider_name
+    ProviderModelConfigWrite:
+      type: object
+      description: Serializer for writing ProviderModelConfig data, to be used by
+        post/patch actions.
+      properties:
+        provider_name:
+          type: string
+          maxLength: 255
+        model_name:
+          type: string
+          maxLength: 255
+        config:
+          nullable: true
+      required:
+      - model_name
+      - provider_name
+    ProviderModelConfigWriteRequest:
+      type: object
+      description: Serializer for writing ProviderModelConfig data, to be used by
+        post/patch actions.
+      properties:
+        provider_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        config:
+          nullable: true
+      required:
+      - model_name
+      - provider_name
     ProviderRead:
       type: object
       description: Serializer for reading provider details.
@@ -1571,6 +2311,14 @@ components:
         * `admin` - Admin
         * `engineer` - Engineer
         * `member` - Member
+    StatusEnum:
+      enum:
+      - drafted
+      - published
+      type: string
+      description: |-
+        * `drafted` - Drafted
+        * `published` - Published
     TeamRead:
       type: object
       description: |-
@@ -1652,6 +2400,14 @@ components:
       - en_US
       title: TranslationEntity
       type: object
+    TypeEnum:
+      enum:
+      - simple
+      - advanced
+      type: string
+      description: |-
+        * `simple` - Simple
+        * `advanced` - Advanced
   securitySchemes:
     basicAuth:
       type: http

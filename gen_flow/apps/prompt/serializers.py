@@ -81,10 +81,11 @@ class PromptWriteSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = self.context.get('request')
-        team = request.iam_context.get('team')
-        if team:
-            # Filter queryset based on the iam_context
-            self.fields['group_id'].queryset = PromptGroup.objects.filter(team=team)
+        if request and hasattr(request, 'iam_context'):
+            team = request.iam_context.get('team')
+            if team:
+                # Filter queryset based on the iam_context
+                self.fields['group_id'].queryset = PromptGroup.objects.filter(team=team)
 
     class Meta:
         model = Prompt
