@@ -40,7 +40,7 @@ class Team(TimeAuditModel, UserOwnedModel):
         default_permissions = ()
 
     @property
-    def is_personal(self):
+    def is_personal(self) -> bool:
         '''
         Returns True if the team name matches the default user team name from settings.
         '''

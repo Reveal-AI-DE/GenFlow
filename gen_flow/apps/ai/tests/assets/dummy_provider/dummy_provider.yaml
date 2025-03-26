@@ -1,9 +1,0 @@
-id: dummy_provider
-label:
-  en_US: DummyProvider
-  de_DE: DummyProvider
-description:
-  en_US: Models provided by DummyProvider
-  de_DE: Modelle von DummyProvider
-supported_model_types:
-  - llm

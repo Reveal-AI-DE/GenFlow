@@ -18,6 +18,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = str(Path(__file__).parents[2])
@@ -98,6 +99,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
     ],
     'DEFAULT_RENDERER_CLASSES': [
+        'gen_flow.apps.core.renderers.GenFlowAPIRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -113,6 +115,8 @@ REST_FRAMEWORK = {
     'ALLOWED_VERSIONS': ('1.0'),
     'DEFAULT_VERSION': '1.0',
     'VERSION_PARAM': 'version',
+    'DEFAULT_PAGINATION_CLASS': 'gen_flow.apps.core.pagination.CustomPagination',
+    'PAGE_SIZE': 10,
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -186,7 +190,7 @@ IAM_ROLES = [IAM_ADMIN_ROLE, 'user']
 LOGIN_URL = 'rest_login'
 LOGIN_REDIRECT_URL = '/'
 
-OBJECTS_NOT_RELATED_WITH_TEAM = ['user']
+OBJECTS_NOT_RELATED_WITH_TEAM = ['user', 'model']
 
 # TEAM settings
 USER_DEFAULT_TEAM_NAME = 'Personal'
@@ -260,6 +264,19 @@ os.makedirs(DATA_ROOT, exist_ok=True)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(DATA_ROOT, 'media')
 os.makedirs(MEDIA_ROOT, exist_ok=True)
+
+# providers media
+PROVIDERS_URL = '/media/providers'
+PROVIDERS_ROOT = os.path.join(MEDIA_ROOT, 'providers')
+os.makedirs(PROVIDERS_ROOT, exist_ok=True)
+
+CONFIG_ROOT = os.path.join(BASE_DIR, 'config')
+MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, 'model')
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    # extended upload protocol headers
+    'x-team',
+]
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'GenFlow REST API',

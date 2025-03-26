@@ -31,3 +31,6 @@ if apps.is_installed('gen_flow.apps.team'):
 
 if apps.is_installed('gen_flow.apps.iam'):
     urlpatterns.append(path('api/', include('gen_flow.apps.iam.urls')))
+
+if apps.is_installed('gen_flow.apps.core'):
+    urlpatterns.append(path('', include('gen_flow.apps.core.urls')))

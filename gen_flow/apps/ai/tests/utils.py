@@ -19,7 +19,7 @@ class DummyAIProvider(AIProvider):
     Dummy AI provider class.
     '''
 
-    PROVIDER_FOLDER = 'dummy_provider'
+    PROVIDER_FOLDER = 'dummy'
 
     def validate_credentials(self, credentials: dict) -> None:
         '''
@@ -92,3 +92,7 @@ def create_dummy_model_config():
     dist_path = settings.MODEL_CONFIG_ROOT
     os.makedirs(dist_path, exist_ok=True)
     os.system(f'cp -r {src_path}/* {dist_path}')
+
+def remove_dummy_model_config():
+    dist_path = settings.MODEL_CONFIG_ROOT
+    os.system(f'rm -rf {dist_path}/*')

@@ -8,7 +8,6 @@ from collections.abc import Sequence
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.base.ai_provider import AIProvider
 from gen_flow.apps.ai.providers.registry import AI_PROVIDERS, AIProviderExtension
-# from gen_flow.apps.ai.schema_validators.provider_credential_schema_validator import ProviderCredentialSchemaValidator
 
 class AIProviderFactory:
     '''
@@ -29,10 +28,11 @@ class AIProviderFactory:
         Retrieves and returns a list of AI provider schemas with their supported models.
         '''
 
-        if self.schemas is not None:
-            return self.schemas
-
         ai_provider_extensions = self._get_ai_provider_map()
+
+        if self.schemas is not None and \
+            len(self.schemas) == len(ai_provider_extensions.items()):
+            return self.schemas
 
         ai_provider_schemas = []
         for ai_provider_extension in ai_provider_extensions.values():
@@ -54,7 +54,7 @@ class AIProviderFactory:
 
         return ai_provider_schemas
 
-    def get_ai_provider_instance(self, provider: str) -> AIProvider:
+    def get_ai_provider_instance(self, provider_name: str) -> AIProvider:
         '''
         Retrieves and returns the instance of the specified ai provider.
         '''
@@ -63,25 +63,25 @@ class AIProviderFactory:
         ai_provider_extensions = self._get_ai_provider_map()
 
         # get the provider extension
-        ai_provider_extension = ai_provider_extensions.get(provider)
+        ai_provider_extension = ai_provider_extensions.get(provider_name)
         if not ai_provider_extension:
-            raise Exception(f'Invalid AI provider: {provider}')
+            raise Exception(f'Invalid AI provider: {provider_name}')
 
         # get the provider instance
         ai_provider_instance = ai_provider_extension.ai_provider_instance
 
         return ai_provider_instance
 
-    def validate_credentials(self, provider: str, credentials: dict) -> dict:
+    def validate_credentials(self, provider_name: str, credentials: dict) -> dict:
         '''
         Validates the credentials for a given ai provider and returns the filtered credentials.
         '''
 
-        ai_provider_instance = self.get_ai_provider_instance(provider)
+        ai_provider_instance = self.get_ai_provider_instance(provider_name)
         ai_provider_schema = ai_provider_instance.get_schema()
 
         if not ai_provider_schema.credential_form:
-            raise ValueError(f'AI Provider {provider} does not have credential_form')
+            raise ValueError(f'AI Provider {provider_name} does not have credential_form')
 
         # validate credential form
         filtered_credentials = ai_provider_schema.validate_credential_form(credentials)

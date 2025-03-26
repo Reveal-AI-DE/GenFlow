@@ -74,12 +74,12 @@ class LLMModelCollection(ModelCollection):
 
         return mode
 
-    def get_parameter_configs(self, model: str) -> list[ConfigurationEntity]:
+    def get_parameter_configs(self, model_name: str) -> list[ConfigurationEntity]:
         ''''
         Retrieves the parameter configurations for a given model.
         '''
 
-        schema = self.get_model_schema(model)
+        schema = self.get_model_schema(model_name)
 
         if schema:
             return schema.parameter_configs

@@ -5,6 +5,8 @@
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.contrib.auth.models import User, Group
+
+from gen_flow.apps.common.security.rsa import generate_key_pair
 from gen_flow.apps.team.models import Team, Membership, Invitation, TeamRole
 
 USERS = {
@@ -82,6 +84,9 @@ def create_dummy_team(owner, team_data, team_role: TeamRole=TeamRole.OWNER):
     else:
         membership.is_active = True
         membership.save()
+    # generate public key
+    team.encrypt_public_key = generate_key_pair(team.id)
+    team.save()
     return team, membership
 
 def create_dummy_invitation(membership, owner):

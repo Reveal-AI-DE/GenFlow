@@ -80,7 +80,7 @@ class TeamReadSerializer(serializers.ModelSerializer):
     owner = BasicUserSerializer(allow_null=True)
     user_role = serializers.SerializerMethodField()
 
-    def get_user_role(self, obj):
+    def get_user_role(self, obj) -> str | None:
         '''
         Retrieve the role of the user in the given team.
 

@@ -1,0 +1,22 @@
+id: dummy
+label:
+  en_US: DummyProvider
+  de_DE: DummyProvider
+description:
+  en_US: Models provided by DummyProvider
+  de_DE: Modelle von DummyProvider
+supported_model_types:
+  - llm
+credential_form:
+  - name: api_key
+    label:
+      en_US: API Key
+      de_DE: API-Schlüssel
+    type: secret
+    required: true
+  - name: organization
+    label:
+      en_US: Organization
+      de_DE: Organisation
+    type: string
+    required: false

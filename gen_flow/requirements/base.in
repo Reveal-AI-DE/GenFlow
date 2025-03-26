@@ -18,3 +18,5 @@ gmpy2==2.2.1
 
 openai==1.66.3
 tiktoken==0.9.0
+
+pillow==11.0.0

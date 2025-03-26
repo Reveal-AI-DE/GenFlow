@@ -22,10 +22,11 @@ class ModelCollection(ABC):
     DEFAULT_PARAMETERS_FILE_NAME = '_defaults.yaml'
     LISTING_FILE_NAME = '_listing.yaml'
 
-    # .../provider/type/**schemas.yaml
-    config_path: str = ''
-    schemas: Optional[list[ModelEntity]] = None
-    default_parameter_configs: Optional[dict] = None
+    def __init__(self) -> None:
+        # .../provider/type/**schemas.yaml
+        self.config_path: str = ''
+        self.schemas: Optional[list[ModelEntity]] = None
+        self.default_parameter_configs: Optional[dict] = None
 
     @abstractmethod
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
@@ -121,7 +122,7 @@ class ModelCollection(ABC):
 
         return schemas
 
-    def get_model_schema(self, model: str) -> Optional[ModelEntity]:
+    def get_model_schema(self, model_name: str) -> Optional[ModelEntity]:
         '''
         Get model schema by model name
         '''
@@ -130,8 +131,8 @@ class ModelCollection(ABC):
         models = self.get_models()
 
         model_map = {model.id: model for model in models}
-        if model in model_map:
-            return model_map[model]
+        if model_name in model_map:
+            return model_map[model_name]
 
         return None
 

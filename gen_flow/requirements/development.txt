@@ -24,7 +24,7 @@ mccabe==0.7.0
     # via pylint
 packaging==24.2
     # via pytoolconfig
-platformdirs==4.3.6
+platformdirs==4.3.7
     # via
     #   pylint
     #   pytoolconfig

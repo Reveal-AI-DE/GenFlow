@@ -38,7 +38,8 @@ def register_ai_provider(name: str):
         Returns:
             function: A wrapper function that registers the AI provider.
         '''
-
+        if cls.__abstractmethods__ or not issubclass(cls, AIProvider):
+            raise TypeError(f'{cls.__name__} must be a subclass of AIProvider')
         config_path = osp.join(settings.MODEL_CONFIG_ROOT, name)
         if osp.exists(config_path) and osp.exists(osp.join(config_path, f'{name}.yaml')):
             assert name not in AI_PROVIDERS, 'AI Provider \'%s\' already registered' % name

@@ -35,11 +35,16 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/Token'
           description: ''
   /api/auth/logout:
     post:
@@ -52,11 +57,16 @@ paths:
       tags:
       - auth
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
           description: ''
   /api/auth/password/change:
     post:
@@ -78,10 +88,15 @@ paths:
               $ref: '#/components/schemas/PasswordChangeRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
           description: ''
   /api/auth/password/reset:
     post:
@@ -103,11 +118,16 @@ paths:
               $ref: '#/components/schemas/PasswordResetRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
           description: ''
   /api/auth/password/reset/confirm:
     post:
@@ -131,11 +151,16 @@ paths:
               $ref: '#/components/schemas/PasswordResetConfirmRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
           description: ''
   /api/auth/register:
     post:
@@ -152,11 +177,814 @@ paths:
               $ref: '#/components/schemas/RegisterSerializerExRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       - {}
       responses:
         '201':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/RegisterSerializerEx'
+          description: ''
+  /api/invitations:
+    get:
+      operationId: invitations_list
+      description: Retrieve a list of all invitations. Supports filtering and searching
+        by owner username, membership user ID, and membership active status.
+      summary: List invitations
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - in: query
+        name: membership__is_active
+        schema:
+          type: boolean
+      - in: query
+        name: membership__user__id
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: owner__username
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - invitations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedInvitationReadList'
+          description: ''
+    post:
+      operationId: invitations_create
+      description: Create a new invitation with the provided details.
+      summary: Create an invitation
+      tags:
+      - invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvitationWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InvitationWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/InvitationRead'
+          description: ''
+  /api/invitations/{key}:
+    get:
+      operationId: invitations_retrieve
+      description: Retrieve detailed information about a specific invitation by its
+        ID.
+      summary: Get invitation details
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        description: A unique value identifying this invitation.
+        required: true
+      tags:
+      - invitations
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/InvitationRead'
+          description: ''
+    patch:
+      operationId: invitations_partial_update
+      description: Partially update the details of a specific invitation. Only the
+        provided fields will be updated.
+      summary: Update an invitation
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        description: A unique value identifying this invitation.
+        required: true
+      tags:
+      - invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInvitationWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInvitationWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/InvitationRead'
+          description: ''
+  /api/memberships:
+    get:
+      operationId: memberships_list
+      description: Retrieve a list of all memberships.Supports filtering and searching
+        by user username and role.
+      summary: List memberships
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: role
+        schema:
+          type: string
+          enum:
+          - admin
+          - engineer
+          - member
+          - owner
+        description: |-
+          * `owner` - Owner
+          * `admin` - Admin
+          * `engineer` - Engineer
+          * `member` - Member
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      - in: query
+        name: user__username
+        schema:
+          type: string
+      tags:
+      - memberships
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMembershipReadList'
+          description: ''
+  /api/memberships/{id}:
+    get:
+      operationId: memberships_retrieve
+      description: Retrieve detailed information about a specific membership by its
+        ID.
+      summary: Get membership details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this membership.
+        required: true
+      tags:
+      - memberships
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/MembershipRead'
+          description: ''
+    patch:
+      operationId: memberships_partial_update
+      description: Partially update the details of a specific membership.Only the
+        provided fields will be updated.
+      summary: Update a membership
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this membership.
+        required: true
+      tags:
+      - memberships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMembershipWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMembershipWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/MembershipRead'
+          description: ''
+    delete:
+      operationId: memberships_destroy
+      description: Delete a specific membership by its ID.
+      summary: Delete a membership
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this membership.
+        required: true
+      tags:
+      - memberships
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The membership has been deleted
+  /api/models:
+    get:
+      operationId: models_list
+      description: Allows the user to list all available AI provider models
+      summary: List AI provider models
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - in: query
+        name: enabled_only
+        schema:
+          type: boolean
+        description: If true, only enabled models will be returned
+      - in: query
+        name: model_type
+        schema:
+          type: string
+          enum:
+          - ModelType.LLM
+        description: The type of the model to filter by
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - models
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/models/{id}:
+    get:
+      operationId: models_retrieve
+      description: Allows the user to retrieve an AI provider model
+      summary: Retrieve an AI provider model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      - in: query
+        name: provider_name
+        schema:
+          type: string
+        description: The name of the AI provider to filter by
+      tags:
+      - models
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/models/{id}/parameter_config:
+    get:
+      operationId: models_parameter_config_list
+      description: Allows the user to retrieve the parameter configurations for a
+        specific model
+      summary: Retrieve parameter configurations for a model
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: provider_name
+        schema:
+          type: string
+        description: The name of the AI provider to filter by
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - models
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/providers:
+    get:
+      operationId: providers_list
+      description: Allows the user to list all available (enabled/disabled) AI providers
+        with their configurations
+      summary: List AI provider configurations
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - providers
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: providers_create
+      description: Allows the user to configure an AI provider on the team level,
+        to be available to the team members.
+      summary: Enable an AI provider
+      tags:
+      - providers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProviderWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/ProviderRead'
+          description: ''
+  /api/providers/{id}:
+    get:
+      operationId: providers_retrieve
+      description: Allows the user to retrieve an enabled AI provider with its obfuscated
+        credentials
+      summary: Retrieve an enabled AI provider
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      tags:
+      - providers
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/ProviderRead'
+          description: ''
+    put:
+      operationId: providers_update
+      description: |-
+        ProviderViewSet is a view set for managing Provider instances. It supports
+        creating, retrieving, updating, and destroying Provider objects.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      tags:
+      - providers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProviderWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/ProviderWrite'
+          description: ''
+    patch:
+      operationId: providers_partial_update
+      description: Allows the user to update an enabled AI provider credentials
+      summary: Update an enabled AI provider
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      tags:
+      - providers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProviderWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProviderWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/ProviderRead'
+          description: ''
+    delete:
+      operationId: providers_destroy
+      description: Allows the user to disable an AI provider
+      summary: Disable an AI provider
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this provider.
+        required: true
+      tags:
+      - providers
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Provider disabled successfully
+  /api/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - af
+          - ar
+          - ar-dz
+          - ast
+          - az
+          - be
+          - bg
+          - bn
+          - br
+          - bs
+          - ca
+          - ckb
+          - cs
+          - cy
+          - da
+          - de
+          - dsb
+          - el
+          - en
+          - en-au
+          - en-gb
+          - eo
+          - es
+          - es-ar
+          - es-co
+          - es-mx
+          - es-ni
+          - es-ve
+          - et
+          - eu
+          - fa
+          - fi
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - he
+          - hi
+          - hr
+          - hsb
+          - hu
+          - hy
+          - ia
+          - id
+          - ig
+          - io
+          - is
+          - it
+          - ja
+          - ka
+          - kab
+          - kk
+          - km
+          - kn
+          - ko
+          - ky
+          - lb
+          - lt
+          - lv
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - my
+          - nb
+          - ne
+          - nl
+          - nn
+          - os
+          - pa
+          - pl
+          - pt
+          - pt-br
+          - ro
+          - ru
+          - sk
+          - sl
+          - sq
+          - sr
+          - sr-latn
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - tk
+          - tr
+          - tt
+          - udm
+          - ug
+          - uk
+          - ur
+          - uz
+          - vi
+          - zh-hans
+          - zh-hant
+      - in: query
+        name: scheme
+        schema:
+          type: string
+          enum:
+          - json
+          - yaml
+      tags:
+      - schema
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/yaml:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/system/about:
+    get:
+      operationId: system_about_retrieve
+      description: This method provides information about the system, including the
+        name, version, description, and license.
+      summary: Method provides information about the system
+      tags:
+      - system
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/AboutSystem'
           description: ''
   /api/teams:
     get:
@@ -183,6 +1011,18 @@ paths:
         name: owner__username
         schema:
           type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -192,10 +1032,15 @@ paths:
       tags:
       - teams
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamReadList'
           description: ''
     post:
       operationId: teams_create
@@ -213,10 +1058,15 @@ paths:
               $ref: '#/components/schemas/TeamWriteRequest'
         required: true
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '201':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/TeamRead'
           description: ''
   /api/teams/{id}:
     get:
@@ -233,10 +1083,15 @@ paths:
       tags:
       - teams
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/TeamRead'
           description: ''
     patch:
       operationId: teams_partial_update
@@ -261,10 +1116,15 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedTeamWriteRequest'
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '200':
-          content: {}
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/TeamRead'
           description: ''
     delete:
       operationId: teams_destroy
@@ -280,12 +1140,33 @@ paths:
       tags:
       - teams
       security:
+      - tokenAuth: []
+      - cookieAuth: []
       - basicAuth: []
       responses:
         '204':
           description: The team has been deleted
 components:
   schemas:
+    AboutSystem:
+      description: Represents the system information.
+      properties:
+        name:
+          $ref: '#/components/schemas/TranslationEntity'
+        description:
+          $ref: '#/components/schemas/TranslationEntity'
+        license:
+          $ref: '#/components/schemas/TranslationEntity'
+        version:
+          title: Version
+          type: string
+      required:
+      - name
+      - description
+      - license
+      - version
+      title: AboutSystem
+      type: object
     BasicUser:
       type: object
       description: |-
@@ -315,6 +1196,49 @@ components:
           maxLength: 150
       required:
       - username
+    InvitationRead:
+      type: object
+      description: |-
+        Serializer for Invitation model, where all fields are read-only.
+        To be used for GET requests.
+      properties:
+        id:
+          type: string
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          allOf:
+          - $ref: '#/components/schemas/BasicUser'
+          nullable: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        user:
+          $ref: '#/components/schemas/BasicUser'
+        team:
+          type: integer
+      required:
+      - id
+      - owner
+      - role
+      - team
+      - user
+    InvitationWriteRequest:
+      type: object
+      description: |-
+        Serializer for Invitation model, to be used for POST requests.
+        It uses the TeamReadSerializer for the representation of the instance data.
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+      - role
     LoginRequest:
       type: object
       properties:
@@ -328,6 +1252,115 @@ components:
           minLength: 1
       required:
       - password
+    MembershipRead:
+      type: object
+      description: |-
+        Serializer for Membership model, where all fields are read-only.
+        To be used for GET requests.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          $ref: '#/components/schemas/BasicUser'
+        team:
+          type: integer
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        joined_date:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+        invitation:
+          type: string
+          readOnly: true
+          nullable: true
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - user
+    PaginatedInvitationReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvitationRead'
+    PaginatedMembershipReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MembershipRead'
+    PaginatedTeamReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamRead'
     PasswordChangeRequest:
       type: object
       properties:
@@ -375,6 +1408,37 @@ components:
           minLength: 1
       required:
       - email
+    PatchedInvitationWriteRequest:
+      type: object
+      description: |-
+        Serializer for Invitation model, to be used for POST requests.
+        It uses the TeamReadSerializer for the representation of the instance data.
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        email:
+          type: string
+          format: email
+          minLength: 1
+    PatchedMembershipWriteRequest:
+      type: object
+      description: |-
+        Serializer for Membership model, to be used for POST requests.
+        It uses the MembershipReadSerializer for the representation of the instance data.
+      properties:
+        is_active:
+          type: boolean
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+    PatchedProviderWriteRequest:
+      type: object
+      description: Serializer for writing provider details.
+      properties:
+        provider_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        credentials: {}
     PatchedTeamWriteRequest:
       type: object
       description: |-
@@ -387,6 +1451,54 @@ components:
           maxLength: 255
         description:
           type: string
+    ProviderRead:
+      type: object
+      description: Serializer for reading provider details.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider_name:
+          type: string
+          maxLength: 255
+        credentials:
+          type: object
+          additionalProperties: {}
+          description: Returns the decrypted credentials.
+          readOnly: true
+        is_enabled:
+          type: boolean
+          description: Returns if the provider is valid.
+          readOnly: true
+        last_used:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - provider_name
+    ProviderWrite:
+      type: object
+      description: Serializer for writing provider details.
+      properties:
+        provider_name:
+          type: string
+          maxLength: 255
+        credentials: {}
+      required:
+      - credentials
+      - provider_name
+    ProviderWriteRequest:
+      type: object
+      description: Serializer for writing provider details.
+      properties:
+        provider_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        credentials: {}
+      required:
+      - credentials
+      - provider_name
     RegisterSerializerEx:
       type: object
       properties:
@@ -447,6 +1559,18 @@ components:
         detail:
           type: string
           readOnly: true
+    RoleEnum:
+      enum:
+      - owner
+      - admin
+      - engineer
+      - member
+      type: string
+      description: |-
+        * `owner` - Owner
+        * `admin` - Admin
+        * `engineer` - Engineer
+        * `member` - Member
     TeamRead:
       type: object
       description: |-
@@ -476,9 +1600,20 @@ components:
           nullable: true
         user_role:
           type: string
+          nullable: true
+          description: |-
+            Retrieve the role of the user in the given team.
+
+            Args:
+                obj: The team object for which the user's role is being retrieved.
+
+            Returns:
+                str: The role of the user in the team if the user is a member, otherwise None.
           readOnly: true
         is_personal:
-          type: string
+          type: boolean
+          description: Returns True if the team name matches the default user team
+            name from settings.
           readOnly: true
       required:
       - owner
@@ -505,10 +1640,31 @@ components:
           maxLength: 40
       required:
       - key
+    TranslationEntity:
+      additionalProperties: true
+      description: 'Represents a translation object with the following attributes:'
+      properties:
+        en_US:
+          description: Required key for English (US) translation
+          title: En Us
+          type: string
+      required:
+      - en_US
+      title: TranslationEntity
+      type: object
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"
 externalDocs:
   description: GenFlow documentation
   url: https://genflow.github.io/genflow/docs/
