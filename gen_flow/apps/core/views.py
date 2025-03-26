@@ -4,19 +4,21 @@
 
 from os import path as osp
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_spectacular.utils import (
-    OpenApiResponse, PolymorphicProxySerializer, OpenApiTypes,
+    OpenApiResponse, OpenApiTypes,
     extend_schema_view, extend_schema, OpenApiParameter
 )
 from rest_framework.permissions import SAFE_METHODS
+from django.db.models.query import QuerySet
 
 from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.core.models import AboutSystem, Provider
-from gen_flow.apps.core.serializers import ProviderReadSerializer, ProviderWriteSerializer, AIProviderConfigurationSerializer
-from gen_flow.apps.core.config.entities import AIProviderConfiguration
+from gen_flow.apps.core.serializers import (ProviderReadSerializer, ProviderWriteSerializer,
+    AIProviderConfigurationSerializer, ModelWithProviderEntitySerializer, ConfigurationEntitySerializer)
+from gen_flow.apps.core.config.entities import ModelWithProviderEntity
 from gen_flow.apps.core.config.provider_service import AIProviderConfigurationService
 import gen_flow.apps.core.permissions as perms
 
@@ -129,7 +131,7 @@ class ProviderViewSet(
     queryset = Provider.objects.all()
     iam_team_field = 'team'
 
-    def get_serializer_class(self, *args, **kwargs):
+    def get_serializer_class(self, *args, **kwargs) -> serializers.ModelSerializer:
         '''
         Returns the appropriate serializer class based on the request method.
         Uses ProviderReadSerializer for safe methods (GET, HEAD, OPTIONS) and
@@ -140,7 +142,7 @@ class ProviderViewSet(
         else:
             return ProviderWriteSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Provider]:
         '''
         Retrieves the queryset for the view, applying necessary filters based on the action.
         '''
@@ -153,7 +155,7 @@ class ProviderViewSet(
         return queryset
 
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer) -> None:
         '''
         Saves the serializer with additional context, including the owner
             (current user) and team (from IAM context).
@@ -165,7 +167,11 @@ class ProviderViewSet(
         }
         serializer.save(**extra_kwargs)
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs) -> Response:
+        '''
+        Retrieves a list of AI provider configurations.
+        '''
+
         queryset = self.filter_queryset(self.get_queryset())
         try:
             provider_configurations = AIProviderConfigurationService.get_configuration(
@@ -176,3 +182,159 @@ class ProviderViewSet(
 
         serializer = AIProviderConfigurationSerializer(provider_configurations, many=True)
         return Response({'results': serializer.data, 'count': len(serializer.data)})
+
+@extend_schema(tags=['models'])
+@extend_schema_view(
+    list=extend_schema(
+        summary='List AI provider models',
+        description='Allows the user to list all available AI provider models',
+        parameters=[
+            OpenApiParameter(
+                name='enabled_only',
+                description='If true, only enabled models will be returned',
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.BOOL,
+                required=False,
+            ),
+            OpenApiParameter(
+                name='model_type',
+                description='The type of the model to filter by',
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.STR,
+                enum=[str(i) for i in ModelType],
+                required=False,
+            ),
+        ],
+        responses={
+            200: ModelWithProviderEntitySerializer(many=True),
+        }
+    ),
+    retrieve=extend_schema(
+        summary='Retrieve an AI provider model',
+        description='Allows the user to retrieve an AI provider model',
+        parameters=[
+            OpenApiParameter(
+                'provider_name',
+                description='The name of the AI provider to filter by',
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.STR,
+                required=False,
+            ),
+        ],
+        responses={
+            200: ModelWithProviderEntitySerializer,
+        }
+    ),
+    parameter_config=extend_schema(
+        summary='Retrieve parameter configurations for a model',
+        description='Allows the user to retrieve the parameter configurations for a specific model',
+        parameters=[
+            OpenApiParameter(
+                'provider_name',
+                description='The name of the AI provider to filter by',
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.STR,
+                required=False,
+            ),
+        ],
+        responses={
+            200: ConfigurationEntitySerializer(many=True),
+        }
+    )
+)
+class AIModelViewSet(
+    viewsets.GenericViewSet,
+    viewsets.mixins.ListModelMixin,
+    viewsets.mixins.RetrieveModelMixin,
+):
+    '''
+    AIModelViewSet is a view set for retrieving AI provider models.
+    '''
+
+    queryset = Provider.objects.all()
+    iam_team_field = 'team'
+
+    def get_queryset(self) -> QuerySet[Provider]:
+        '''
+        Retrieves the queryset for the view, applying necessary filters based on the action.
+        '''
+
+        queryset = super().get_queryset()
+
+        if self.action == 'list':
+            perm = perms.AIModelPermission.create_scope_list(self.request)
+            queryset = perm.filter(queryset)
+        return queryset
+
+
+    def list(self, request, *args, **kwargs) -> Response:
+        '''
+        Retrieves a list of AI provider configurations.
+        '''
+
+        enabled_only = request.query_params.get('enabled_only', False)
+        model_type = request.query_params.get('model_type', None)
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        try:
+            models = AIProviderConfigurationService.get_models(
+                queryset=queryset,
+                model_type=model_type,
+                enabled_only=enabled_only)
+        except Exception as e:
+            return Response({'message': str(e)}, status=400)
+
+        serializer = ModelWithProviderEntitySerializer(models, many=True)
+        return Response({'results': serializer.data, 'count': len(serializer.data)})
+
+    def retrieve(self, request, pk: str=None) -> Response:
+        '''
+        Retrieves a model based on the provided model name and provider name.
+        '''
+
+        model = self.get_model(request, model_name=pk)
+
+        if model:
+            serializer = ModelWithProviderEntitySerializer(model)
+            return Response(serializer.data)
+        else:
+            return Response({'message': f'Model \'{pk}\' not found'}, status=404)
+
+    @action(detail=True, methods=['GET'], serializer_class=ConfigurationEntitySerializer)
+    def parameter_config(self, request, pk: str=None) -> Response:
+        '''
+        Retrieves the parameter configurations for a specific model.
+        '''
+
+        model = self.get_model(request, model_name=pk)
+        if model:
+            parameter_configs = AIProviderConfigurationService.get_model_parameter_configs(
+                provider_name=model.provider.id,
+                model_name=model.id
+            )
+            serializer = ConfigurationEntitySerializer(parameter_configs, many=True)
+            return Response({'results': serializer.data, 'count': len(serializer.data)})
+        else:
+            return Response({'message': f'Model "{pk}" not found'}, status=404)
+
+    def get_model(self, request, model_name: str=None) -> ModelWithProviderEntity:
+        '''
+        Retrieves a model based on the provided model name and provider name.
+        '''
+
+        provider_name = request.query_params.get('provider_name', None)
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        model = AIProviderConfigurationService.get_model(
+            model_name=model_name,
+            provider_name=provider_name,
+            queryset=queryset,
+            enabled_only=True,
+        )
+
+        # May raise a permission denied
+        self.check_object_permissions(request, model)
+
+        return model

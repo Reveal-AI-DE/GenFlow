@@ -33,7 +33,7 @@ class RegisteredAIProviderTest(TestCase):
         for ai_provider_schema in ai_provider_schemas:
             if not ai_provider_schema.credential_form:
                 with self.assertRaises(ValueError):
-                    self.ai_provider_factory.validate_credentials(ai_provider_schema.provider_name, {})
+                    self.ai_provider_factory.validate_credentials(ai_provider_schema.id, {})
             else:
                 self.validate_credentials_valid(ai_provider_schema)
                 self.validate_credentials_invalid(ai_provider_schema)

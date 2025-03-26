@@ -8,11 +8,12 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from gen_flow.apps.core.views import SystemViewSet, ProviderViewSet
+from gen_flow.apps.core.views import SystemViewSet, ProviderViewSet, AIModelViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('system', SystemViewSet, basename='system')
 router.register('providers', ProviderViewSet)
+router.register('models', AIModelViewSet, basename='model')
 
 urlpatterns = [
    # Entry point for a client

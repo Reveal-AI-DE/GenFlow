@@ -122,7 +122,7 @@ class ModelCollection(ABC):
 
         return schemas
 
-    def get_model_schema(self, model: str) -> Optional[ModelEntity]:
+    def get_model_schema(self, model_name: str) -> Optional[ModelEntity]:
         '''
         Get model schema by model name
         '''
@@ -131,8 +131,8 @@ class ModelCollection(ABC):
         models = self.get_models()
 
         model_map = {model.id: model for model in models}
-        if model in model_map:
-            return model_map[model]
+        if model_name in model_map:
+            return model_map[model_name]
 
         return None
 

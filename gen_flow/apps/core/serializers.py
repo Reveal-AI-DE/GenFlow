@@ -10,7 +10,7 @@ from django.conf import settings
 from rest_framework import serializers
 
 from gen_flow.apps.common.security.encrypter import encrypt_token, decrypt_token
-from gen_flow.apps.common.entities import TranslationEntity
+from gen_flow.apps.common.entities import TranslationEntity, ConfigurationEntity
 from gen_flow.apps.common.file_utils import create_media_symbolic_links
 from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity
@@ -100,6 +100,15 @@ class ProviderReadSerializer(serializers.ModelSerializer):
         fields = ['id', 'provider_name', 'credentials', 'is_enabled', 'last_used']
 
 
+class ConfigurationEntitySerializer(serializers.BaseSerializer):
+    def to_representation(self, instance: ConfigurationEntity) -> dict[str, Any]:
+        '''
+        Serializes ConfigurationEntity into json
+        '''
+
+        data = instance.model_dump(mode='json')
+        return data
+
 class ProviderWriteSerializer(serializers.ModelSerializer):
     '''
     Serializer for writing provider details.
@@ -120,7 +129,7 @@ class ProviderWriteSerializer(serializers.ModelSerializer):
         '''
 
         original_credentials = obj.fix_encrypted_config()
-        secret_variables = Provider.extract_secret_variables(obj.provider_name)
+        secret_variables = Provider.extract_secret_variables(provider_name=obj.provider_name)
         # decrypt credentials
         for key, value in new_credentials.items():
             if key in secret_variables:
@@ -140,12 +149,12 @@ class ProviderWriteSerializer(serializers.ModelSerializer):
 
         try:
             credentials = ai_provider_factory.validate_credentials(
-                provider=provider_name, credentials=credentials
+                provider_name=provider_name, credentials=credentials
             )
         except Exception as ex:
             raise serializers.ValidationError(str(ex))
 
-        secret_variables = Provider.extract_secret_variables(provider_name)
+        secret_variables = Provider.extract_secret_variables(provider_name=provider_name)
         for key, value in credentials.items():
             if key in secret_variables:
                 credentials[key] = encrypt_token(team_id, value)

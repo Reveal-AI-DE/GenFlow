@@ -118,12 +118,12 @@ class AIProviderConfiguration(AIProviderEntity):
             'active': active,
         }
 
-    def get_provider_models(self, model_type:  ModelType=None):
+    def get_provider_models(self, model_type: ModelType=None):
         '''
         Retrieves models from the AI provider instance based on the specified model type.
         '''
 
-        ai_provider_instance = ai_provider_factory.get_ai_provider_instance(self.id)
+        ai_provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=self.id)
 
         model_types = []
         if model_type:
@@ -134,14 +134,14 @@ class AIProviderConfiguration(AIProviderEntity):
         provider_entity = ai_provider_instance.get_schema()
         all_models = []
         for model_type in model_types:
-            models = ai_provider_instance.get_models(model_type)
+            models = ai_provider_instance.get_models(model_type=model_type.value)
             for model in models:
                 model_with_provider_entity = ModelWithProviderEntity(
                     id=model.id,
                     label=model.label,
-                    model_type=model.type,
+                    type=model.type,
                     features=model.features,
-                    model_properties=model.properties,
+                    properties=model.properties,
                     deprecated=model.deprecated,
                     active=True,
                     provider=provider_entity.to_common_ai_provider(),

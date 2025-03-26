@@ -2,20 +2,29 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Optional, Dict
+from typing import Optional, Dict, List, cast
 
 from django.db.models.query import QuerySet
 
 from gen_flow.apps.ai import ai_provider_factory
+from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
+from gen_flow.apps.ai.llm.llm_model_collection import LLMModelCollection
 from gen_flow.apps.core.models import Provider
-from gen_flow.apps.core.config.entities import AIProviderConfiguration, UserConfiguration
+from gen_flow.apps.core.config.entities import AIProviderConfiguration, UserConfiguration, ModelWithProviderEntity
 
 class AIProviderConfigurationService:
+    '''
+    Service class for managing AI provider configurations.
+    '''
+
     staticmethod
     def get_provider_entity(provider_name: str) -> AIProviderEntity:
-        return ai_provider_factory.get_ai_provider_instance(provider_name).get_schema()
+        '''
+        Retrieves the AI provider entity schema for the given provider name.
+        '''
 
+        return ai_provider_factory.get_ai_provider_instance(provider_name=provider_name).get_schema()
 
     @staticmethod
     def get_provider_configuration(
@@ -24,6 +33,10 @@ class AIProviderConfigurationService:
         db_provider: Optional[Provider] = None,
         ai_provider_entity: Optional[AIProviderEntity] = None,
     ) -> AIProviderConfiguration:
+        '''
+        Retrieves the AI provider configuration for the given provider name.
+        '''
+
         if ai_provider_entity is None:
             ai_provider_entity = AIProviderConfigurationService.get_provider_entity(provider_name)
 
@@ -48,6 +61,10 @@ class AIProviderConfigurationService:
 
     @staticmethod
     def get_configuration(queryset: QuerySet[AIProviderConfiguration]) -> Dict[str, AIProviderConfiguration]:
+        '''
+        Retrieves configurations for all AI providers.
+        '''
+
         ai_provider_entities = ai_provider_factory.get_ai_provider_schemas()
         provider_configurations = {}
         for ai_provider_entity in ai_provider_entities:
@@ -61,3 +78,104 @@ class AIProviderConfigurationService:
             provider_configurations[ai_provider_entity.id] = ai_provider_configuration
 
         return provider_configurations
+
+    @staticmethod
+    def get_provider_models(
+        provider_name: str,
+        queryset: Optional[QuerySet[AIProviderConfiguration]] = None,
+        db_provider: Optional[Provider] = None,
+        model_type:  Optional[str] = None,
+        enabled_only:  Optional[bool] = False,
+    ) -> List[ModelWithProviderEntity]:
+        '''
+        Retrieves models for a specific AI provider.
+        '''
+
+        ai_provider_configuration = AIProviderConfigurationService.get_provider_configuration(
+            provider_name,
+            queryset=queryset,
+            db_provider=db_provider
+        )
+        if enabled_only and ai_provider_configuration.user_configuration.provider is None:
+            return []
+
+        try:
+            model_type = ModelType(model_type) if model_type else None
+        except ValueError:
+            raise ValueError(f'Invalid model type: {model_type}')
+
+        return ai_provider_configuration.get_provider_models(model_type=model_type)
+
+    @staticmethod
+    def get_models(
+        queryset: Optional[QuerySet[AIProviderConfiguration]],
+        model_type:  Optional[str] = None,
+        enabled_only:  Optional[bool] = False,
+    ) -> List[ModelWithProviderEntity]:
+        '''
+        Retrieves models for all AI providers.
+        '''
+
+        ai_provider_entities = ai_provider_factory.get_ai_provider_schemas()
+
+        models = []
+        for ai_provider_entity in ai_provider_entities:
+            db_provider = queryset.filter(provider_name=ai_provider_entity.id).first()
+            provider_models = AIProviderConfigurationService.get_provider_models(
+                provider_name=ai_provider_entity.id,
+                queryset=queryset,
+                db_provider=db_provider,
+                model_type=model_type,
+                enabled_only=enabled_only,
+            )
+
+            models.extend(provider_models)
+
+        return models
+
+    @staticmethod
+    def get_model(
+        model_name: str,
+        provider_name: Optional[str],
+        queryset: Optional[QuerySet[AIProviderConfiguration]],
+        db_provider: Optional[Provider] = None,
+        model_type:  Optional[str] = None,
+        enabled_only:  Optional[bool] = False,
+    ) -> ModelWithProviderEntity:
+        '''
+        Retrieves a specific model by name.
+        '''
+
+        models: List[ModelWithProviderEntity] = []
+        if provider_name is not None:
+            if db_provider is None:
+                db_provider = queryset.filter(provider_name=provider_name).first()
+            models = AIProviderConfigurationService.get_provider_models(
+                provider_name,
+                queryset=queryset,
+                db_provider=db_provider,
+                model_type=model_type,
+                enabled_only=enabled_only,
+            )
+        else:
+            models = AIProviderConfigurationService.get_models(
+                queryset=queryset,
+                model_type=model_type,
+                enabled_only=enabled_only,
+            )
+
+        model = next((model for model in models if model.id == model_name), None)
+
+        return model
+
+    @staticmethod
+    def get_model_parameter_configs(provider_name: str, model_name: str):
+        '''
+        Retrieves the parameter configuration for a specific model from a given provider.
+        '''
+
+        provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=provider_name)
+        model_collection_instance = provider_instance.get_model_collection_instance(model_type=ModelType.LLM.value)
+        model_collection_instance = cast(LLMModelCollection, model_collection_instance)
+
+        return model_collection_instance.get_parameter_configs(model_name)

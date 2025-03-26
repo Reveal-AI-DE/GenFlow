@@ -68,7 +68,7 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
             return None
         else:
             # Get provider credential secret variables
-            provider_credential_secret_variables = Provider.extract_secret_variables(provider=self.provider_name)
+            provider_credential_secret_variables = Provider.extract_secret_variables(provider_name=self.provider_name)
             # fix origin data
             provider_credentials = self.fix_encrypted_config()
 
@@ -115,7 +115,7 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
 
     def obfuscated_credentials(self) -> dict:
         # Get provider credential secret variables
-        credential_secret_variables = Provider.extract_secret_variables(self.provider_name)
+        credential_secret_variables = Provider.extract_secret_variables(provider_name=self.provider_name)
 
         # fix origin data
         credentials = self.fix_encrypted_config()
@@ -128,12 +128,12 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         return credentials
 
     @staticmethod
-    def extract_secret_variables(provider: str) -> list[str]:
+    def extract_secret_variables(provider_name: str) -> list[str]:
         '''
         Extracts secret variables for the given provider name.
         '''
 
-        ai_provider_entity: AIProviderEntity = ai_provider_factory.get_ai_provider_instance(provider=provider).get_schema()
+        ai_provider_entity: AIProviderEntity = ai_provider_factory.get_ai_provider_instance(provider_name=provider_name).get_schema()
         credential_form: list[ConfigurationEntity] = ai_provider_entity.credential_form
 
         secret_input_form_variables = []
