@@ -37,3 +37,6 @@ if apps.is_installed('gen_flow.apps.core'):
 
 if apps.is_installed('gen_flow.apps.prompt'):
     urlpatterns.append(path('api/', include('gen_flow.apps.prompt.urls')))
+
+if apps.is_installed('gen_flow.apps.session'):
+    urlpatterns.append(path('api/', include('gen_flow.apps.session.urls')))

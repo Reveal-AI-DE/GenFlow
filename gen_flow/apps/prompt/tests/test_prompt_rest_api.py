@@ -156,7 +156,7 @@ class PromptRetrieveTestCase(PromptTestCase):
 
     def test_retrieve_prompt_admin(self):
         team = self.regular_users[0]['teams'][0]['team']
-        user = self.regular_users[0]['user']
+        _ = self.regular_users[0]['user']
         group = self.regular_users[0]['teams'][0]['group']
         self.create_data['group_id'] = group.id
         prompt = create_prompt(team=team, owner=self.admin_user, data=self.create_data)
@@ -314,7 +314,7 @@ class PromptUpdateTestCase(PromptTestCase):
         response = self.update_prompt(another_user, prompt_id=prompt.id, data=new_data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_retrieve_prompt_user_owner(self):
+    def test_update_prompt_user_owner(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         group = self.regular_users[0]['teams'][0]['group']
@@ -347,7 +347,7 @@ class PromptListTestCase(PromptTestCase):
         response = self.list_prompt(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_prompt_group_admin(self):
+    def test_list_prompt_admin(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         group = self.regular_users[0]['teams'][0]['group']
@@ -358,7 +358,7 @@ class PromptListTestCase(PromptTestCase):
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(response.data['results'][0]['name'], prompt.name)
 
-    def test_list_prompt_group_user(self):
+    def test_list_prompt_user(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         group = self.regular_users[0]['teams'][0]['group']
@@ -369,7 +369,7 @@ class PromptListTestCase(PromptTestCase):
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(response.data['results'][0]['name'], prompt.name)
 
-    def test_list_prompt_group_user_member(self):
+    def test_list_prompt_user_member(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         group = self.regular_users[0]['teams'][0]['group']
@@ -383,7 +383,7 @@ class PromptListTestCase(PromptTestCase):
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(response.data['results'][0]['name'], prompt.name)
 
-    def test_list_prompt_group_user_another_team(self):
+    def test_list_prompt_user_another_team(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         another_user = self.regular_users[1]['user']
@@ -393,7 +393,7 @@ class PromptListTestCase(PromptTestCase):
         response = self.list_prompt(another_user, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_list_prompt_group_team_filtering(self):
+    def test_list_prompt_team_filtering(self):
         team = self.regular_users[0]['teams'][0]['team']
         user = self.regular_users[0]['user']
         another_user = self.regular_users[1]['user']
