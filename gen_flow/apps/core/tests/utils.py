@@ -5,10 +5,16 @@
 from gen_flow.apps.core.models import Provider
 
 def enable_provider(team, owner, data) -> Provider:
-    provider = Provider.objects.create(
-        team=team,
-        owner=owner,
-        is_valid=True,
-        **data
-    )
+    try:
+        provider = Provider.objects.get(
+            provider_name=data['provider_name'],
+            team=team,
+        )
+    except Provider.DoesNotExist:
+        provider = Provider.objects.create(
+            team=team,
+            owner=owner,
+            is_valid=True,
+            **data
+        )
     return provider

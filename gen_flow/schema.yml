@@ -494,6 +494,65 @@ paths:
       responses:
         '204':
           description: The membership has been deleted
+  /api/messages:
+    get:
+      operationId: messages_list
+      description: List all messages that belong to a session.
+      summary: List messages
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: session
+        schema:
+          type: integer
+        description: The ID of the session to filter messages by.
+        required: true
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - messages
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSessionMessageReadList'
+          description: ''
   /api/models:
     get:
       operationId: models_list
@@ -1407,6 +1466,196 @@ paths:
                 type: object
                 additionalProperties: {}
           description: ''
+  /api/sessions:
+    get:
+      operationId: sessions_list
+      description: List all sessions that the user has access to.
+      summary: List sessions
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSessionReadList'
+          description: ''
+    post:
+      operationId: sessions_create
+      description: Create a new session with the given data.
+      summary: Create a session
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SessionWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/SessionRead'
+          description: ''
+  /api/sessions/{id}:
+    get:
+      operationId: sessions_retrieve
+      description: Retrieve the session with the given ID.
+      summary: Retrieve a session
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/SessionRead'
+          description: ''
+    put:
+      operationId: sessions_update
+      description: |-
+        Provides CRUD operations and additional functionality
+        for managing Session objects.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SessionWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/SessionWrite'
+          description: ''
+    patch:
+      operationId: sessions_partial_update
+      description: Update the session with the given data.
+      summary: Update a session
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSessionWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSessionWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/SessionRead'
+          description: ''
+    delete:
+      operationId: sessions_destroy
+      description: Delete the session with the given ID.
+      summary: Delete a session
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The session has been deleted
   /api/system/about:
     get:
       operationId: system_about_retrieve
@@ -1824,6 +2073,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PromptRead'
+    PaginatedSessionMessageReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionMessageRead'
+    PaginatedSessionReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionRead'
     PaginatedTeamReadList:
       type: object
       required:
@@ -1967,6 +2262,20 @@ components:
           minLength: 1
           maxLength: 255
         credentials: {}
+    PatchedSessionWriteRequest:
+      type: object
+      description: Serializer for writing Session data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        session_type:
+          $ref: '#/components/schemas/SessionTypeEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        related_prompt:
+          type: integer
     PatchedTeamWriteRequest:
       type: object
       description: |-
@@ -2311,6 +2620,109 @@ components:
         * `admin` - Admin
         * `engineer` - Engineer
         * `member` - Member
+    SessionMessageRead:
+      type: object
+      description: Serializer for reading SessionMessage data, to be used by get actions.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        query:
+          type: string
+        answer:
+          type: string
+          nullable: true
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          type: string
+          readOnly: true
+      required:
+      - query
+    SessionModeEnum:
+      enum:
+      - chat
+      - completion
+      type: string
+      description: |-
+        * `chat` - Chat
+        * `completion` - Completion
+    SessionRead:
+      type: object
+      description: Serializer for reading Session data, to be used by get actions.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        session_type:
+          $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigRead'
+        related_prompt:
+          $ref: '#/components/schemas/PromptRead'
+        created_date:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_date:
+          type: string
+          format: date-time
+          readOnly: true
+        owner:
+          $ref: '#/components/schemas/BasicUser'
+      required:
+      - name
+      - owner
+    SessionTypeEnum:
+      enum:
+      - llm
+      - prompt
+      type: string
+      description: |-
+        * `llm` - Llm
+        * `prompt` - Prompt
+    SessionWrite:
+      type: object
+      description: Serializer for writing Session data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        session_type:
+          $ref: '#/components/schemas/SessionTypeEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWrite'
+        related_prompt:
+          type: integer
+      required:
+      - name
+    SessionWriteRequest:
+      type: object
+      description: Serializer for writing Session data, to be used by post/patch actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        session_type:
+          $ref: '#/components/schemas/SessionTypeEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        related_prompt:
+          type: integer
+      required:
+      - name
     StatusEnum:
       enum:
       - drafted

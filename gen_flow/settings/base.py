@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'gen_flow.apps.iam',
     'gen_flow.apps.core',
     'gen_flow.apps.prompt',
+    'gen_flow.apps.session',
 ]
 
 SITE_ID = 1
@@ -276,6 +277,9 @@ MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, 'model')
 
 PROMPTS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, 'prompts')
 os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
+
+SESSIONS_ROOT = os.path.join(DATA_ROOT, 'sessions')
+os.makedirs(SESSIONS_ROOT, exist_ok=True)
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
