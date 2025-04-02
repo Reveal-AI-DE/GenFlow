@@ -61,3 +61,25 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
 
         full_path = osp.join(settings.SESSIONS_ROOT, str(self.id))
         return osp.relpath(full_path, settings.BASE_DIR)
+
+
+class SessionMessage(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
+    '''
+    Represents a message exchanged within a session,
+    including the query, the answer, and associated metadata.
+
+    Attributes:
+        query (TextField): The query text submitted by the user.
+            This field is required.
+        answer (TextField): The response or answer to the query.
+            This field is optional.
+        usage (JSONField): A JSON object containing metadata about the usage of the message
+          such as token counts. This field is optional.
+        session (ForeignKey): A foreign key linking the message to a specific session.
+            This field is required and enforces cascading deletion.
+    '''
+
+    query = models.TextField(null=False, blank=False)
+    answer = models.TextField(null=True, blank=True)
+    usage = models.JSONField(null=True, blank=True)
+    session = models.ForeignKey(Session, null=False, on_delete=models.CASCADE)

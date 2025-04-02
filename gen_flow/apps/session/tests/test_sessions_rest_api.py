@@ -12,27 +12,8 @@ from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 from gen_flow.apps.core.tests.utils import enable_provider
 from gen_flow.apps.session.models import Session, SessionType, SessionMode
-from gen_flow.apps.session.serializers import SessionReadSerializer
-from gen_flow.apps.session.tests.utils import create_dummy_prompt, create_dummy_session
-
-
-SESSION_DATA = {
-    'name': 'Test Session',
-    'type': SessionType.LLM.value,
-    'mode': SessionMode.CHAT.value,
-    'related_model': {
-        'provider_name': 'dummy',
-        'model_name': 'model2',
-    },
-}
-
-
-PROVIDER_DATA = {
-    'provider_name': 'dummy',
-    'encrypted_config': {
-        'api_key': 'test'
-    }
-}
+from gen_flow.apps.session.tests.utils import (create_dummy_prompt, create_dummy_session,
+    SESSION_DATA, PROVIDER_DATA)
 
 
 class SessionTestCase(APITestCase):

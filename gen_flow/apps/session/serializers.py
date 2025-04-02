@@ -11,7 +11,7 @@ from gen_flow.apps.team.serializers import BasicUserSerializer
 from gen_flow.apps.core.serializers import ProviderModelConfigReadSerializer, ProviderModelConfigWriteSerializer
 from gen_flow.apps.prompt.models import Prompt
 from gen_flow.apps.prompt.serializers import PromptReadSerializer
-from gen_flow.apps.session.models import Session, SessionType
+from gen_flow.apps.session.models import SessionType, Session, SessionMessage
 
 
 class SessionReadSerializer(serializers.ModelSerializer):
@@ -35,7 +35,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
 
 class SessionWriteSerializer(serializers.ModelSerializer):
     '''
-    Serializer for writing Prompt data, to be used by post/patch actions.
+    Serializer for writing Session data, to be used by post/patch actions.
     '''
 
     related_model = ProviderModelConfigWriteSerializer(required=False,)
@@ -145,4 +145,45 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         '''
 
         serializer = SessionReadSerializer(instance, context=self.context)
+        return serializer.data
+
+
+class SessionMessageReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for reading SessionMessage data, to be used by get actions.
+    '''
+
+    owner = serializers.StringRelatedField()
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = SessionMessage
+        fields = ('id', 'query', 'answer', 'created_date', 'updated_date', 'owner')
+
+
+class SessionMessageWriteSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for writing SessionMessage data, to be used by post/patch actions.
+    '''
+
+    session = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = SessionMessage
+        fields = ('session', 'query', 'answer')
+
+    def to_representation(self, instance):
+        '''
+        Converts the SessionMessage instance into a serialized representation
+        using the `SessionMessageReadSerializer`.
+        '''
+
+        serializer = SessionMessageReadSerializer(instance, context=self.context)
         return serializer.data

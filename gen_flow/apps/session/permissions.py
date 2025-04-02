@@ -91,3 +91,67 @@ class SessionPermission(GenFLowBasePermission):
         '''
 
         return queryset
+
+
+class SessionMessagePermission(GenFLowBasePermission):
+    '''
+    Handles the permissions for session message-related actions.
+    '''
+
+    class Scopes(StrEnum):
+        '''
+        Defines the possible scopes of actions.
+        '''
+
+        LIST = 'list'
+
+    staticmethod
+    def get_scopes(request, view, obj):
+        '''
+        Returns the scope of the action being performed based on the view's action.
+        '''
+
+        Scopes = __class__.Scopes
+        return [{
+            'list': Scopes.LIST,
+        }.get(view.action, None)]
+
+    @classmethod
+    def create(cls, request, view, obj, iam_context):
+        '''
+        Creates and returns a list of permissions based on the request, view, and object.
+        '''
+
+        permissions = []
+        if view.basename == 'message':
+            for scope in cls.get_scopes(request, view, obj):
+                self = cls.create_base_perm(request, view, scope, iam_context, obj)
+                permissions.append(self)
+
+        return permissions
+
+    def check_access(self) -> bool:
+        '''
+        Checks if the user has access based on their group name and team role.
+        '''
+
+        # if no team -> no access
+        if self.team_id is None:
+            return False
+
+        # admin users have full control
+        if self.group_name == settings.IAM_ADMIN_ROLE:
+            return True
+
+        # team member can list session messages
+        if self.scope == self.Scopes.LIST:
+            return self.team_role is not None
+
+        return False
+
+    def filter(self, queryset):
+        ''''
+        Filters the queryset based on the permissions
+        '''
+
+        return queryset

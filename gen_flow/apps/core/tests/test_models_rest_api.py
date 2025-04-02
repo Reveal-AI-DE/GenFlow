@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+from urllib.parse import urlencode
+
 from http.client import HTTPResponse
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
@@ -9,7 +11,7 @@ from rest_framework.test import APIClient, APITestCase
 from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 from gen_flow.apps.core.tests.utils import enable_provider
-from urllib.parse import urlencode
+
 
 class AIModelTestCase(APITestCase):
     def setUp(self):
