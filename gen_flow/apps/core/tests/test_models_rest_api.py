@@ -14,11 +14,13 @@ from gen_flow.apps.core.tests.utils import enable_provider
 
 
 class AIModelTestCase(APITestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         import gen_flow.apps.ai.tests.register_providers # noqa
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
-        self.data = {
+        super().setUpClass()
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users(create_teams=True)
+        cls.data = {
             'provider_name': 'dummy',
             'encrypted_config': {
                 'api_key': 'test'

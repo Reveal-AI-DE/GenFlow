@@ -12,11 +12,13 @@ from gen_flow.apps.core.tests.utils import enable_provider
 
 
 class ProviderTestCase(APITestCase):
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         import gen_flow.apps.ai.tests.register_providers # noqa
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
-        self.data = {
+        super().setUpClass()
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users(create_teams=True)
+        cls.data = {
             'provider_name': 'dummy',
             'encrypted_config': {
                 'api_key': 'test'
@@ -25,9 +27,10 @@ class ProviderTestCase(APITestCase):
 
 
 class ProviderCreateTestCase(ProviderTestCase):
-    def setUp(self):
-        super().setUp()
-        self.data = {
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.data = {
             'provider_name': 'dummy',
             'credentials': {
                 'api_key': 'test'
@@ -45,8 +48,9 @@ class ProviderCreateTestCase(ProviderTestCase):
 
     def test_enable_provider_invalid_credentials(self):
         team_id = self.regular_users[0]['teams'][0]['team'].id
-        self.data['credentials'] = {}
-        response = self.enable_provider(self.admin_user, self.data, team_id)
+        data = self.data.copy()
+        data['credentials'] = {}
+        response = self.enable_provider(self.admin_user, data, team_id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_enable_provider_admin(self):
@@ -155,9 +159,10 @@ class ProviderDestroyTestCase(ProviderTestCase):
 
 
 class ProviderUpdateTestCase(ProviderTestCase):
-    def setUp(self):
-        super().setUp()
-        self.updated_data = {
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.updated_data = {
             'provider_name': 'dummy',
             'credentials': {
                 'api_key': 'updated_test'

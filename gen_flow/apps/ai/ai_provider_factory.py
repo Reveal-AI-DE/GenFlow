@@ -45,7 +45,10 @@ class AIProviderFactory:
             for model_type in ai_provider_schema.supported_model_types:
                 models = ai_provider_instance.get_models(model_type=model_type.value)
                 if models:
-                    ai_provider_schema.models.extend(models)
+                    existed_models = [model.id for model in ai_provider_schema.models]
+                    for model in models:
+                        if model.id not in existed_models:
+                            ai_provider_schema.models.append(model)
 
             ai_provider_schemas.append(ai_provider_schema)
 

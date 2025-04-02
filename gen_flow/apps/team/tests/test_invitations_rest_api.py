@@ -11,9 +11,10 @@ from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
 
 class InvitationAPITestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users(create_teams=True, team_role=TeamRole.MEMBER)
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users(create_teams=True, team_role=TeamRole.MEMBER)
 
     def check_response(self, response, status_code, data=None):
         self.assertEqual(response.status_code, status_code)
@@ -25,9 +26,10 @@ class InvitationAPITestCase(APITestCase):
 
 
 class InvitationListAPITestCase(InvitationAPITestCase):
-    def setUp(self):
-        super().setUp()
-        self.created_invitations_count = sum([len(user['teams']) for user in self.regular_users])
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.created_invitations_count = sum([len(user['teams']) for user in cls.regular_users])
 
     def list_invitations(self, user, team_id: int=None):
         with ForceLogin(user, self.client):
@@ -96,9 +98,10 @@ class InvitationRetrieveAPITestCase(InvitationAPITestCase):
 
 
 class InvitationCreateAPITestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users(create_teams=True)
 
     def create_invitation(self, user, data, team_id):
         with ForceLogin(user, self.client):

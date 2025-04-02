@@ -4,6 +4,7 @@
 
 import shutil
 from os import path as osp
+from typing import cast
 
 from rest_framework import viewsets, status
 from drf_spectacular.utils import (
@@ -13,6 +14,7 @@ from drf_spectacular.utils import (
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.session import permissions as perms
 from gen_flow.apps.session.models import Session, SessionMessage
 from gen_flow.apps.session.serializers import (SessionReadSerializer, SessionWriteSerializer,
@@ -94,12 +96,11 @@ class SessionViewSet(viewsets.ModelViewSet):
         '''
         Saves a new Session instance, associating it with the current user and team.
         '''
-
-        extra_kwargs = {
-            'owner': self.request.user,
-            'team': self.request.iam_context['team']
-        }
-        serializer.save(**extra_kwargs)
+        request = cast(HttpRequestWithIamContext, self.request)
+        serializer.save(
+            owner=self.request.user,
+            team=request.iam_context.team,
+        )
 
     def perform_destroy(self, instance: Session):
         '''

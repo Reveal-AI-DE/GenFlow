@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+from typing import cast
+
 from rest_framework import mixins, viewsets, status
 from django.utils.crypto import get_random_string
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
@@ -9,6 +11,7 @@ from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from django.core.exceptions import ImproperlyConfigured
 
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 import gen_flow.apps.team.models as models
 import gen_flow.apps.team.serializers as serializers
 import gen_flow.apps.team.permissions as perms
@@ -259,11 +262,11 @@ class InvitationViewSet(
         '''
         Saves the serializer with additional keyword arguments.
         '''
-
+        request = cast(HttpRequestWithIamContext, self.request)
         serializer.save(
             owner=self.request.user,
             key=get_random_string(length=64),
-            team=self.request.iam_context['team'],
+            team=request.iam_context.team,
             request=self.request,
         )
 

@@ -11,9 +11,10 @@ from rest_framework.test import APIClient, APITestCase
 from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 from gen_flow.apps.core.tests.utils import enable_provider
+from gen_flow.apps.prompt.tests.utils import PROVIDER_DATA
 from gen_flow.apps.session.models import Session, SessionType
 from gen_flow.apps.session.tests.utils import (create_dummy_prompt, create_dummy_session,
-    SESSION_DATA, PROVIDER_DATA)
+    SESSION_DATA)
 
 
 class SessionTestCase(APITestCase):

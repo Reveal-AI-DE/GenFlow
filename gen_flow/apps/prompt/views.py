@@ -4,16 +4,18 @@
 
 import shutil
 from os import path as osp
+from typing import cast
 
 from rest_framework import viewsets, status
 from drf_spectacular.utils import (
-    OpenApiTypes, OpenApiParameter, OpenApiResponse,
+    OpenApiResponse,
     extend_schema_view, extend_schema
 )
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.prompt import permissions as perms
 from gen_flow.apps.prompt.models import PromptGroup, Prompt
 from gen_flow.apps.prompt.serializers import (PromptGroupReadSerializer, PromptGroupWriteSerializer,
@@ -95,9 +97,10 @@ class PromptGroupViewSet(viewsets.ModelViewSet):
         Saves a new PromptGroup instance with additional fields:
         '''
 
+        request = cast(HttpRequestWithIamContext, self.request)
         serializer.save(
             owner=self.request.user,
-            team=self.request.iam_context['team'],
+            team=request.iam_context.team,
         )
 
 
@@ -188,9 +191,10 @@ class PromptViewSet(viewsets.ModelViewSet):
         Saves a new Prompt instance, associating it with the current user and team.
         '''
 
-        return serializer.save(
+        request = cast(HttpRequestWithIamContext, self.request)
+        serializer.save(
             owner=self.request.user,
-            team=self.request.iam_context['team'],
+            team=request.iam_context.team,
         )
 
     def perform_destroy(self, instance: Prompt):

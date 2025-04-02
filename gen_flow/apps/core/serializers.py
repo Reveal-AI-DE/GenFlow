@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from os import path as osp
-from typing import Any
+from typing import Any, cast
 from json import dumps as json_dumps
 
 from django.conf import settings
@@ -14,6 +14,7 @@ from gen_flow.apps.common.entities import TranslationEntity, ConfigurationEntity
 from gen_flow.apps.common.file_utils import create_media_symbolic_links
 from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.team.models import Team
 from gen_flow.apps.core.models import Provider, ProviderModelConfig
 from gen_flow.apps.core.config.entities import ModelWithProviderEntity, AIProviderConfiguration
@@ -177,9 +178,10 @@ class ProviderWriteSerializer(serializers.ModelSerializer):
 
         # get team from context
         request = self.context.get('request', None)
+        request = cast(HttpRequestWithIamContext, request)
         if request is None:
             raise serializers.ValidationError('Request context is required.')
-        db_team: Team = request.iam_context.get('team', None)
+        db_team: Team = request.iam_context.team
         if db_team is None:
             raise serializers.ValidationError('Team context is required.')
 
@@ -217,7 +219,7 @@ class ProviderWriteSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
-def get_model(request, model_name: str, provider_name: str) -> ModelWithProviderEntity:
+def get_model(request: HttpRequestWithIamContext, model_name: str, provider_name: str) -> ModelWithProviderEntity:
     '''
     Returns the model entity for the given model name and provider name.
     '''
@@ -225,7 +227,7 @@ def get_model(request, model_name: str, provider_name: str) -> ModelWithProvider
         db_provider = Provider.objects.get(
             provider_name=provider_name,
             is_valid=True,
-            team=request.iam_context.get('team'),
+            team=request.iam_context.team,
         )
     except Provider.DoesNotExist:
         raise serializers.ValidationError(f'AI Provider {provider_name} not enabled')

@@ -4,9 +4,12 @@
 
 from rest_framework.filters import BaseFilterBackend
 from django.db.models import Q
+from django.db.models.query import QuerySet
 from collections.abc import Iterable
 
 from drf_spectacular.utils import OpenApiParameter
+
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 
 TEAM_OPEN_API_PARAMETERS = [
     OpenApiParameter(
@@ -67,7 +70,7 @@ class TeamFilterBackend(BaseFilterBackend):
         return Q()
 
 
-    def filter_queryset(self, request, queryset, view):
+    def filter_queryset(self, request: HttpRequestWithIamContext, queryset: QuerySet, view):
         '''
         Filters the queryset based on the team context in the request.
         Returns only non-team objects if no team is specified.
@@ -79,7 +82,7 @@ class TeamFilterBackend(BaseFilterBackend):
             return queryset
 
         visibility = None
-        team = request.iam_context['team']
+        team = request.iam_context.team
 
         if team:
             visibility = {'team': team.id}

@@ -3,10 +3,32 @@
 # SPDX-License-Identifier: MIT
 
 from django.core.exceptions import BadRequest
+from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.conf import settings
+from pydantic import BaseModel, ConfigDict
 
-def get_team(request):
+from gen_flow.apps.team.models import Team
+
+class TeamContext(BaseModel):
+    '''
+    Represents the team context.
+    '''
+
+    team: Team | None
+    privilege: str | None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+class HttpRequestWithIamContext(HttpRequest):
+    '''
+    Represents an HTTP request with IAM context.
+    '''
+
+    iam_context: TeamContext
+
+
+def get_team(request: HttpRequest) ->  TeamContext:
     '''
     Retrieves the team and privilege information for the given request.
 
@@ -45,10 +67,7 @@ def get_team(request):
     except Team.DoesNotExist:
         raise BadRequest(f'{team_id} team does not exist.')
 
-    context = {
-        'team': team,
-        'privilege': getattr(privilege, 'name', None)
-    }
+    context = TeamContext(team=team, privilege=getattr(privilege, 'name', None))
 
     return context
 
@@ -65,7 +84,7 @@ class ContextMiddleware:
         # The next middleware or view in the chain
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequestWithIamContext):
         '''
         Attaches the `iam_context` attribute to the request and calls the next middleware or view.
         '''
