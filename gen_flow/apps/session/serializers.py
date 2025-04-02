@@ -29,7 +29,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
         '''
 
         model = Session
-        fields = ('id', 'name', 'type', 'mode', 'related_model',
+        fields = ('id', 'name', 'session_type', 'session_mode', 'related_model',
             'related_prompt', 'created_date', 'updated_date', 'owner')
 
 
@@ -63,7 +63,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         '''
 
         model = Session
-        fields = ('name', 'type', 'related_model', 'related_prompt')
+        fields = ('name', 'session_type', 'related_model', 'related_prompt')
 
     def validate(self, data) -> dict:
         '''
@@ -72,7 +72,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         '''
 
         super().validate(data)
-        session_type = data.get('type')
+        session_type = data.get('session_type')
         if session_type == SessionType.LLM.value and \
             'related_model' not in data:
             raise serializers.ValidationError('related_model is required for LLM session')
@@ -88,7 +88,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         of related models using the `ProviderModelConfigWriteSerializer`.
         '''
 
-        session_type = validated_data.pop('type', SessionType.LLM.value)
+        session_type = validated_data.pop('session_type', SessionType.LLM.value)
 
         if session_type == SessionType.LLM.value:
             related_model_data = validated_data.pop('related_model')
@@ -101,7 +101,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
             related_model = related_model_serializer.create(related_model_data)
             # Creates a new Session instance with the provided data.
             session = Session.objects.create(
-                type=session_type,
+                session_type=session_type,
                 related_model=related_model,
                 **validated_data)
 
@@ -112,7 +112,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
                 validated_data.pop('related_model')
             # Creates a new Session instance with the provided data.
             session = Session.objects.create(
-                type=session_type,
+                session_type=session_type,
                 **validated_data)
 
         return session
@@ -134,8 +134,8 @@ class SessionWriteSerializer(serializers.ModelSerializer):
             )
             related_model_serializer.update(instance.related_model, related_model)
         # session type is not allowed to be updated
-        if 'type' in validated_data:
-            instance.type = validated_data.pop('type')
+        if 'session_type' in validated_data:
+            instance.session_type = validated_data.pop('session_type')
         return super().update(instance, validated_data)
 
     def to_representation(self, instance) -> dict:

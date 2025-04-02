@@ -13,8 +13,8 @@ from gen_flow.apps.session.models import SessionType, SessionMode, Session, Sess
 
 SESSION_DATA = {
     'name': 'Test Session',
-    'type': SessionType.LLM.value,
-    'mode': SessionMode.CHAT.value,
+    'session_type': SessionType.LLM.value,
+    'session_mode': SessionMode.CHAT.value,
     'related_model': {
         'provider_name': 'dummy',
         'model_name': 'model2',
@@ -70,7 +70,7 @@ def create_dummy_session(
         data: dict
     ) -> Session:
     session = None
-    if data['type'] == SessionType.PROMPT.value:
+    if data['session_type'] == SessionType.PROMPT.value:
         prompt = create_dummy_prompt(team=team, owner=owner)
         if 'related_model' in data:
             del data['related_model']
@@ -80,7 +80,7 @@ def create_dummy_session(
             related_prompt=prompt,
             **data
         )
-    if data['type'] == SessionType.LLM.value:
+    if data['session_type'] == SessionType.LLM.value:
         provider_model_config = ProviderModelConfig.objects.create(**data['related_model'])
         del data['related_model']
         session = Session.objects.create(

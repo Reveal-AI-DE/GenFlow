@@ -48,8 +48,8 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     '''
 
     name = models.CharField(max_length=255, null=False, blank=False)
-    type = models.CharField(max_length=10, choices=SessionType.choices, default=SessionType.LLM)
-    mode = models.CharField(max_length=10, choices=SessionMode.choices, default=SessionMode.CHAT)
+    session_type = models.CharField(max_length=10, choices=SessionType.choices, default=SessionType.LLM)
+    session_mode = models.CharField(max_length=10, choices=SessionMode.choices, default=SessionMode.CHAT)
     related_model = models.OneToOneField(ProviderModelConfig, null=True, on_delete=models.SET_NULL)
     related_prompt = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
 
