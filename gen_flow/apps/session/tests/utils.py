@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from gen_flow.apps.team.models import Team
 from gen_flow.apps.core.models import ProviderModelConfig
 from gen_flow.apps.prompt.models import Prompt
-from gen_flow.apps.prompt.tests.utils import create_prompt_group, create_prompt, PROMPT_DATA, PROMPT_GROUP_DATA
+from gen_flow.apps.prompt.tests.utils import create_prompt, PROMPT_DATA
 from gen_flow.apps.session.models import SessionType, SessionMode, Session, SessionMessage
 
 
@@ -33,11 +33,6 @@ SESSION_MESSAGE_DATA = [
 
 
 def create_dummy_prompt(team: Team, owner: User) -> Prompt:
-    prompt_group = create_prompt_group(
-        team=team,
-        owner=owner,
-        data=PROMPT_GROUP_DATA
-    )
     prompt_data = PROMPT_DATA.copy()
     del prompt_data['related_model']
     prompt = create_prompt(
