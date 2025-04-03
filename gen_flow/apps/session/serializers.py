@@ -8,6 +8,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from gen_flow.apps.team.serializers import BasicUserSerializer
+from gen_flow.apps.core.config.llm_model_bundle import LLMModelBundle
 from gen_flow.apps.core.serializers import ProviderModelConfigReadSerializer, ProviderModelConfigWriteSerializer
 from gen_flow.apps.prompt.models import Prompt
 from gen_flow.apps.prompt.serializers import PromptReadSerializer
@@ -38,7 +39,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
     Serializer for writing Session data, to be used by post/patch actions.
     '''
 
-    related_model = ProviderModelConfigWriteSerializer(required=False,)
+    related_model = ProviderModelConfigWriteSerializer(required=False)
     related_prompt = serializers.PrimaryKeyRelatedField(
         required=False, queryset=Prompt.objects.none(),  # Default to none
     )
@@ -187,3 +188,28 @@ class SessionMessageWriteSerializer(serializers.ModelSerializer):
 
         serializer = SessionMessageReadSerializer(instance, context=self.context)
         return serializer.data
+
+
+class GenerateRequestSerializer(serializers.Serializer):
+    query = serializers.CharField()
+    files = serializers.ListField(child=serializers.JSONField(), required=False)
+    parameters = serializers.JSONField(required=False)
+    stream = serializers.BooleanField(default=False)
+
+    def validate(self, data):
+        parameters = data.get('parameters', None)
+        if parameters is not None:
+            model_bundle: LLMModelBundle = self.context.get('llm_model_bundle')
+            provider_model_serializer = ProviderModelConfigWriteSerializer(
+                data={
+                    'provider_name': model_bundle.configuration.id,
+                    'model_name': model_bundle.model_schema.id,
+                    'config': {
+                        'parameters': parameters
+                    }
+                },
+                context=self.context
+            )
+            provider_model_serializer.is_valid(raise_exception=True)
+            data['related_model'] = provider_model_serializer.data
+        return data

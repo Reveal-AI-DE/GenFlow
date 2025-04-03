@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+from typing import Optional
+
 from django.core.exceptions import BadRequest
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
@@ -15,8 +17,8 @@ class TeamContext(BaseModel):
     Represents the team context.
     '''
 
-    team: Team | None
-    privilege: str | None
+    team: Optional[Team] = None
+    privilege: Optional[str] = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 

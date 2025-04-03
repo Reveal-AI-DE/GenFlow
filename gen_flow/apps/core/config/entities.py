@@ -7,7 +7,7 @@ from typing import Optional, Any
 from pydantic import BaseModel, ConfigDict, field_serializer
 
 from gen_flow.apps.ai.base.entities.shared import ModelType
-from gen_flow.apps.ai.base.entities.model import CommonModelEntity
+from gen_flow.apps.ai.base.entities.model import CommonModelEntity, ModelEntity
 from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity, AIProviderEntity
 from gen_flow.apps.ai.base.ai_provider import AIProvider
 from gen_flow.apps.ai.base.model_collection import ModelCollection
@@ -151,7 +151,7 @@ class AIProviderConfiguration(AIProviderEntity):
         return all_models
 
 
-class ProviderModelConfigurationBundle(BaseModel):
+class ModelCollectionBundle(BaseModel):
     '''
     Encapsulates the configuration and instances
     related to an AI provider and specific model type.
@@ -163,3 +163,17 @@ class ProviderModelConfigurationBundle(BaseModel):
 
     # pydantic configs
     model_config = ConfigDict(arbitrary_types_allowed=True, protected_namespaces=())
+
+
+class ModelBundle(ModelCollectionBundle):
+    '''
+    Encapsulates the ModelCollectionBundle along with specific model schema
+    and provided parameters and credentials.
+    '''
+
+    model_schema: ModelEntity
+    parameters: dict[str, Any] = {}
+    credentials: dict[str, Any] = {}
+
+    # pydantic configs
+    model_config = ConfigDict(protected_namespaces=())
