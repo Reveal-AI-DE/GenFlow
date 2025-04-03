@@ -11,10 +11,28 @@ from rest_framework.test import APIClient, APITestCase
 from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 from gen_flow.apps.core.tests.utils import enable_provider
-from gen_flow.apps.prompt.tests.utils import PROVIDER_DATA
-from gen_flow.apps.session.models import Session, SessionType
-from gen_flow.apps.session.tests.utils import (create_dummy_prompt, create_dummy_session,
-    SESSION_DATA)
+from gen_flow.apps.session.models import Session, SessionType, SessionMode
+from gen_flow.apps.session.serializers import SessionReadSerializer
+from gen_flow.apps.session.tests.utils import create_dummy_prompt, create_dummy_session
+
+
+SESSION_DATA = {
+    'name': 'Test Session',
+    'type': SessionType.LLM.value,
+    'mode': SessionMode.CHAT.value,
+    'related_model': {
+        'provider_name': 'dummy',
+        'model_name': 'model2',
+    },
+}
+
+
+PROVIDER_DATA = {
+    'provider_name': 'dummy',
+    'encrypted_config': {
+        'api_key': 'test'
+    }
+}
 
 
 class SessionTestCase(APITestCase):
@@ -39,7 +57,7 @@ class SessionTestCase(APITestCase):
         )
         # prompt session
         data = SESSION_DATA.copy()
-        data['session_type'] = SessionType.PROMPT.value
+        data['type'] = SessionType.PROMPT.value
         cls.prompt_session = create_dummy_session(
             team=team,
             owner=user,
@@ -78,13 +96,13 @@ class SessionCreateTestCase(SessionTestCase):
         data = SESSION_DATA.copy()
 
         # type: llm but no related_model
-        data['session_type'] = SessionType.LLM.value
+        data['type'] = SessionType.LLM.value
         del data['related_model']
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # type: prompt but no related_prompt
-        data['session_type'] = SessionType.PROMPT.value
+        data['type'] = SessionType.PROMPT.value
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -109,7 +127,7 @@ class SessionCreateTestCase(SessionTestCase):
 
         # type: prompt
         data = SESSION_DATA.copy()
-        data['session_type'] = SessionType.PROMPT.value
+        data['type'] = SessionType.PROMPT.value
         data['related_prompt'] = prompt.id
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -126,7 +144,7 @@ class SessionCreateTestCase(SessionTestCase):
 
         # type: prompt
         data = SESSION_DATA.copy()
-        data['session_type'] = SessionType.PROMPT.value
+        data['type'] = SessionType.PROMPT.value
         data['related_prompt'] = prompt.id
         response = self.create_session(user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
