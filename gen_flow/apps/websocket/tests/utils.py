@@ -1,28 +1,24 @@
-'''
-ASGI config for gen_flow project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.1/howto/deployment/asgi/
-'''
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
 
 import os
 
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 from gen_flow.apps.websocket.auth_middleware import TokenAuthMiddlewareStack
 from gen_flow.apps.websocket.team_middleware import ContextMiddleware
 from gen_flow.apps.websocket.urls import websocket_urlpatterns
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gen_flow.settings.development')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gen_flow.settings.testing')
 
 # Initialize Django ASGI application early to ensure the app registry is ready
 django_asgi_app = get_asgi_application()
 
 application =  ProtocolTypeRouter({
-    'http': get_asgi_application(),
     'websocket': TokenAuthMiddlewareStack(
         ContextMiddleware(
             URLRouter(
