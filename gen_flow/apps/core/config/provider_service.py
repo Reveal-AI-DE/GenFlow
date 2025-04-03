@@ -12,7 +12,7 @@ from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.llm.llm_model_collection import LLMModelCollection
 from gen_flow.apps.core.models import Provider
-from gen_flow.apps.core.config.entities import AIProviderConfiguration, UserConfiguration, ModelWithProviderEntity
+from gen_flow.apps.core.config.entities import AIProviderConfiguration, UserConfiguration, ModelWithProviderEntity, ModelCollectionBundle
 
 class AIProviderConfigurationService:
     '''
@@ -30,7 +30,7 @@ class AIProviderConfigurationService:
     @staticmethod
     def get_provider_configuration(
         provider_name: str,
-        queryset: Optional[QuerySet[AIProviderConfiguration]] = None,
+        queryset: Optional[QuerySet[Provider]] = None,
         db_provider: Optional[Provider] = None,
         ai_provider_entity: Optional[AIProviderEntity] = None,
     ) -> AIProviderConfiguration:
@@ -61,7 +61,7 @@ class AIProviderConfigurationService:
         return ai_provider_configuration
 
     @staticmethod
-    def get_configuration(queryset: QuerySet[AIProviderConfiguration]) -> Dict[str, AIProviderConfiguration]:
+    def get_configuration(queryset: QuerySet[Provider]) -> Dict[str, AIProviderConfiguration]:
         '''
         Retrieves configurations for all AI providers.
         '''
@@ -109,7 +109,7 @@ class AIProviderConfigurationService:
 
     @staticmethod
     def get_models(
-        queryset: Optional[QuerySet[AIProviderConfiguration]],
+        queryset: Optional[QuerySet[Provider]],
         model_type:  Optional[str] = None,
         enabled_only:  Optional[bool] = False,
     ) -> List[ModelWithProviderEntity]:
@@ -138,7 +138,7 @@ class AIProviderConfigurationService:
     def get_model(
         model_name: str,
         provider_name: Optional[str],
-        queryset: Optional[QuerySet[AIProviderConfiguration]] = None,
+        queryset: Optional[QuerySet[Provider]] = None,
         db_provider: Optional[Provider] = None,
         model_type:  Optional[str] = None,
         enabled_only:  Optional[bool] = False,
@@ -193,3 +193,29 @@ class AIProviderConfigurationService:
         model_collection_instance = cast(LLMModelCollection, model_collection_instance)
         # Process model parameters
         return model_collection_instance._process_model_parameters(model_name, model_parameters)
+
+    @staticmethod
+    def get_model_collection_bundle(provider_name: str, queryset: Optional[QuerySet[Provider]] = None,
+            db_provider: Optional[Provider] = None, model_type:  Optional[str] = 'llm'
+        ) -> ModelCollectionBundle:
+        '''
+        Retrieves the model collection bundle for the given provider name.
+        '''
+
+        ai_provider_configuration = AIProviderConfigurationService.get_provider_configuration(
+            provider_name=provider_name, queryset=queryset, db_provider=db_provider
+        )
+        ai_provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=provider_name)
+
+        try:
+            model_type = ModelType(model_type) if model_type else ModelType.LLM
+        except ValueError:
+            raise ValueError('Invalid model type')
+
+        model_collection_instance = ai_provider_instance.get_model_collection_instance(model_type=model_type.value)
+
+        return ModelCollectionBundle(
+            configuration=ai_provider_configuration,
+            ai_provider_instance=ai_provider_instance,
+            model_collection_instance=model_collection_instance
+        )

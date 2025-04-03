@@ -130,8 +130,8 @@ class LLMModelCollectionTest(TestCase):
                 UserMessage(content='hello'),
                 AssistantMessage(content='world'),
             ]
-            input = self.llm_model_collection.get_tokens_count(model.id, {}, messages)
-            output = self.llm_model_collection.get_tokens_count(model.id, {}, [self.llm_model_collection.RESPONSE])
+            input = self.llm_model_collection.get_tokens_count(model.id, messages)
+            output = self.llm_model_collection.get_tokens_count(model.id, [self.llm_model_collection.RESPONSE])
             result = self.llm_model_collection.call(model.id, {}, messages, {})
             self.assertIsNotNone(result)
             self.assertIsNotNone(result.usage)

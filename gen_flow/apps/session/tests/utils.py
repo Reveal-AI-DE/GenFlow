@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from gen_flow.apps.team.models import Team
 from gen_flow.apps.core.models import ProviderModelConfig
 from gen_flow.apps.prompt.models import Prompt
-from gen_flow.apps.prompt.tests.utils import create_prompt_group, create_prompt
+from gen_flow.apps.prompt.tests.utils import create_prompt, PROMPT_DATA
 from gen_flow.apps.session.models import SessionType, SessionMode, Session, SessionMessage
 
 
@@ -22,14 +22,6 @@ SESSION_DATA = {
 }
 
 
-PROVIDER_DATA = {
-    'provider_name': 'dummy',
-    'encrypted_config': {
-        'api_key': 'test'
-    }
-}
-
-
 SESSION_MESSAGE_DATA = [
     {
         'query': 'Test Message 1',
@@ -41,22 +33,8 @@ SESSION_MESSAGE_DATA = [
 
 
 def create_dummy_prompt(team: Team, owner: User) -> Prompt:
-    prompt_group_data={
-        'name': 'dummy',
-        'description': 'dummy',
-        'color': 'dummy',
-    }
-    prompt_group = create_prompt_group(
-        team=team,
-        owner=owner,
-        data=prompt_group_data
-    )
-    prompt_data = {
-        'name': 'dummy',
-        'description': 'dummy',
-        'pre_prompt': 'dummy',
-        'group_id': prompt_group.id,
-    }
+    prompt_data = PROMPT_DATA.copy()
+    del prompt_data['related_model']
     prompt = create_prompt(
         team=team,
         owner=owner,

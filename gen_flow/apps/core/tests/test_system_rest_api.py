@@ -11,9 +11,11 @@ from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
 
 class ServerAboutTestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users()
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users()
 
     def get_about(self, user=None) -> HTTPResponse:
         url = '/api/system/about'

@@ -7,13 +7,14 @@ from rest_framework.test import APIClient, APITestCase
 
 from gen_flow.apps.team.models import TeamRole, Membership
 from gen_flow.apps.team.serializers import MembershipReadSerializer
-from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users, USERS
+from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
 
 class MembershipAPITestCase(APITestCase):
-    def setUp(self):
-        self.client = APIClient()
-        self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
+    @classmethod
+    def setUpTestData(cls):
+        cls.client = APIClient()
+        cls.admin_user, cls.regular_users = create_dummy_users(create_teams=True)
 
     def check_response(self, response, status_code, data=None):
         self.assertEqual(response.status_code, status_code)
@@ -27,11 +28,13 @@ class MembershipAPITestCase(APITestCase):
 
 
 class MembershipListAPITestCase(MembershipAPITestCase):
-    def setUp(self):
-        super().setUp()
-        self.created_memberships_count = sum([len(user['teams']) for user in self.regular_users])
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.created_memberships_count = sum([len(user['teams']) for user in cls.regular_users])
         # each user also has a default team
-        self.created_memberships_count += len(self.regular_users)
+        cls.created_memberships_count += len(cls.regular_users)
+
 
     def list_memberships(self, user, team_id: int=None):
         with ForceLogin(user, self.client):

@@ -164,7 +164,10 @@ class ProviderModelConfig(TimeAuditModel):
         Retrieves the 'parameters' from the config JSON field. Defaults to an empty dictionary if not present.
         '''
 
-        return self.config.get('parameters', {})
+        if self.config is not None:
+            return self.config.get('parameters', {})
+        else:
+            return {}
 
     @property
     def mode(self) -> Optional[str]:
@@ -172,7 +175,10 @@ class ProviderModelConfig(TimeAuditModel):
         Retrieves the 'mode' from the config JSON field. Defaults to None if not present.
         '''
 
-        return self.config.get('mode', None)
+        if self.config is not None:
+            return self.config.get('mode', None)
+        else:
+            return {}
 
     @property
     def stop(self) -> Optional[list[str]]:
@@ -180,4 +186,7 @@ class ProviderModelConfig(TimeAuditModel):
         Retrieves the 'stop' list from the config JSON field. Defaults to an empty list if not present.
         '''
 
-        return self.config.get('stop', [])
+        if self.config is not None:
+            return self.config.get('stop', None)
+        else:
+            return {}

@@ -82,7 +82,7 @@ class PromptWriteSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         request = self.context.get('request')
         if request and hasattr(request, 'iam_context'):
-            team = request.iam_context.get('team')
+            team = request.iam_context.team
             if team:
                 # Filter queryset based on the iam_context
                 self.fields['group_id'].queryset = PromptGroup.objects.filter(team=team)

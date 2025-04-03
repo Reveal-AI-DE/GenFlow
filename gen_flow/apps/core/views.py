@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from os import path as osp
+from typing import cast
 
 from rest_framework import viewsets, status, serializers
 from rest_framework.decorators import action
@@ -15,6 +15,7 @@ from rest_framework.permissions import SAFE_METHODS
 from django.db.models.query import QuerySet
 
 from gen_flow.apps.ai.base.entities.shared import ModelType
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.core.models import AboutSystem, Provider
 from gen_flow.apps.core.serializers import (ProviderReadSerializer, ProviderWriteSerializer,
     AIProviderConfigurationSerializer, ModelWithProviderEntitySerializer, ConfigurationEntitySerializer)
@@ -160,10 +161,10 @@ class ProviderViewSet(
         Saves the serializer with additional context, including the owner
             (current user) and team (from IAM context).
         '''
-
+        request = cast(HttpRequestWithIamContext, self.request)
         extra_kwargs = {
             'owner': self.request.user,
-            'team': self.request.iam_context['team']
+            'team': request.iam_context.team,
         }
         serializer.save(**extra_kwargs)
 

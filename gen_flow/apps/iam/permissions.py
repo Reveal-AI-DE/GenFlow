@@ -10,13 +10,14 @@ from rest_framework.permissions import BasePermission
 from django.conf import settings
 from django.db.models import Model
 
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.team.models import Membership, Team
 
 class StrEnum(str, Enum):
     def __str__(self) -> str:
         return self.value
 
-def get_team(request, obj):
+def get_team(request: HttpRequestWithIamContext, obj):
     '''
     Retrieve the team associated with the given object or request.
 
@@ -37,7 +38,7 @@ def get_team(request, obj):
             # Skip initialization of team for those objects that don't related with team
             view = request.parser_context.get('view')
             if view and view.basename in settings.OBJECTS_NOT_RELATED_WITH_TEAM:
-                return request.iam_context['team']
+                return request.iam_context.team
 
             raise exc
 
@@ -46,7 +47,7 @@ def get_team(request, obj):
         except Team.DoesNotExist:
             return None
 
-    return request.iam_context['team']
+    return request.iam_context.team
 
 def get_membership(request, team):
     '''
@@ -62,7 +63,7 @@ def get_membership(request, team):
         is_active=True
     ).first()
 
-def build_iam_context(request, team: Optional[Team], membership: Optional[Membership]):
+def build_iam_context(request: HttpRequestWithIamContext, team: Optional[Team], membership: Optional[Membership]):
     '''
     Builds the IAM context dictionary for a given request, team, and membership.
 
@@ -77,7 +78,7 @@ def build_iam_context(request, team: Optional[Team], membership: Optional[Member
 
     return {
         'user_id': request.user.id,
-        'group_name': request.iam_context['privilege'],
+        'group_name': request.iam_context.privilege,
         'team_id': getattr(team, 'id', None),
         'team_owner_id': getattr(team.owner, 'id', None)
             if team else None,
