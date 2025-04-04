@@ -57,7 +57,7 @@ def register_ai_provider(name: str):
     return wrapper
 
 
-def register_model_collection(ai_provider: str, model_type_str: str):
+def register_model_collection(ai_provider: str, model_type: str):
     def wrapper(cls):
         '''
         A decorator to register a model collection for a specific AI provider.
@@ -70,9 +70,9 @@ def register_model_collection(ai_provider: str, model_type_str: str):
         assert ai_provider in AI_PROVIDERS, 'AI Provider \'%s\' not registered' % ai_provider
         ai_provider_instance: AIProvider = AI_PROVIDERS[ai_provider].ai_provider_instance
 
-        assert model_type_str in ModelType.values(), 'Model type \'%s\' not supported' % model_type_str
+        assert model_type in ModelType.values(), 'Model type \'%s\' not supported' % model_type
 
-        model_type_name = model_type_str.replace('-', '_')
+        model_type_name = model_type.replace('-', '_')
         config_path = osp.join(ai_provider_instance.config_path, model_type_name)
         if osp.exists(config_path):
             ai_provider_instance.add_model_collection_instance(config_path, model_cls=cls)
@@ -81,4 +81,4 @@ def register_model_collection(ai_provider: str, model_type_str: str):
 
 if 'test' not in os.getenv('DJANGO_SETTINGS_MODULE', ''):
     # register AI providers
-    pass
+    import gen_flow.apps.ai.providers.openai.openai # noqa: F401

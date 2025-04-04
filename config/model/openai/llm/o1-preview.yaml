@@ -1,0 +1,22 @@
+id: o1-preview
+label:
+  en_US: o1-preview
+  de_DE: o1-preview
+type: llm
+features:
+  - agent-thought
+properties:
+  mode: chat
+  context_size: 128000
+parameter_configs:
+  - name: max_tokens
+    use_template: max_tokens
+    default: 32768
+    min: 1
+    max: 32768
+    advanced: false
+pricing:
+  input: '15.00'
+  output: '60.00'
+  unit: '0.000001'
+  currency: USD

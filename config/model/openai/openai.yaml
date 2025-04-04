@@ -1,0 +1,51 @@
+id: openai
+label:
+  en_US: OpenAI
+  de_DE: OpenAI
+description:
+  en_US: Models provided by OpenAI, such as GPT-3.5-Turbo and GPT-4.
+  de_DE: Modelle von OpenAI, wie GPT-3.5-Turbo und GPT-4.
+icon_small:
+  en_US: icon_s_en.svg
+  de_DE: icon_s_en.svg
+icon_large:
+  en_US: icon_l_en.svg
+  de_DE: icon_l_en.svg
+background: "#E5E7EB"
+help:
+  title:
+    en_US: Get your API Key from OpenAI
+    de_DE: Holen Sie sich Ihren API-Schlüssel von OpenAI
+  url:
+    en_US: https://platform.openai.com/account/api-keys
+    de_DE: https://platform.openai.com/account/api-keys
+supported_model_types:
+  - llm
+credential_form:
+  - name: openai_api_key
+    label:
+      en_US: API Key
+      de_DE: API-Schlüssel
+    type: secret
+    required: true
+    placeholder:
+      en_US: Enter your API Key
+      de_DE: Geben Sie Ihren API-Schlüssel ein
+  - name: openai_organization
+    label:
+      en_US: Organization
+      de_DE: Organisation
+    type: string
+    required: false
+    placeholder:
+      en_US: Enter your Organization ID
+      de_DE: Geben Sie Ihre Organisations-ID ein
+  - name: openai_api_base
+    label:
+      en_US: API Base
+      de_DE: API-Basis
+    type: string
+    required: false
+    placeholder:
+      en_US: Enter your API Base, e.g. https://api.openai.com
+      de_DE: Geben Sie Ihre API-Basis ein, z. B. https://api.openai.com
