@@ -1,0 +1,47 @@
+id: gpt-4
+label:
+  en_US: gpt-4
+  de_DE: gpt-4
+type: llm
+features:
+  - multi-tool-call
+  - agent-thought
+  - stream-tool-call
+properties:
+  mode: chat
+  context_size: 8192
+parameter_configs:
+  - name: temperature
+    use_template: temperature
+  - name: top_p
+    use_template: top_p
+  - name: presence_penalty
+    use_template: presence_penalty
+  - name: frequency_penalty
+    use_template: frequency_penalty
+  - name: max_tokens
+    use_template: max_tokens
+    default: 512
+    min: 1
+    max: 8192
+    advanced: false
+  - name: seed
+    label:
+      en_US: Seed
+    type: int
+    help:
+      en_US: If specified, model will make a best effort to sample deterministically,
+        such that repeated requests with the same seed and parameters should return
+        the same result. Determinism is not guaranteed, and you should refer to the
+        system_fingerprint response parameter to monitor changes in the backend.
+      de_DE: Falls angegeben, bemüht sich das Modell um eine deterministische Stichprobe,
+        so dass wiederholte Anfragen mit demselben Seed und denselben Parametern
+        das gleiche Ergebnis liefern. Determinismus ist nicht garantiert, und Sie sollten sich auf den
+        system_fingerprint Antwortparameter, um Änderungen im Backend zu überwachen.
+    required: false
+    advanced: true
+pricing:
+  input: '0.03'
+  output: '0.06'
+  unit: '0.001'
+  currency: USD

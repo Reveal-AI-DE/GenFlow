@@ -1,0 +1,83 @@
+temperature:
+  label:
+    en_US: Temperature
+    de_DE: Temperature
+  type: float
+  help:
+    en_US: 'Controls randomness. Lower temperature results in less random completions.
+      As the temperature approaches zero, the model will become deterministic and repetitive.
+      Higher temperature results in more random completions.'
+    de_DE: 'Kontrolliert die Zufälligkeit.
+      Eine niedrigere Temperatur führt zu weniger zufälligen Vervollständigungen.
+      Wenn sich die Temperatur dem Wert Null nähert, wird das Modell deterministisch und repetitiv.
+      Höhere Temperatur führt zu mehr zufälligen Vervollständigungen.'
+  default: 0.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+top_p:
+  label:
+    en_US: Top P
+    de_DE: Top P
+  type: float
+  help:
+    en_US: 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.'
+    de_DE: 'Steuert die Vielfalt über die Kernstichprobe: 0.5 bedeutet, dass die Hälfte aller wahrscheinlichkeitsgewichteten Optionen berücksichtigt werden.'
+  default: 1.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+  advanced: true
+top_k:
+  label:
+    en_US: Top K
+    de_DE: Top K
+  type: int
+  help:
+    en_US: 'Limits the number of tokens to consider for each step by keeping only the k most likely tokens.'
+    de_DE: 'Begrenzt die Anzahl der zu berücksichtigenden Token für jeden Schritt, indem nur die k wahrscheinlichsten Token beibehalten werden.'
+  default: 50
+  min: 1
+  max: 100
+  precision: 0
+  advanced: true
+presence_penalty:
+  label:
+    en_US: Presence Penalty
+    de_DE: Presence Penalty
+  type: float
+  help:
+    en_US: 'Applies a penalty to the log-probability of tokens already in the text.'
+    de_DE: 'Wendet einen Malus auf die logarithmische Wahrscheinlichkeit von Token an, die bereits im Text enthalten sind.'
+  default: 0.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+  advanced: true
+frequency_penalty:
+  label:
+    en_US: Frequency Penalty
+    de_DE: Frequency Penalty
+  type: float
+  help:
+    en_US: Applies a penalty to the log-probability of tokens that appear in the text.
+    de_DE: Wendet einen Malus auf die Log-Wahrscheinlichkeit von Token an, die im Text vorkommen.
+  default: 0.0
+  min: 0.0
+  max: 1.0
+  precision: 2
+  advanced: true
+max_tokens:
+  label:
+    en_US: Max Tokens
+    de_DE: Max Tokens
+  type: int
+  help:
+    en_US: 'Specifies the upper limit on the length of generated results.
+      If the generated results are truncated, you can increase this parameter.'
+    de_DE: 'Gibt die Obergrenze für die Länge der generierten Ergebnisse an.
+      Wenn die generierten Ergebnisse abgeschnitten sind, können Sie diesen Parameter erhöhen.'
+  default: 64
+  min: 1
+  max: 2048
+  precision: 0
