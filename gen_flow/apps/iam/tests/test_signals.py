@@ -33,8 +33,8 @@ class PostMigrateSignalTest(TestCase):
 class CreateUserSignalTest(TestCase):
     def setUp(self):
         # Create groups for testing
-        self.admin_group = Group.objects.create(name=settings.IAM_ADMIN_ROLE)
-        self.default_group = Group.objects.create(name=settings.IAM_DEFAULT_ROLE)
+        self.admin_group = Group.objects.get(name=settings.IAM_ADMIN_ROLE)
+        self.default_group = Group.objects.get(name=settings.IAM_DEFAULT_ROLE)
 
     def test_create_superuser(self):
         # Create a superuser

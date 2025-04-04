@@ -41,15 +41,7 @@ USERS = {
     ]
 }
 
-# TODO: should be removed after fixing the issue with the post_migrate signal
-def create_groups():
-    for role in settings.IAM_ROLES:
-        Group.objects.get_or_create(name=role)
-
 def create_dummy_users(create_teams: bool=False, team_role: TeamRole=TeamRole.OWNER):
-    # TODO: should be removed after fixing the issue with the post_migrate signal
-    create_groups()
-
     admin_user = User.objects.create_superuser(
         username=USERS['admin']['username'],
         email=USERS['admin']['email'],

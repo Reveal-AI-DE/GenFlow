@@ -8,8 +8,6 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
-from gen_flow.apps.team.tests.utils import create_groups
-
 
 class UserRegisterAPITestCase(APITestCase):
 
@@ -25,8 +23,6 @@ class UserRegisterAPITestCase(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        # TODO: should be removed after fixing the issue with the post_migrate signal
-        create_groups()
 
     def _run_api_user_register(self, data):
         url = reverse('rest_register')
