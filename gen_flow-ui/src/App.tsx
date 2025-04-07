@@ -6,6 +6,7 @@ import React from 'react';
 import {
     Admin, useStore, localStorageStore,
     StoreContextProvider,
+    Resource,
 } from 'react-admin';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
@@ -15,6 +16,9 @@ import englishMessages from '@/i18n/en_US';
 
 import { Layout } from '@/layout';
 import { themes, Theme, ThemeName } from '@/themes';
+
+// Resources
+import { PromptGroupResourceProps } from '@/prompt';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -50,7 +54,11 @@ const App = (): JSX.Element => {
             dataProvider={dataProvider}
             authProvider={authProvider}
             disableTelemetry
-        />
+        >
+            <Resource
+                {...PromptGroupResourceProps}
+            />
+        </Admin>
     );
 };
 

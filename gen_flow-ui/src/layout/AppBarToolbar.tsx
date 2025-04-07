@@ -5,7 +5,7 @@
 import React from 'react';
 import { LoadingIndicator, LocalesMenuButton } from 'react-admin';
 
-import { ThemeSwapper } from '../themes';
+import { ThemeSwapper } from '@/themes';
 
 export const AppBarToolbar = (): JSX.Element => (
     <>

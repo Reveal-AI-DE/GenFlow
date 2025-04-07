@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import AppBar from './AppBar';
-import Layout from './Layout';
+import AppBar from '@/layout/AppBar';
+import Layout from '@/layout/Layout';
 
 export { AppBar, Layout };

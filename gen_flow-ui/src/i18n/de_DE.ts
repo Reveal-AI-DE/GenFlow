@@ -187,6 +187,13 @@ const deDE: TranslationMessages = {
         },
     },
     label: {
+        about: 'Über',
+        version: 'Version %{version}',
+        user_menu: {
+            settings: {
+                title: 'Einstellungen',
+            },
+        },
         providers: 'Anbieter',
         advanced: 'Erweiterte',
         members: 'Mitglieder',
@@ -219,14 +226,6 @@ const deDE: TranslationMessages = {
             scroll: {
                 top: 'Nach oben scrollen',
                 bottom: 'Nach unten scrollen',
-            }
-        },
-        user_menu: {
-            settings: {
-                title: 'Einstellungen',
-            },
-            about: {
-                title: 'Über',
             }
         },
         collection: {

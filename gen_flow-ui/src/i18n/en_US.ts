@@ -157,6 +157,13 @@ const enUS: TranslationMessages = {
         },
     },
     label: {
+        about: 'About',
+        version: 'Version %{version}',
+        user_menu: {
+            settings: {
+                title: 'Settings',
+            },
+        },
         providers: 'Providers',
         advanced: 'Advanced',
         members: 'Members',
@@ -192,14 +199,6 @@ const enUS: TranslationMessages = {
             scroll: {
                 top: 'Scroll to top',
                 bottom: 'Scroll to bottom',
-            }
-        },
-        user_menu: {
-            settings: {
-                title: 'Settings',
-            },
-            about: {
-                title: 'About',
             }
         },
         collection: {

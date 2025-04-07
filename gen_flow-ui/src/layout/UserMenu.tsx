@@ -9,8 +9,11 @@ import {
     UserMenuProps,
 } from 'react-admin';
 
+import { AboutMenuItem } from '@/system';
+
 const UserMenu: FC<UserMenuProps> = (props) => (
     <RAUserMenu {...props}>
+        <AboutMenuItem />
         <Logout />
     </RAUserMenu>
 );

@@ -7,3 +7,13 @@ export interface MetaParams {
         [key: string]: string;
     }
 };
+
+export interface TranslationEntity {
+    en_US: string;
+    [key: string]: string;
+};
+
+export interface HelpEntity {
+    title: TranslationEntity;
+    url?: TranslationEntity;
+};

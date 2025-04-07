@@ -2,5 +2,4 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from '@/types/common';
-export * from '@/types/system';
+export * from './global';
