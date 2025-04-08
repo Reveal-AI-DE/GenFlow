@@ -238,13 +238,9 @@ const deDE: TranslationMessages = {
                 no_files: 'Keine Dateien hochgeladen'
             }
         },
-        membership: {
-            invite: 'Invite Member',
-            edit_dialog: 'Edit \'%{username}\' membership',
-        },
-        team: {
-            edit_dialog: 'Edit \'%{name}\' Team',
-        },
+        invite: 'Invite Member',
+        edit_member_dialog: 'Edit \'%{username}\' membership',
+        edit_team: 'Edit \'%{name}\' Team',
     },
     message: {
         item_updated: '%{name} aktualisiert',

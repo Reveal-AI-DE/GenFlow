@@ -13,6 +13,7 @@ type Providers = {
 };
 
 const providers: Providers = {
+    invitations: defaultDataProvider,
     memberships: defaultDataProvider,
     'prompt-groups': defaultDataProvider,
     providers: defaultDataProvider,

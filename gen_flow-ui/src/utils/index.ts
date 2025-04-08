@@ -2,4 +2,5 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from './dataProvider';
+export * from '@/utils/data';
+export * from '@/utils/dataProvider';

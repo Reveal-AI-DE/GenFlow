@@ -47,6 +47,10 @@ const UserField: FC<UserFieldProps> = ({ user }) => {
     const translate = useTranslate()
     const { currentUser } = useContext<GlobalContextInterface>(GlobalContext);
 
+    if (!user) {
+        return null;
+    }
+
     let avatar = user.avatar ? user.avatar : undefined;
     if (!avatar) {
         if (user.first_name && user.first_name !== '') {

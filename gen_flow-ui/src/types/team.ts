@@ -4,6 +4,8 @@
 
 import { RaRecord } from 'react-admin';
 
+import { Identity } from '@/types/user';
+
 export enum TeamRole {
     OWNER = 'owner',
     ADMIN = 'admin',
@@ -22,4 +24,5 @@ export interface Membership extends RaRecord {
     is_active: boolean;
     joined_date: number;
     role: string;
+    user: Identity;
 };

@@ -18,6 +18,7 @@ import { Layout } from '@/layout';
 import { themes, Theme, ThemeName } from '@/themes';
 
 // Resources
+import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
 import { PromptGroupResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
@@ -58,6 +59,9 @@ const App = (): JSX.Element => {
             authProvider={authProvider}
             disableTelemetry
         >
+            <Resource
+                {...InvitationResourceProps}
+            />
             <Resource
                 {...MembershipResourceProps}
             />

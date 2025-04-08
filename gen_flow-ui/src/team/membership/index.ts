@@ -5,6 +5,8 @@
 import { ResourceProps } from 'react-admin';
 import BadgeIcon from '@mui/icons-material/Badge';
 
+import { MembershipList } from '@/team/membership/list';
+
 const MembershipResourceProps: ResourceProps = {
     name: 'memberships',
     icon: BadgeIcon,
@@ -12,4 +14,5 @@ const MembershipResourceProps: ResourceProps = {
 
 export {
     MembershipResourceProps,
+    MembershipList,
 };

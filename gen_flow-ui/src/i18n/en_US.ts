@@ -211,13 +211,9 @@ const enUS: TranslationMessages = {
                 no_files: 'No files uploaded'
             },
         },
-        membership: {
-            invite: 'Invite Member',
-            edit_dialog: 'Edit \'%{username}\' membership',
-        },
-        team: {
-            edit_dialog: 'Edit \'%{name}\' Team',
-        },
+        invite: 'Invite Member',
+        edit_member_dialog: 'Edit \'%{username}\' membership',
+        edit_team: 'Edit \'%{name}\' Team',
     },
     message: {
         item_updated: '%{name} updated',
@@ -240,10 +236,6 @@ const enUS: TranslationMessages = {
         invited: 'Member invited',
         validate: {
             unique: '%{name} must be unique'
-        },
-        team: {
-            created: 'Team created',
-            updated: 'Team updated',
         },
         prompt: {
             start_test_title: 'Start Testing session',
