@@ -41,7 +41,7 @@ class UserOwnedModel(models.Model):
     '''
 
     owner = models.ForeignKey(get_user_model(), null=True,
-        blank=True, on_delete=models.SET_NULL, related_name='%(class)s')
+        blank=True, on_delete=models.CASCADE, related_name='%(class)s')
 
     class Meta:
         abstract = True
