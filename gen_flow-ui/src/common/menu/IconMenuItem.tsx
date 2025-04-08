@@ -15,14 +15,14 @@ import MenuItem,
 import { styled } from '@mui/material/styles';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
-export const LeftIconContainer = styled(ListItemIcon, {
+const LeftIconContainer = styled(ListItemIcon, {
     name: 'GFIconMenuItem',
     slot: 'left-icon',
 })(() => ({
     minWidth: 5,
 }));
 
-export const RightIconContainer = styled(ListItemIcon, {
+const RightIconContainer = styled(ListItemIcon, {
     name: 'GFIconMenuItem',
     slot: 'right-icon',
 })(() => ({
@@ -34,7 +34,7 @@ export interface IconMenuItemProps extends Omit<MuiMenuItemProps, 'ref'> {
     className?: string;
     label?: string;
     leftIcon?: ReactNode;
-    onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+    onClick?: (event: any) => void;
     ref?: RefObject<HTMLLIElement>;
     rightIcon?: ReactNode;
 };

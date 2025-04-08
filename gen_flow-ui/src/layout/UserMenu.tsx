@@ -9,10 +9,15 @@ import {
     UserMenuProps,
 } from 'react-admin';
 
-import { AboutMenuItem } from '@/system';
+import { AboutMenuItem, SettingsMenuItem } from '@/system';
+import { TeamMenuItem } from '@/team';
 
 const UserMenu: FC<UserMenuProps> = (props) => (
-    <RAUserMenu {...props}>
+    <RAUserMenu
+        {...props}
+    >
+        <TeamMenuItem />
+        <SettingsMenuItem />
         <AboutMenuItem />
         <Logout />
     </RAUserMenu>

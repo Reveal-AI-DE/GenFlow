@@ -5,8 +5,10 @@
 from typing import cast
 
 from rest_framework import mixins, viewsets, status
+from rest_framework.decorators import action
 from django.utils.crypto import get_random_string
-from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
+from drf_spectacular.utils import (OpenApiResponse, PolymorphicProxySerializer,
+    extend_schema, extend_schema_view)
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 from django.core.exceptions import ImproperlyConfigured
@@ -16,6 +18,49 @@ import gen_flow.apps.team.models as models
 import gen_flow.apps.team.serializers as serializers
 import gen_flow.apps.team.permissions as perms
 
+
+@extend_schema(tags=['users'])
+@extend_schema_view(
+    self=extend_schema(
+        summary='Get current user',
+        description='Retrieve the details of the currently authenticated user.',
+        responses={
+            '200': PolymorphicProxySerializer(component_name='MetaUser',
+                serializers=[
+                    serializers.UserSerializer, serializers.BasicUserSerializer,
+                ], resource_type_field_name=None,
+            ),
+        },
+    ),
+)
+class UserViewSet(viewsets.GenericViewSet):
+    serializer_class = None
+
+    def get_serializer_class(self):
+        # Early exit for drf-spectacular compatibility
+        if getattr(self, 'swagger_fake_view', False):
+            return serializers.UserSerializer
+
+        user = self.request.user
+        is_self = int(self.kwargs.get('pk', 0)) == user.id or \
+            self.action == 'self'
+        if user.is_staff:
+            return serializers.UserSerializer if not is_self else serializers.UserSerializer
+        else:
+            if is_self and self.request.method in SAFE_METHODS:
+                return serializers.UserSerializer
+            else:
+                return serializers.BasicUserSerializer
+
+    @action(detail=False, methods=['GET'])
+    def self(self, request):
+        '''
+        Method returns an instance of a user who is currently authorized
+        '''
+
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(request.user, context={'request': request})
+        return Response(serializer.data)
 
 
 @extend_schema(tags=['teams'])

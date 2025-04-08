@@ -59,11 +59,6 @@ const enUS: TranslationMessages = {
         providers: {
             name: 'Provider |||| Providers',
             fields: {
-                credentials: {
-                    label: 'Credentials',
-                    enabled: 'Enabled',
-                    disabled: 'Disabled',
-                }
             },
         },
         models: {
@@ -159,13 +154,12 @@ const enUS: TranslationMessages = {
     label: {
         about: 'About',
         version: 'Version %{version}',
-        user_menu: {
-            settings: {
-                title: 'Settings',
-            },
-        },
-        providers: 'Providers',
+        settings: 'Settings',
+        credentials: 'Credentials',
+        enabled: 'Enabled',
+        disabled: 'Disabled',
         advanced: 'Advanced',
+        you: 'You',
         members: 'Members',
         view: 'View',
         total_resource: 'Total %{resource}',

@@ -30,7 +30,7 @@ const AboutMenuItem: FC = () => {
                 'aria-labelledby': translate('label.about'),
                 title: (
                     <>
-                        {aboutSystem.name[locale]}
+                        {aboutSystem.name[locale] ?? aboutSystem.name.en_US}
                         <Typography variant='caption' display='block'>
                             {translate('label.version', { version: aboutSystem.version })}
                         </Typography>
@@ -44,12 +44,12 @@ const AboutMenuItem: FC = () => {
                 dialogContent: (
                     <>
                         <Typography variant='subtitle2'>
-                            {aboutSystem.description[locale]}
+                            {aboutSystem.description[locale] ?? aboutSystem.description.en_US}
                         </Typography>
                         <br />
                         <Divider />
                         <Typography variant='overline' display='block' sx={{ textAlign: 'right' }}>
-                            {aboutSystem.license[locale]}
+                            {aboutSystem.license[locale] ?? aboutSystem.license.en_US}
                         </Typography>
                     </>
                 ),

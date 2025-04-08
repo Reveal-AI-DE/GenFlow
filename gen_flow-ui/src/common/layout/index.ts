@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: MIT
 
 import Dialog, { DialogProps } from './Dialog';
+import TabsController, { TabItems } from './TabsController';
 
 export {
-    Dialog
+    Dialog,
+    TabsController
 };
 
-export type { DialogProps };
+export type { DialogProps, TabItems };

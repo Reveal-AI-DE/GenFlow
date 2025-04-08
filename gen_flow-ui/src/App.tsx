@@ -18,7 +18,10 @@ import { Layout } from '@/layout';
 import { themes, Theme, ThemeName } from '@/themes';
 
 // Resources
+import { MembershipResourceProps } from '@/team/membership';
 import { PromptGroupResourceProps } from '@/prompt';
+import { ProviderResourceProps } from '@/provider';
+import { TeamResourceProps } from '@/team';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -56,7 +59,16 @@ const App = (): JSX.Element => {
             disableTelemetry
         >
             <Resource
+                {...MembershipResourceProps}
+            />
+            <Resource
                 {...PromptGroupResourceProps}
+            />
+            <Resource
+                {...ProviderResourceProps}
+            />
+            <Resource
+                {...TeamResourceProps}
             />
         </Admin>
     );

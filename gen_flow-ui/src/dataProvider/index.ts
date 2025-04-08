@@ -6,14 +6,19 @@ import { DataProvider } from 'react-admin';
 
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
 import { systemDataProvider } from '@/system';
+import { userDataProvider } from '@/user';
 
 type Providers = {
     [key: string]: DataProvider
 };
 
 const providers: Providers = {
+    memberships: defaultDataProvider,
     'prompt-groups': defaultDataProvider,
+    providers: defaultDataProvider,
     system: systemDataProvider,
+    teams: defaultDataProvider,
+    users: userDataProvider,
 };
 
 type DataProviderMethod = (resource: string, params: any) => any;
@@ -37,6 +42,7 @@ const dataProviderWrapper: DataProvider = {
     deleteMany: createMethod('deleteMany'),
     // Add any additional methods here
     getAbout: createMethod('getAbout'),
+    self: createMethod('self'),
 };
 
 export {

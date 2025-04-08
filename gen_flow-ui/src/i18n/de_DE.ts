@@ -92,11 +92,6 @@ const deDE: TranslationMessages = {
         providers: {
             name: 'Anbieter |||| Anbieter',
             fields: {
-                credentials: {
-                    label: 'Zugangsdaten',
-                    enabled: 'Aktiviert',
-                    disabled: 'Deaktiviert',
-                }
             },
         },
         models: {
@@ -189,13 +184,12 @@ const deDE: TranslationMessages = {
     label: {
         about: 'Über',
         version: 'Version %{version}',
-        user_menu: {
-            settings: {
-                title: 'Einstellungen',
-            },
-        },
-        providers: 'Anbieter',
+        settings: 'Einstellungen',
+        credentials: 'Zugangsdaten',
+        enabled: 'Aktiviert',
+        disabled: 'Deaktiviert',
         advanced: 'Erweiterte',
+        you: 'Du',
         members: 'Mitglieder',
         view: 'zeigen',
         total_resource: 'Anzahl der %{resource}',
