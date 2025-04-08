@@ -24,7 +24,7 @@ class OpenAIClient(OpenAI):
         credentials_kwargs = self._to_credential_kwargs(credentials)
 
         # init model client
-        super.__init__(**credentials_kwargs)
+        super().__init__(**credentials_kwargs)
 
 
     def _to_credential_kwargs(self, credentials: Mapping) -> dict:
