@@ -6,7 +6,6 @@ import React, { FC } from 'react';
 import {
     CreateBase, EditBase, Form, useNotify,
     useTranslate, useLocale, useRecordContext,
-    RecordContextProvider,
 } from 'react-admin';
 
 import { AIProviderConfiguration, Provider } from '@/types';
@@ -41,9 +40,6 @@ const ProviderSetupButton: FC<ProviderSetupButtonProps> = () => {
 
     const populateProps = (activeProvider: boolean | undefined): object => (
         activeProvider ? {
-            record: aiProviderConfiguration,
-            transform
-        } : {
             id: aiProviderConfiguration.user_configuration?.provider as string,
             mutationMode: 'pessimistic',
             queryOptions: {
@@ -53,6 +49,8 @@ const ProviderSetupButton: FC<ProviderSetupButtonProps> = () => {
                     });
                 },
             }
+        } : {
+            transform
         }
     );
 
@@ -85,9 +83,7 @@ const ProviderSetupButton: FC<ProviderSetupButtonProps> = () => {
                         ),
                         dialogAction: (onClose) => (
                             <>
-                                <RecordContextProvider value={aiProviderConfiguration}>
-                                    <ProviderHelp />
-                                </RecordContextProvider>
+                                <ProviderHelp help={aiProviderConfiguration.help} />
                                 <ProviderSetupActions
                                     onClose={() => onClose && onClose({}, 'escapeKeyDown')}
                                 />

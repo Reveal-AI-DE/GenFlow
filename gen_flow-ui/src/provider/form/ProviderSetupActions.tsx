@@ -24,31 +24,34 @@ const ProviderSetupActions: FC<ProviderSetupActionsProps> = ({
     const notify = useNotify();
     const refresh = useRefresh();
 
-    if (!record) {
+    const renderDisableButton = (provider: Provider): JSX.Element | null => {
+        if (provider.is_enabled) {
+            return (
+                <DeleteWithConfirmButton
+                    mutationOptions={{
+                        onSuccess: () => {
+                            reset();
+                            refresh();
+                            onClose();
+                        },
+                        onError: (error) => {
+                            notify((error as Error).toString(), { type: 'error' });
+                        }
+                    }}
+                    confirmTitle='message.delete_dialog.disable_title'
+                    confirmContent='message.delete_dialog.disable_content'
+                    translateOptions={{ resource: 'provider' }}
+                    redirect={false}
+                />
+            );
+        }
         return null;
-    }
+    };
 
     return (
         <>
             {
-                record.is_enabled && (
-                    <DeleteWithConfirmButton
-                        mutationOptions={{
-                            onSuccess: () => {
-                                reset();
-                                refresh();
-                                onClose();
-                            },
-                            onError: (error) => {
-                                notify((error as Error).toString(), { type: 'error' });
-                            }
-                        }}
-                        confirmTitle='message.delete_dialog.disable_title'
-                        confirmContent='message.delete_dialog.disable_content'
-                        translateOptions={{ resource: 'provider' }}
-                        redirect={false}
-                    />
-                )
+                record && renderDisableButton(record)
             }
             <CancelButton
                 onClick={() => {

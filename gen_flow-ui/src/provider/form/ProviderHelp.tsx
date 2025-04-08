@@ -7,23 +7,26 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import LaunchIcon from '@mui/icons-material/Launch';
 import Typography from '@mui/material/Typography';
-import { useRecordContext, useLocale } from 'react-admin';
+import { useLocale } from 'react-admin';
 
-import { AIProviderConfiguration } from '@/types';
+import { HelpEntity } from '@/types';
 
-type ProviderHelpProps = object;
+interface ProviderHelpProps {
+    help?: HelpEntity;
+};
 
-const ProviderHelp: FC<ProviderHelpProps> = () => {
-    const record = useRecordContext<AIProviderConfiguration>();
+const ProviderHelp: FC<ProviderHelpProps> = ({
+    help,
+}) => {
     const locale = useLocale();
-    if (!record || !record.help) return null;
+    if (!help) return null;
 
     return (
         <Box flexGrow={1}>
             {
-                record.help.url ? (
+                help.url ? (
                     <Link
-                        href={record.help.url[locale] ?? record.help.url.en_US}
+                        href={help.url[locale] ?? help.url.en_US}
                         target='_blank'
                         rel='noreferrer'
                         variant='caption'
@@ -31,13 +34,13 @@ const ProviderHelp: FC<ProviderHelpProps> = () => {
                     >
                         <span>
                             <span style={{marginRight: '2px'}}>
-                                {record.help.title[locale] ?? record.help.title.en_US}
+                                {help.title[locale] ?? help.title.en_US}
                             </span>
                             <LaunchIcon fontSize='inherit' />
                         </span>
                     </Link>
                 ) : (
-                    <Typography variant='body2' component='span'>{record.help.title[locale] ?? record.help.title.en_US}</Typography>
+                    <Typography variant='body2' component='span'>{help.title[locale] ?? help.title.en_US}</Typography>
                 )
             }
         </Box>
