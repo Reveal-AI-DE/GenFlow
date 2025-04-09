@@ -54,8 +54,8 @@ const ModelSelectInput: FC<ModelSelectInputProps> = ({
         if (!record) {
             return;
         }
-        setValue(`${source}.model_name`, (record as ModelWithProviderEntity).model);
-        setValue(`${source}.provider_name`, (record as ModelWithProviderEntity).provider.provider);
+        setValue(`${source}.model_name`, (record as ModelWithProviderEntity).id);
+        setValue(`${source}.provider_name`, (record as ModelWithProviderEntity).provider.id);
         if (onChange) {
             onChange(value, record);
         }

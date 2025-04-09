@@ -98,7 +98,7 @@ const ModelField: FC<ModelFieldProps> = ({
                 return (
                     <>
                         {
-                            Object.keys(record.model_properties).map((key: string) => {
+                            Object.keys(record.properties).map((key: string) => {
                                 if (properties && !properties.includes(key as PropertyKey)) {
                                     return null;
                                 }
@@ -106,7 +106,7 @@ const ModelField: FC<ModelFieldProps> = ({
                                     <ModelPropertyItem
                                         key={key}
                                         property={key as PropertyKey}
-                                        value={record.model_properties[key as PropertyKey]}
+                                        value={record.properties[key as PropertyKey]}
                                     />
                                 );
                             })

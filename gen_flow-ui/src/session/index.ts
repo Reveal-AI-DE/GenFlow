@@ -7,7 +7,7 @@ import WorkspacesIcon from '@mui/icons-material/Workspaces';
 
 import { SessionCreate } from '@/session/form';
 import { SessionList } from '@/session/list';
-import { SessionShow } from '@/session/show';
+import { SessionCard, SessionShow } from '@/session/show';
 
 const SessionResourceProps: ResourceProps = {
     name: 'sessions',
@@ -19,4 +19,5 @@ const SessionResourceProps: ResourceProps = {
 export {
     SessionResourceProps,
     SessionCreate,
+    SessionCard,
 };

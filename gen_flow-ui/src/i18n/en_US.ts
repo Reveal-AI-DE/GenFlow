@@ -167,29 +167,20 @@ const enUS: TranslationMessages = {
         files: 'Files',
         details: 'Details',
         session_info: 'Session Info',
-        session: {
-            new: 'New Chat',
-        },
+        ask: 'Ask anything!',
+        new: 'New Chat',
         chat: {
             title: 'Chat',
             actions: 'Chat Actions',
             info: 'Session Info',
             usage: 'Session Usage',
             input: {
-                send: 'Send message',
-                stop: 'Stop',
-                attach: 'Attach file',
                 use_prompt: 'Use Prompt',
-                placeholder: 'Ask anything!'
             },
             settings: {
                 btn_label: 'Chat Settings',
                 advanced: 'Advanced',
             },
-            scroll: {
-                top: 'Scroll to top',
-                bottom: 'Scroll to bottom',
-            }
         },
         collection: {
             interface: {
@@ -258,6 +249,11 @@ const enUS: TranslationMessages = {
         copy: 'Copy',
         edit: 'Edit',
         regenerate: 'Regenerate',
+        attach: 'Attach file',
+        send: 'Send message',
+        stop: 'Stop',
+        scroll_top: 'Scroll to top',
+        scroll_bottom: 'Scroll to bottom',
     }
 };
 

@@ -74,3 +74,8 @@ export interface ObjectConfigurationEntity extends ConfigurationEntity {
 export enum ModelType {
     LLM = 'llm',
 };
+
+export interface FileEntity {
+    id: string;
+    path: string;
+};

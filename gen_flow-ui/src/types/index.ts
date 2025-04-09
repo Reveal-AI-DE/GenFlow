@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 export * from '@/types/common';
+export * from '@/types/message';
 export * from '@/types/model';
 export * from '@/types/provider';
 export * from '@/types/session';

@@ -197,9 +197,8 @@ const deDE: TranslationMessages = {
         files: 'Files',
         details: 'Details',
         session_info: 'Session Info',
-        session: {
-            new: 'Neuer Chat',
-        },
+        ask: 'Alles fragen!',
+        new: 'Neuer Chat',
         chat: {
             title: 'Chat',
             actions: 'Chat-Aktionen',
@@ -208,7 +207,6 @@ const deDE: TranslationMessages = {
             input: {
                 send: 'Nachricht senden',
                 stop: 'stoppen',
-                attach: 'Datei anhängen',
                 use_prompt: 'Prompt verwenden',
                 placeholder: 'Alles fragen!'
             },
@@ -290,6 +288,9 @@ const deDE: TranslationMessages = {
         copy: 'Kopie',
         edit: 'Bearbeiten',
         regenerate: 'Regenerieren',
+        attach: 'Datei anhängen',
+        send: 'Nachricht senden',
+        stop: 'stoppen',
     }
 };
 

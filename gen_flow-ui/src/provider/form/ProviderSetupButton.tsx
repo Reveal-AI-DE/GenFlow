@@ -35,7 +35,7 @@ const ProviderSetupButton: FC<ProviderSetupButtonProps> = () => {
 
     const transform = (data: Provider): Provider => ({
         ...data,
-        provider_name: aiProviderConfiguration.id,
+        provider_name: aiProviderConfiguration.id as string,
     });
 
     const populateProps = (activeProvider: boolean | undefined): object => (

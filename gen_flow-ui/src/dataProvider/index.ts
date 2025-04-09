@@ -16,12 +16,14 @@ type Providers = {
 const providers: Providers = {
     invitations: defaultDataProvider,
     memberships: defaultDataProvider,
+    messages: defaultDataProvider,
     models: {
         ...defaultDataProvider,
         ...modelDataProvider
     },
     'prompt-groups': defaultDataProvider,
     providers: defaultDataProvider,
+    sessions: defaultDataProvider,
     system: systemDataProvider,
     teams: defaultDataProvider,
     users: userDataProvider,

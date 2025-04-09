@@ -38,7 +38,7 @@ const SelectRelated: FC = () => {
                 label={false}
                 variant='outlined'
                 validate={required()}
-                filter={{ model_type: 'llm', valid_only: true }}
+                filter={{ model_type: 'llm', enabled_only: true }}
             />
         );
     }
@@ -66,7 +66,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
         ...data
     }: Session): Session => ({
         name: 'New Chat',
-        related_model: data.type === SessionType.LLM ? related_model : undefined,
+        related_model: data.session_type === SessionType.LLM ? related_model : undefined,
         ...data,
     });
 
@@ -118,7 +118,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
                         }}
                     >
                         <SaveButton
-                            label='label.session.new'
+                            label='label.new'
                             icon={<AddIcon />}
                         />
                     </ButtonContainer>

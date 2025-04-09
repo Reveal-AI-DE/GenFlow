@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react';
+import { Route } from 'react-router';
 import {
-    Admin, useStore, localStorageStore,
-    StoreContextProvider,
-    Resource,
+    Admin, useStore, localStorageStore, StoreContextProvider,
+    Resource, CustomRoutes, Authenticated,
 } from 'react-admin';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
@@ -20,11 +20,15 @@ import { themes, Theme, ThemeName } from '@/themes';
 // Resources
 import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
+import { MessageResourceProps } from '@/message';
 import { ModelResourceProps } from '@/provider/model';
 import { PromptGroupResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
 import { SessionResourceProps } from '@/session';
+
+// Components
+import { NewChat } from '@/chat';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -68,6 +72,9 @@ const App = (): JSX.Element => {
                 {...MembershipResourceProps}
             />
             <Resource
+                {...MessageResourceProps}
+            />
+            <Resource
                 {...ModelResourceProps}
             />
             <Resource
@@ -82,6 +89,16 @@ const App = (): JSX.Element => {
             <Resource
                 {...SessionResourceProps}
             />
+            <CustomRoutes>
+                <Route
+                    path='/new'
+                    element={(
+                        <Authenticated>
+                            <NewChat />
+                        </Authenticated>
+                    )}
+                />
+            </CustomRoutes>
         </Admin>
     );
 };
