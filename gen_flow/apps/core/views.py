@@ -253,6 +253,7 @@ class AIModelViewSet(
     '''
 
     queryset = Provider.objects.all()
+    ordering_fields = ['id']
     iam_team_field = 'team'
 
     def get_queryset(self) -> QuerySet[Provider]:
