@@ -5,6 +5,7 @@
 import { DataProvider } from 'react-admin';
 
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
+import { modelDataProvider } from '@/provider/model';
 import { systemDataProvider } from '@/system';
 import { userDataProvider } from '@/user';
 
@@ -15,6 +16,10 @@ type Providers = {
 const providers: Providers = {
     invitations: defaultDataProvider,
     memberships: defaultDataProvider,
+    models: {
+        ...defaultDataProvider,
+        ...modelDataProvider
+    },
     'prompt-groups': defaultDataProvider,
     providers: defaultDataProvider,
     system: systemDataProvider,
@@ -44,6 +49,7 @@ const dataProviderWrapper: DataProvider = {
     // Add any additional methods here
     getAbout: createMethod('getAbout'),
     self: createMethod('self'),
+    getParameterConfig: createMethod('getParameterConfig'),
 };
 
 export {

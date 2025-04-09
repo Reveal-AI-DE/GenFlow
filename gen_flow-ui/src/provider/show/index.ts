@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 import ProviderCard from '@/provider/show/ProviderCard';
+import ProviderField from '@/provider/show/ProviderField';
 
 export {
     ProviderCard,
+    ProviderField,
 };

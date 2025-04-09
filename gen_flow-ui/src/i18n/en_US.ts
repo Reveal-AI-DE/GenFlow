@@ -64,7 +64,7 @@ const enUS: TranslationMessages = {
         models: {
             name: 'Model |||| Models',
             fields: {
-                model_type: 'Type',
+                type: 'Type',
             }
         },
         teams: {

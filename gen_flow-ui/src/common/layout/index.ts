@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: MIT
 
-import Dialog, { DialogProps } from './Dialog';
-import TabsController, { TabItems } from './TabsController';
+import ControlledAccordion from '@/common/layout/ControlledAccordion';
+import Dialog, { DialogProps } from '@/common/layout/Dialog';
+import TabsController, { TabItems } from '@/common/layout/TabsController';
 
 export {
+    ControlledAccordion,
     Dialog,
     TabsController
 };

@@ -20,6 +20,7 @@ import { themes, Theme, ThemeName } from '@/themes';
 // Resources
 import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
+import { ModelResourceProps } from '@/provider/model';
 import { PromptGroupResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
@@ -64,6 +65,9 @@ const App = (): JSX.Element => {
             />
             <Resource
                 {...MembershipResourceProps}
+            />
+            <Resource
+                {...ModelResourceProps}
             />
             <Resource
                 {...PromptGroupResourceProps}

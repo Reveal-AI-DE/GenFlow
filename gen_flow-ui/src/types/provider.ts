@@ -8,8 +8,7 @@ import {
     BaseYamlEntityWithIcons, HelpEntity, ConfigurationEntity,
 } from '@/types/common';
 
-export interface CommonAIProviderEntity extends BaseYamlEntityWithIcons {
-    id: string;
+export interface CommonAIProviderEntity extends RaRecord, BaseYamlEntityWithIcons {
     supported_model_types: string[];
 };
 

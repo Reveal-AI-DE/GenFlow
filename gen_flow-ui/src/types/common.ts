@@ -50,6 +50,7 @@ export interface CommonConfigurationEntity {
 export interface ConfigurationEntity extends CommonConfigurationEntity {
     help?: TranslationEntity;
     placeholder?: TranslationEntity;
+    default?: string | number | boolean;
 };
 
 export interface NumberConfigurationEntity extends ConfigurationEntity {
@@ -68,4 +69,8 @@ export type TextConfigurationEntity = ConfigurationEntity;
 
 export interface ObjectConfigurationEntity extends ConfigurationEntity {
     parameters?: ConfigurationEntity[];
+};
+
+export enum ModelType {
+    LLM = 'llm',
 };
