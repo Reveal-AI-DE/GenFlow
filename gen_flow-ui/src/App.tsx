@@ -24,6 +24,7 @@ import { ModelResourceProps } from '@/provider/model';
 import { PromptGroupResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
+import { SessionResourceProps } from '@/session';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -77,6 +78,9 @@ const App = (): JSX.Element => {
             />
             <Resource
                 {...TeamResourceProps}
+            />
+            <Resource
+                {...SessionResourceProps}
             />
         </Admin>
     );

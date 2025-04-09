@@ -12,8 +12,8 @@ const enUS: TranslationMessages = {
             name: 'Session |||| Sessions',
             fields: {
                 name: 'Name',
-                type: 'Type',
-                mode: 'Mode',
+                session_type: 'Type',
+                session_mode: 'Mode',
                 related_model: {
                     label: 'Related Model',
                     provider_name: 'Provider',
@@ -165,12 +165,8 @@ const enUS: TranslationMessages = {
         total_resource: 'Total %{resource}',
         favorite_resources: 'Favorite Prompts and Assistants',
         files: 'Files',
-        collections: 'Collections',
         details: 'Details',
-        samples: 'Samples',
-        point: 'Point Id: %{id}',
-        references: 'References',
-        reference: 'Reference Id: %{id}',
+        session_info: 'Session Info',
         session: {
             new: 'New Chat',
         },

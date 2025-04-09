@@ -45,8 +45,8 @@ const deDE: TranslationMessages = {
             name: 'Session |||| Sessions',
             fields: {
                 name: 'Name',
-                type: 'Type',
-                mode: 'Mode',
+                session_type: 'Type',
+                session_mode: 'Mode',
                 related_model: {
                     label: 'Verwandtes Modell',
                     provider_name: 'Anbieter',
@@ -195,9 +195,8 @@ const deDE: TranslationMessages = {
         total_resource: 'Anzahl der %{resource}',
         favorite_resources: 'Bevorzugte Prompts und Assistenten',
         files: 'Files',
-        collections: 'Collections',
         details: 'Details',
-        samples: 'Samples',
+        session_info: 'Session Info',
         session: {
             new: 'Neuer Chat',
         },
