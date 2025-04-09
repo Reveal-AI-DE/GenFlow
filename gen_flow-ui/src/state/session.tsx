@@ -57,7 +57,7 @@ export const SessionState: FC<SessionStateProps> = ({
     }
 
     const fetchInitialData = async (): Promise<void> => {
-        switch(session.type) {
+        switch(session.session_type) {
             case SessionType.LLM:
                 setFloatActions([
                     SessionFloatActionKey.SETTINGS,

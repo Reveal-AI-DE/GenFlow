@@ -8,6 +8,7 @@ import { ShowBase, useTranslate, Identifier } from 'react-admin';
 
 import { Dialog, DialogProps } from '@/common';
 import SessionCard from '@/session/show/SessionCard';
+import SessionUsageCard from '@/session/show/SessionUsageCard';
 import SessionShowButton from '@/session/show/SessionShowButton';
 
 type SessionShowDialogProps = {
@@ -56,7 +57,9 @@ const SessionShowDialog: FC<SessionShowDialogProps> = ({
                                 md: 12,
                                 lg: 6
                             }}
-                        />
+                        >
+                            <SessionUsageCard />
+                        </Grid>
                     </Grid>
                 )}
                 dialogAction={() => (

@@ -11,6 +11,23 @@ export enum SessionType {
     LLM = 'llm',
 };
 
+export interface SessionDailyUsage {
+    day: string;
+    total_messages: number;
+    total_price: number;
+}
+
+export interface SessionUsage {
+    total_messages: number;
+    total_input_tokens: number;
+    total_output_tokens: number;
+    total_price: number;
+    total_input_price: number;
+    total_output_price: number;
+    currency: string;
+    per_day: SessionDailyUsage[];
+}
+
 export interface Session extends RaRecord {
     name: string;
     session_type: string;
@@ -18,6 +35,7 @@ export interface Session extends RaRecord {
     related_model?: ModelConfigWithEntity;
     created_at?: string;
     updated_at?: string;
+    usage?: SessionUsage;
 };
 
 export interface GenerateRequest {

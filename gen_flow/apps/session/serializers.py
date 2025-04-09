@@ -2,11 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 
-from functools import reduce
+from typing import List
 
 from django.db import transaction
 from rest_framework import serializers
+import pandas as pd
 
+from gen_flow.apps.ai.llm.entities import Usage
 from gen_flow.apps.team.serializers import BasicUserSerializer
 from gen_flow.apps.core.config.llm_model_bundle import LLMModelBundle
 from gen_flow.apps.core.serializers import ProviderModelConfigReadSerializer, ProviderModelConfigWriteSerializer
@@ -23,6 +25,53 @@ class SessionReadSerializer(serializers.ModelSerializer):
     related_model = ProviderModelConfigReadSerializer(required=False)
     related_prompt = PromptReadSerializer(required=False)
     owner = BasicUserSerializer()
+    usage = serializers.SerializerMethodField()
+
+    def get_usage(self, instance: Session):
+        usage = {
+            'total_messages': 0,
+            'total_input_tokens': 0,
+            'total_output_tokens': 0,
+            'total_price': 0,
+            'total_input_price': 0,
+            'total_output_price': 0,
+            'currency': 'USD',
+            'per_day': []
+        }
+        # Check if there are any messages in the session
+        count = instance.sessionmessage_set.count()
+        if count == 0:
+            return usage
+
+        # Convert the list of dictionaries to a DataFrame
+        df = pd.DataFrame(instance.get_usage())
+
+        # Calculate the total usage
+        usage['total_messages'] = count
+        usage['total_input_tokens'] = df['input_tokens'].sum()
+        usage['total_output_tokens'] = df['output_tokens'].sum()
+        usage['total_price'] = df['total_price'].sum()
+
+        # Calculate the total input/output price
+        usage['total_input_price'] = df.apply(
+            lambda row: row['input_tokens'] * row['input_unit_price'] * row['input_price_unit'], axis=1
+        ).sum()
+        usage['total_output_price'] = df.apply(
+            lambda row: row['output_tokens'] * row['output_unit_price'] * row['output_price_unit'], axis=1
+        ).sum()
+
+        # Calculate the per day usage
+        per_day = df.groupby(df['created_date'].dt.date).agg(
+            total_messages=('input_tokens', 'count'),
+            total_price=('total_price', 'sum')
+        ).reset_index()
+        per_day['created_date'] = pd.to_datetime(per_day['created_date'])
+        per_day['day'] = per_day['created_date'].dt.strftime('%Y-%m-%d')
+        per_day = per_day.drop(columns=['created_date'])
+        per_day = per_day.to_dict(orient='records')
+        usage['per_day'] = per_day
+
+        return usage
 
     class Meta:
         '''
@@ -31,7 +80,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
 
         model = Session
         fields = ('id', 'name', 'session_type', 'session_mode', 'related_model',
-            'related_prompt', 'created_date', 'updated_date', 'owner')
+            'related_prompt', 'created_date', 'updated_date', 'owner', 'usage')
 
 
 class SessionWriteSerializer(serializers.ModelSerializer):

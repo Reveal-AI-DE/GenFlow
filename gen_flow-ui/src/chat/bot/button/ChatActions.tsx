@@ -11,12 +11,13 @@ import InfoIcon from '@mui/icons-material/Info';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import AddCommentIcon from '@mui/icons-material/AddComment';
+import ElectricMeterIcon from '@mui/icons-material/ElectricMeter';
 import { useTranslate } from 'react-admin';
 
 import { Popover } from '@/common';
 import { SessionFloatActionKey } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
-import { SessionCard } from '@/session';
+import { SessionCard, SessionUsageCard } from '@/session';
 
 const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
     position: 'absolute',
@@ -72,16 +73,40 @@ const ChatActions: FC<ChatActionsProps> = () => {
                 )
             }
             {
+                floatActions.includes(SessionFloatActionKey.USAGE) && (
+                    <Popover
+                        component='fab'
+                        componentProps={{
+                            icon: <ElectricMeterIcon />,
+                            tooltipTitle: translate('label.chat.usage'),
+                            open,
+                        }}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <Box minWidth='320px' padding={2}>
+                            <SessionUsageCard />
+                        </Box>
+                    </Popover>
+                )
+            }
+            {
                 floatActions.includes(SessionFloatActionKey.NEW) && (
                     <SpeedDialAction
-                        key={translate('label.session.new')}
+                        key={translate('label.new')}
                         icon={<AddCommentIcon sx={{transform: 'scaleX(-1)'}} />}
                         slotProps={{
                             tooltip: {
-                                title: translate('label.session.new'),
+                                title: translate('label.new'),
                             },
                             fab: {
-                                href: '/#',
+                                href: '/#/new',
                             }
                         }}
                     />
