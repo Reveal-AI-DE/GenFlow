@@ -325,7 +325,7 @@ class ProviderModelConfigReadSerializer(serializers.ModelSerializer):
             data['entity'] = model_data
             parameter_configs = self.get_model_parameter_configs(instance)
             parameter_configs_data = [ConfigurationEntitySerializer(parameter_config).data for parameter_config in parameter_configs]
-            data['entity']['parameter_rules'] = parameter_configs_data
+            data['entity']['parameter_configs'] = parameter_configs_data
 
         return data
 
