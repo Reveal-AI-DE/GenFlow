@@ -8,6 +8,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from gen_flow.apps.team.models import TeamRole
 from gen_flow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from gen_flow.apps.prompt.models import Prompt
 from gen_flow.apps.prompt.tests.utils import create_prompt_group, PROMPT_GROUP_DATA
 
 
@@ -23,12 +24,16 @@ class PromptGroupTestCase(APITestCase):
         team = cls.regular_users[0]['teams'][0]['team']
         user = cls.regular_users[0]['user']
         data = PROMPT_GROUP_DATA.copy()
-        cls.prompt_group = create_prompt_group(team=team, owner=user, data=data)
+        cls.prompt_group = create_prompt_group(
+            team=team,
+            owner=user,
+            data=data
+        )
 
 
 class PromptGroupCreateTestCase(PromptGroupTestCase):
     def create_prompt_group(self, user, data, team_id=None) -> HTTPResponse:
-        url = f'/api/prompt-groups?team={team_id}' if team_id else '/api/prompt-groups'
+        url = f'/api/prompt/groups?team={team_id}' if team_id else '/api/prompt/groups'
         with ForceLogin(user, self.client):
             response = self.client.post(url, data, format='json')
         return response
@@ -73,7 +78,7 @@ class PromptGroupRetrieveTestCase(PromptGroupTestCase):
         cls.create_prompt_group()
 
     def retrieve_prompt_group(self, user, group_id, team_id=None) -> HTTPResponse:
-        url = f'/api/prompt-groups/{group_id}?team={team_id}' if team_id else f'/api/prompt-groups/{group_id}'
+        url = f'/api/prompt/groups/{group_id}?team={team_id}' if team_id else f'/api/prompt/groups/{group_id}'
         with ForceLogin(user, self.client):
             response = self.client.get(url)
         return response
@@ -119,7 +124,7 @@ class PromptGroupDeleteTestCase(PromptGroupTestCase):
         self.create_prompt_group()
 
     def delete_prompt_group(self, user, group_id, team_id=None) -> HTTPResponse:
-        url = f'/api/prompt-groups/{group_id}?team={team_id}' if team_id else f'/api/prompt-groups/{group_id}'
+        url = f'/api/prompt/groups/{group_id}?team={team_id}' if team_id else f'/api/prompt/groups/{group_id}'
         with ForceLogin(user, self.client):
             response = self.client.delete(url)
         return response
@@ -162,7 +167,7 @@ class PromptGroupUpdateTestCase(PromptGroupTestCase):
         cls.create_prompt_group()
 
     def update_prompt_group(self, user, group_id, data, team_id=None) -> HTTPResponse:
-        url = f'/api/prompt-groups/{group_id}?team={team_id}' if team_id else f'/api/prompt-groups/{group_id}'
+        url = f'/api/prompt/groups/{group_id}?team={team_id}' if team_id else f'/api/prompt/groups/{group_id}'
         with ForceLogin(user, self.client):
             response = self.client.patch(url, data, format='json')
         return response
@@ -224,7 +229,7 @@ class PromptGroupListTestCase(PromptGroupTestCase):
         cls.create_prompt_group()
 
     def list_prompt_groups(self, user, team_id=None) -> HTTPResponse:
-        url = f'/api/prompt-groups?team={team_id}' if team_id else '/api/prompt-groups'
+        url = f'/api/prompt/groups?team={team_id}' if team_id else '/api/prompt/groups'
         with ForceLogin(user, self.client):
             response = self.client.get(url)
             return response

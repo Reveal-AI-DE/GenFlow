@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils.text import get_valid_filename
 
 from gen_flow.apps.common.models import TimeAuditModel, UserOwnedModel, TeamAssociatedModel
-from gen_flow.apps.core.models import ProviderModelConfig
+from gen_flow.apps.core.models import EntityGroup, ProviderModelConfig
 
 
 def get_prompt_media_path(instance: 'Prompt', filename: str) -> str:
@@ -41,28 +41,6 @@ class PromptStatus(models.TextChoices):
     PUBLISHED = 'published'
 
 
-class PromptGroup(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
-    '''
-    Represents a group of prompts with associated metadata.
-
-    Attributes:
-        name (str): The name of the prompt group, limited to 255 characters.
-        description (str): A detailed description of the prompt group.
-        color (str): A color code associated with the prompt group, stored as a string with a maximum length of 9 characters.
-    '''
-
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    color = models.CharField(max_length=9)
-
-    def __str__(self) -> str:
-        '''
-        Returns the name of the prompt group as its string representation.
-        '''
-
-        return self.name
-
-
 class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     '''
     Represents a Prompt entity with various attributes and relationships.
@@ -88,7 +66,7 @@ class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     type = models.CharField(max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE)
     status = models.CharField(max_length=10, choices=PromptStatus.choices, default=PromptStatus.DRAFTED)
     avatar = models.ImageField(upload_to=get_prompt_media_path, null=True, blank=True)
-    group = models.ForeignKey(PromptGroup, null=False, on_delete=models.CASCADE)
+    group = models.ForeignKey(EntityGroup, null=False, on_delete=models.CASCADE)
     related_model = models.OneToOneField(ProviderModelConfig, null=True, on_delete=models.CASCADE)
     related_test_session = models.IntegerField(null=True)
     is_pinned = models.BooleanField(default=False)

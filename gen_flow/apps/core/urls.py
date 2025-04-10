@@ -28,7 +28,7 @@ urlpatterns = [
    # entry point for API
    path('api/', include(router.urls)),
 
-      # Custom route for ProviderModelView to accept IDs with dots
-   re_path(r'^api/models/(?P<pk>[\w\.-]+)/$', AIModelViewSet.as_view({'get': 'retrieve'}), name='model-detail'),
+   # Custom route for AIModelViewSet to accept IDs with dots
+   re_path(r'^api/models/(?P<pk>[\w\.-]+)$', AIModelViewSet.as_view({'get': 'retrieve'}), name='model-detail'),
    re_path(r'^api/models/(?P<pk>[\w\.-]+)/parameter_config$', AIModelViewSet.as_view({'get': 'parameter_config'}), name='model-detail'),
 ]

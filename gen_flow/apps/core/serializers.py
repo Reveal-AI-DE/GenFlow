@@ -16,9 +16,45 @@ from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity
 from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.team.models import Team
-from gen_flow.apps.core.models import Provider, ProviderModelConfig
+from gen_flow.apps.core.models import Provider, ProviderModelConfig, EntityGroup
 from gen_flow.apps.core.config.entities import ModelWithProviderEntity, AIProviderConfiguration
 from gen_flow.apps.core.config.provider_service import AIProviderConfigurationService
+
+
+class EntityGroupReadSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for reading EntityGroup data, to be used by get actions.
+    '''
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = EntityGroup
+        fields = ['id', 'name', 'description', 'color', 'entity_type']
+
+
+class EntityGroupWriteSerializer(serializers.ModelSerializer):
+    '''
+    Serializer for writing EntityGroup data, to be used by post/patch actions.
+    '''
+
+    class Meta:
+        '''
+        Defines the model and fields to be serialized.
+        '''
+
+        model = EntityGroup
+        fields = ['name', 'description', 'color']
+
+    def to_representation(self, instance: EntityGroup) -> dict:
+        '''
+        Converts the given instance into its serialized representation.
+        '''
+
+        serializer = EntityGroupReadSerializer(instance, context=self.context)
+        return serializer.data
 
 
 class CommonAIProviderEntitySerializer(serializers.BaseSerializer):

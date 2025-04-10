@@ -27,7 +27,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
     owner = BasicUserSerializer()
     usage = serializers.SerializerMethodField()
 
-    def get_usage(self, instance: Session):
+    def get_usage(self, instance: Session) -> dict:
         usage = {
             'total_messages': 0,
             'total_input_tokens': 0,

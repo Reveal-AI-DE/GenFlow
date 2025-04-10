@@ -290,7 +290,7 @@ class AIModelViewSet(
         serializer = ModelWithProviderEntitySerializer(models, many=True)
         return Response({'results': serializer.data, 'count': len(serializer.data)})
 
-    def retrieve(self, request, pk: str=None) -> Response:
+    def retrieve(self, request, pk=None) -> Response:
         '''
         Retrieves a model based on the provided model name and provider name.
         '''
