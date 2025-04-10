@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
+import { RaRecord } from 'react-admin';
+
 export interface MetaParams {
     queryParams?: {
         [key: string]: string;
@@ -73,6 +75,12 @@ export interface ObjectConfigurationEntity extends ConfigurationEntity {
 
 export enum ModelType {
     LLM = 'llm',
+};
+
+export interface Group extends RaRecord {
+    name: string;
+    description: string;
+    color: string;
 };
 
 export interface FileEntity {
