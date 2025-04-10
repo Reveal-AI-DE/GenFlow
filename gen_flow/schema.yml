@@ -691,6 +691,195 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/prompt/groups:
+    get:
+      operationId: prompt_groups_list
+      description: List all groups
+      summary: List groups
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEntityGroupReadList'
+          description: ''
+    post:
+      operationId: prompt_groups_create
+      description: Create a new group
+      summary: Create a group
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+  /api/prompt/groups/{id}:
+    get:
+      operationId: prompt_groups_retrieve
+      description: Get details of a group
+      summary: Get group details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+    put:
+      operationId: prompt_groups_update
+      description: Provides CRUD operations for the EntityGroup model associated with
+        prompts.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupWrite'
+          description: ''
+    patch:
+      operationId: prompt_groups_partial_update
+      description: Update an existing group
+      summary: Update a group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - prompt-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+    delete:
+      operationId: prompt_groups_destroy
+      description: Delete an existing group
+      summary: Delete a group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - prompt-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The group has been deleted
   /api/prompts:
     get:
       operationId: prompts_list
@@ -943,195 +1132,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PromptRead'
           description: ''
-  /api/prompts/groups:
-    get:
-      operationId: prompts_groups_list
-      description: List all groups
-      summary: List groups
-      parameters:
-      - name: X-Team
-        in: header
-        description: Team identifier
-        schema:
-          type: string
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: page_size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
-      - name: team
-        in: query
-        description: Team identifier
-        schema:
-          type: integer
-      tags:
-      - prompt-groups
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/vnd.gen_flow+json:
-              schema:
-                $ref: '#/components/schemas/PaginatedEntityGroupReadList'
-          description: ''
-    post:
-      operationId: prompts_groups_create
-      description: Create a new group
-      summary: Create a group
-      tags:
-      - prompt-groups
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EntityGroupWriteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/EntityGroupWriteRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '201':
-          content:
-            application/vnd.gen_flow+json:
-              schema:
-                $ref: '#/components/schemas/EntityGroupRead'
-          description: ''
-  /api/prompts/groups/{id}:
-    get:
-      operationId: prompts_groups_retrieve
-      description: Get details of a group
-      summary: Get group details
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this entity group.
-        required: true
-      tags:
-      - prompt-groups
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/vnd.gen_flow+json:
-              schema:
-                $ref: '#/components/schemas/EntityGroupRead'
-          description: ''
-    put:
-      operationId: prompts_groups_update
-      description: Provides CRUD operations for the EntityGroup model associated with
-        prompts.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this entity group.
-        required: true
-      tags:
-      - prompt-groups
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EntityGroupWriteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/EntityGroupWriteRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/vnd.gen_flow+json:
-              schema:
-                $ref: '#/components/schemas/EntityGroupWrite'
-          description: ''
-    patch:
-      operationId: prompts_groups_partial_update
-      description: Update an existing group
-      summary: Update a group
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this entity group.
-        required: true
-      tags:
-      - prompt-groups
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '200':
-          content:
-            application/vnd.gen_flow+json:
-              schema:
-                $ref: '#/components/schemas/EntityGroupRead'
-          description: ''
-    delete:
-      operationId: prompts_groups_destroy
-      description: Delete an existing group
-      summary: Delete a group
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this entity group.
-        required: true
-      tags:
-      - prompt-groups
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      - basicAuth: []
-      responses:
-        '204':
-          description: The group has been deleted
   /api/providers:
     get:
       operationId: providers_list
@@ -1524,6 +1524,12 @@ paths:
       operationId: sessions_create
       description: Create a new session with the given data.
       summary: Create a session
+      parameters:
+      - in: query
+        name: testing
+        schema:
+          type: boolean
+        description: Whether the created session is a prompt test session.
       tags:
       - sessions
       requestBody:
