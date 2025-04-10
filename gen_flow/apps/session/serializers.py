@@ -113,7 +113,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         '''
 
         model = Session
-        fields = ('name', 'session_type', 'related_model', 'related_prompt')
+        fields = ('name', 'session_type', 'session_mode', 'related_model', 'related_prompt')
 
     def validate(self, data) -> dict:
         '''

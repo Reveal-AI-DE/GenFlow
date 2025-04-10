@@ -15,10 +15,11 @@ from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 from gen_flow.apps.team.middleware import HttpRequestWithIamContext
+from gen_flow.apps.prompt.models import Prompt
 from gen_flow.apps.session import permissions as perms
 from gen_flow.apps.session.models import Session, SessionMessage
 from gen_flow.apps.session.serializers import (SessionReadSerializer, SessionWriteSerializer,
-    SessionMessageReadSerializer, SessionMessageWriteSerializer)
+    SessionMessageReadSerializer)
 
 @extend_schema(tags=['sessions'])
 @extend_schema_view(
@@ -32,6 +33,15 @@ from gen_flow.apps.session.serializers import (SessionReadSerializer, SessionWri
     create=extend_schema(
         summary='Create a session',
         description='Create a new session with the given data.',
+        parameters=[
+            OpenApiParameter(
+                'testing',
+                description='Whether the created session is a prompt test session.',
+                location=OpenApiParameter.QUERY,
+                type=OpenApiTypes.BOOL,
+                required=False,
+            ),
+        ],
         request=SessionWriteSerializer,
         responses={
             201: SessionReadSerializer,
@@ -92,12 +102,25 @@ class SessionViewSet(viewsets.ModelViewSet):
             queryset = perm.filter(queryset)
         return queryset
 
-    def perform_create(self, serializer):
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        db_session = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        # It is a prompt test session
+        testing = request.query_params.get('testing', False)
+        db_prompt: Prompt = db_session.related_prompt
+        if testing and db_prompt is not None:
+            db_prompt.related_test_session = db_session.id
+            db_prompt.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer) -> Session:
         '''
         Saves a new Session instance, associating it with the current user and team.
         '''
         request = cast(HttpRequestWithIamContext, self.request)
-        serializer.save(
+        return serializer.save(
             owner=self.request.user,
             team=request.iam_context.team,
         )
