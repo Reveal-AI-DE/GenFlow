@@ -32,14 +32,21 @@ const StyledTextareaAutosize = styled(BaseTextareaAutosize, {
 }));
 
 interface TextareaAutosizeProps {
-    formControlProps?: FormControlProps;
-    inputProps?: InputProps;
+    formControlProps: FormControlProps;
+    inputProps: InputProps;
     variant?: 'standard' | 'outlined' | 'filled';
 };
 
 const TextareaAutosize: FC<TextareaAutosizeProps> = ({
     formControlProps, inputProps, variant
 }) => {
+    const {
+        startAdornment,
+        endAdornment,
+        placeholder,
+        ...rest
+    } = inputProps;
+
     let input;
     switch(variant) {
         case 'standard':
@@ -62,7 +69,10 @@ const TextareaAutosize: FC<TextareaAutosizeProps> = ({
             input = (
                 <OutlinedInput
                     inputComponent={StyledTextareaAutosize}
-                    {...inputProps}
+                    startAdornment={startAdornment}
+                    endAdornment={endAdornment}
+                    placeholder={placeholder}
+                    inputProps={rest as React.InputHTMLAttributes<HTMLTextAreaElement>}
                 />
             )
     }

@@ -77,7 +77,6 @@ const ChatInput: FC<ChatInputProps> = ({
                     maxRows: 4,
                     placeholder: translate('label.ask'),
                     value: userInput,
-                    multiline: true,
                     onCompositionStart: () => setIsTyping(true),
                     onCompositionEnd: () => setIsTyping(false),
                     onChange: (e) => handleInputChange(e.target.value),

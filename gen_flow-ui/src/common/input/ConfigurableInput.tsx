@@ -176,7 +176,18 @@ const ConfigurableInput: FC<ConfigurableInputProps> = ({
         }
         case ConfigurationType.TEXT: {
             return (
-                <TextareaAutosize />
+                <TextareaAutosize
+                    formControlProps={{}}
+                    inputProps={{
+                        minRows: 1,
+                        maxRows: 4,
+                        onChange: ((e) => {
+                            if (onChange) {
+                                onChange(e.target.value, configurationEntity);
+                            }
+                        })
+                    }}
+                />
             );
         }
         case ConfigurationType.OBJECT: {

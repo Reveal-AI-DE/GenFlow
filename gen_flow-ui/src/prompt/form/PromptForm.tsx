@@ -9,7 +9,7 @@ import {
 } from 'react-admin';
 
 import { ModelType } from '@/types';
-import { ImageInput } from '@/common';
+import { ExpandableTextInput, ImageInput } from '@/common';
 import { ModelSelectInput } from '@/provider/model';
 import { GroupSelectInput } from '@/group';
 
@@ -43,12 +43,10 @@ const PromptSetupForm: FC<PromptSetupFormProps> = () => (
             multiline
             rows={2}
         />
-        <TextInput
+        <ExpandableTextInput
             source='pre_prompt'
             variant='outlined'
             validate={required()}
-            multiline
-            rows={4}
         />
         <ArrayInput
             source='suggested_questions'

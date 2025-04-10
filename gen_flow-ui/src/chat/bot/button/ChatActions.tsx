@@ -19,12 +19,25 @@ import { SessionFloatActionKey } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
 import { SessionCard, SessionUsageCard } from '@/session';
 
-const StyledSpeedDial = styled(SpeedDial)(({ theme }) => ({
+const StyledSpeedDial = styled(SpeedDial, {
+    name: 'GFChatActions',
+    slot: 'root',
+})(({ theme }) => ({
     position: 'absolute',
     '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
         top: theme.spacing(2),
         right: theme.spacing(2),
     },
+}));
+
+const StyledBox = styled(Box, {
+    name: 'GFChatActions',
+    slot: 'popover-content',
+})(({ theme }) => ({
+    minWidth: '320px',
+    maxWidth: '700px',
+    maxHeight: '80vh',
+    padding: theme.spacing(2),
 }));
 
 type ChatActionsProps = object;
@@ -66,9 +79,9 @@ const ChatActions: FC<ChatActionsProps> = () => {
                             horizontal: 'right',
                         }}
                     >
-                        <Box minWidth='320px' maxWidth='700px' padding={2}>
+                        <StyledBox>
                             <SessionCard />
-                        </Box>
+                        </StyledBox>
                     </Popover>
                 )
             }
@@ -90,9 +103,9 @@ const ChatActions: FC<ChatActionsProps> = () => {
                             horizontal: 'right',
                         }}
                     >
-                        <Box minWidth='320px' padding={2}>
+                        <StyledBox>
                             <SessionUsageCard />
-                        </Box>
+                        </StyledBox>
                     </Popover>
                 )
             }
