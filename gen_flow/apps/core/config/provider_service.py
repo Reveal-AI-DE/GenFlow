@@ -196,7 +196,7 @@ class AIProviderConfigurationService:
 
     @staticmethod
     def get_model_collection_bundle(provider_name: str, queryset: Optional[QuerySet[Provider]] = None,
-            db_provider: Optional[Provider] = None, model_type:  Optional[str] = 'llm'
+            db_provider: Optional[Provider] = None, model_type:  Optional[str] = ModelType.LLM.value
         ) -> ModelCollectionBundle:
         '''
         Retrieves the model collection bundle for the given provider name.
