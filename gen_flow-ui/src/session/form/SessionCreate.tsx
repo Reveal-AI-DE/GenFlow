@@ -13,7 +13,7 @@ import {
     required, AutocompleteInput,
 } from 'react-admin';
 
-import { SessionType, Session } from '@/types';
+import { SessionType, Session, ModelType } from '@/types';
 import { ModelSelectInput } from '@/provider/model';
 import { getChoicesFromEnum } from '@/utils';
 
@@ -38,7 +38,7 @@ const SelectRelated: FC = () => {
                 label={false}
                 variant='outlined'
                 validate={required()}
-                filter={{ model_type: 'llm', enabled_only: true }}
+                filter={{ model_type: ModelType.LLM, enabled_only: true }}
             />
         );
     }

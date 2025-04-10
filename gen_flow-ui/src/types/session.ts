@@ -6,6 +6,7 @@ import { RaRecord } from 'react-admin'
 
 import { FileEntity } from '@/types/common';
 import { ModelConfigWithEntity, Parameters } from '@/types/model';
+import { Prompt } from '@/types/prompt';
 
 export enum SessionType {
     LLM = 'llm',
@@ -33,6 +34,7 @@ export interface Session extends RaRecord {
     session_type: string;
     session_mode: string;
     related_model?: ModelConfigWithEntity;
+    related_prompt?: Prompt | undefined;
     created_at?: string;
     updated_at?: string;
     usage?: SessionUsage;

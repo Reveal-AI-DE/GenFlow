@@ -13,7 +13,7 @@ import { themes, ThemeName, Theme } from './Themes';
 
 const ucFirst = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-const themeswapper = (): JSX.Element => {
+const themeSwapper = (): JSX.Element => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
@@ -64,4 +64,4 @@ const themeswapper = (): JSX.Element => {
     );
 };
 
-export default themeswapper;
+export default themeSwapper;

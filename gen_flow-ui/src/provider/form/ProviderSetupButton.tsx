@@ -4,7 +4,7 @@
 
 import React, { FC } from 'react';
 import {
-    CreateBase, EditBase, Form, useNotify,
+    CreateBase, EditBase, useNotify,
     useTranslate, useLocale, useRecordContext,
 } from 'react-admin';
 
@@ -60,38 +60,36 @@ const ProviderSetupButton: FC<ProviderSetupButtonProps> = () => {
             redirect={false}
             {...populateProps(aiProviderConfiguration.user_configuration?.active)}
         >
-            <Form>
-                <ButtonWithDialog
-                    label='action.setup'
-                    sx={{
-                        width: '100%',
-                    }}
-                    dialog={{
-                        title: translate('action.setup_name', {
-                            name: aiProviderConfiguration.label[locale] ?? aiProviderConfiguration.label.en_US
-                        }),
-                        maxWidth: 'sm',
-                        fullWidth: true,
-                        disableBackdropClick: true,
-                        ContentProps: {
-                            dividers: true,
-                        },
-                        dialogContent: (
-                            <ProviderSetupForm
-                                credentialForm={aiProviderConfiguration.credential_form || []}
+            <ButtonWithDialog
+                label='action.setup'
+                sx={{
+                    width: '100%',
+                }}
+                dialog={{
+                    title: translate('action.setup_name', {
+                        name: aiProviderConfiguration.label[locale] ?? aiProviderConfiguration.label.en_US
+                    }),
+                    maxWidth: 'sm',
+                    fullWidth: true,
+                    disableBackdropClick: true,
+                    ContentProps: {
+                        dividers: true,
+                    },
+                    dialogContent: (
+                        <ProviderSetupForm
+                            credentialForm={aiProviderConfiguration.credential_form || []}
+                        />
+                    ),
+                    dialogAction: (onClose) => (
+                        <>
+                            <ProviderHelp help={aiProviderConfiguration.help} />
+                            <ProviderSetupActions
+                                onClose={() => onClose && onClose({}, 'escapeKeyDown')}
                             />
-                        ),
-                        dialogAction: (onClose) => (
-                            <>
-                                <ProviderHelp help={aiProviderConfiguration.help} />
-                                <ProviderSetupActions
-                                    onClose={() => onClose && onClose({}, 'escapeKeyDown')}
-                                />
-                            </>
-                        )
-                    }}
-                />
-            </Form>
+                        </>
+                    )
+                }}
+            />
         </ProviderSetupRoot>
     );
 };

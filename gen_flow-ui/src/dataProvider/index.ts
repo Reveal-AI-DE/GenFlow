@@ -6,6 +6,7 @@ import { DataProvider } from 'react-admin';
 
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
 import { modelDataProvider } from '@/provider/model';
+import { promptDataProvider } from '@/prompt';
 import { systemDataProvider } from '@/system';
 import { userDataProvider } from '@/user';
 
@@ -21,6 +22,10 @@ const providers: Providers = {
         ...defaultDataProvider,
         ...modelDataProvider
     },
+    prompts: {
+        ...defaultDataProvider,
+        ...promptDataProvider
+    },
     'prompt-groups': defaultDataProvider,
     providers: defaultDataProvider,
     sessions: defaultDataProvider,
@@ -33,7 +38,10 @@ type DataProviderMethod = (resource: string, params: any) => any;
 
 const createMethod = (method: string): DataProviderMethod => (resource: string, params: any) => {
     if (providers[resource] && typeof providers[resource][method] === 'function') {
-        return providers[resource][method](resource, params);
+        // if the resource has the pattern prefix-resource
+        // then we need to convert it to prefix/resource
+        const convertResource = resource.includes('-') ? resource.replace('-', '/') : resource;
+        return providers[resource][method](convertResource, params);
     }
     throw new Error(`Method ${method} not found on provider for resource ${resource}`);
 };

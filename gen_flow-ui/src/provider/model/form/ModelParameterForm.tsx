@@ -21,10 +21,6 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
     source = 'related_model.config.parameters',
 }) => {
     const modelName = useWatch({ name: modelInputName });
-    if (!modelName) {
-        return null;
-    }
-
     const [configs, setConfigs] = useState<ConfigurationEntity[]>([]);
     const dataProvider = useDataProvider();
 
@@ -48,6 +44,10 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
             fetchConfigurations();
         }
     }, [modelName]);
+
+    if (!modelName) {
+        return null;
+    }
 
     if (configs.length === 0) {
         return null;

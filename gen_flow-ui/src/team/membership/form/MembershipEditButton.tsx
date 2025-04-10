@@ -5,7 +5,7 @@
 import React, { FC } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-    useTranslate, Form, EditBase, useRecordContext,
+    useTranslate, EditBase, useRecordContext,
 } from 'react-admin';
 
 import { Membership } from '@/types';
@@ -29,35 +29,33 @@ const MembershipEditButton: FC<MembershipEditButtonProps> = () => {
             id={membership.id}
             mutationMode='pessimistic'
         >
-            <Form>
-                <ButtonWithDialog
-                    label=''
-                    startIcon={<EditIcon />}
-                    size='small'
-                    sx={{ minWidth: 'auto' }}
-                    dialog={{
-                        title: translate(
-                            'label.edit_member_dialog',
-                            {
-                                username: membership.user.username
-                            }),
-                        maxWidth: 'xs',
-                        fullWidth: true,
-                        disableBackdropClick: true,
-                        ContentProps: {
-                            dividers: true,
-                        },
-                        dialogContent: (
-                            <MembershipForm />
-                        ),
-                        dialogAction: (onClose) => (
-                            <MembershipFormActions
-                                onClose={onClose}
-                            />
-                        ),
-                    }}
-                />
-            </Form>
+            <ButtonWithDialog
+                label=''
+                startIcon={<EditIcon />}
+                size='small'
+                sx={{ minWidth: 'auto' }}
+                dialog={{
+                    title: translate(
+                        'label.edit_member_dialog',
+                        {
+                            username: membership.user.username
+                        }),
+                    maxWidth: 'xs',
+                    fullWidth: true,
+                    disableBackdropClick: true,
+                    ContentProps: {
+                        dividers: true,
+                    },
+                    dialogContent: (
+                        <MembershipForm />
+                    ),
+                    dialogAction: (onClose) => (
+                        <MembershipFormActions
+                            onClose={onClose}
+                        />
+                    ),
+                }}
+            />
         </EditBase>
 
     );

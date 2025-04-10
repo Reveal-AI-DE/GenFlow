@@ -2,8 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
-import GroupField from '@/group/show/GroupField';
+import GroupField, { GroupFieldSlot } from '@/group/show/GroupField';
 
 export {
     GroupField,
+    GroupFieldSlot,
 };

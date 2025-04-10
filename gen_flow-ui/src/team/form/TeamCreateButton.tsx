@@ -5,7 +5,7 @@
 import React, { FC } from 'react';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import {
-    useTranslate, CreateBase, Form,
+    useTranslate, CreateBase,
 } from 'react-admin';
 
 import { Team } from '@/types';
@@ -22,29 +22,27 @@ const TeamCreateButton: FC<TeamCreateButtonProps> = () => {
         <CreateBase<Team>
             redirect={false}
         >
-            <Form>
-                <ButtonWithDialog
-                    label='action.new_team'
-                    startIcon={<GroupAddIcon />}
-                    dialog={{
-                        title: translate('action.new_team'),
-                        maxWidth: 'sm',
-                        fullWidth: true,
-                        disableBackdropClick: true,
-                        ContentProps: {
-                            dividers: true,
-                        },
-                        dialogContent: (
-                            <TeamForm />
-                        ),
-                        dialogAction: (onClose) => (
-                            <TeamFormActions
-                                onClose={onClose}
-                            />
-                        ),
-                    }}
-                />
-            </Form>
+            <ButtonWithDialog
+                label='action.new_team'
+                startIcon={<GroupAddIcon />}
+                dialog={{
+                    title: translate('action.new_team'),
+                    maxWidth: 'sm',
+                    fullWidth: true,
+                    disableBackdropClick: true,
+                    ContentProps: {
+                        dividers: true,
+                    },
+                    dialogContent: (
+                        <TeamForm />
+                    ),
+                    dialogAction: (onClose) => (
+                        <TeamFormActions
+                            onClose={onClose}
+                        />
+                    ),
+                }}
+            />
         </CreateBase>
     );
 };

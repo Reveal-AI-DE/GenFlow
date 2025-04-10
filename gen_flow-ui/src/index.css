@@ -4,10 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }

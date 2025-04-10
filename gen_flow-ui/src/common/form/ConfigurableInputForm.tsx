@@ -54,6 +54,7 @@ const ConfigurableInputForm: FC<ConfigurableInputFormProps> = ({
                                 key={index}
                                 size={{
                                     xs: 12,
+                                    xl: 6,
                                 }}
                             >
                                 {renderParameter(config)}

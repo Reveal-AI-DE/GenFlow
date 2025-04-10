@@ -20,7 +20,7 @@ import { SessionContext, SessionContextInterface } from '@/context';
 import { truncateText } from '@/utils';
 import { WithTooltip, CircularProgress } from '@/common';
 
-export const Root = styled(Box, {
+const Root = styled(Box, {
     name: 'GFAttachment',
     slot: 'root',
 })(() => ({
@@ -30,7 +30,7 @@ export const Root = styled(Box, {
     flexGrow: 1,
 }));
 
-export const StyledBox = styled(Box, {
+const StyledBox = styled(Box, {
     name: 'GFAttachment',
     slot: 'content',
 })(() => ({
@@ -39,7 +39,7 @@ export const StyledBox = styled(Box, {
     alignItems: 'center',
 }));
 
-export const StyledTypography = styled(Typography, {
+const StyledTypography = styled(Typography, {
     name: 'GFAttachment',
     slot: 'title',
 })(({ theme }) => ({

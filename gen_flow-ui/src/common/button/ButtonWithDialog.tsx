@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import { useTranslate, Button, ButtonProps } from 'react-admin';
 
-import { Dialog, DialogProps } from '../layout';
+import { FormDialog, DialogProps } from '../layout';
 
 interface ButtonWithDialogProps extends ButtonProps {
     dialog: Omit<DialogProps, 'open' | 'onClose'> & {
@@ -54,7 +54,7 @@ const ButtonWithDialog: FC<ButtonWithDialogProps> = ({
                 startIcon={startIcon}
                 {...props}
             />
-            <Dialog
+            <FormDialog
                 onClose={(event, reason) => onClose(reason)}
                 open={open}
                 title={title}

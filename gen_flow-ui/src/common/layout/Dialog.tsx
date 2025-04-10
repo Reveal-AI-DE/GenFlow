@@ -25,20 +25,9 @@ import DialogActions,
 {
     DialogActionsProps as MuiDialogActionsProps
 } from '@mui/material/DialogActions';
+import { Form } from 'react-admin';
 
-export const StyledDialog = styled(MuiDialog, {
-    name: 'GFDialog',
-    slot: 'root',
-})(({ theme }) => ({
-    '& .MuiDialogContent-root': {
-        padding: theme.spacing(2),
-    },
-    '& .MuiDialogActions-root': {
-        padding: theme.spacing(1),
-    },
-}));
-
-export const StyledDialogTitle = styled(DialogTitle, {
+const StyledDialogTitle = styled(DialogTitle, {
     name: 'GFDialog',
     slot: 'title',
 })(({ theme }) => ({
@@ -49,7 +38,7 @@ export const StyledDialogTitle = styled(DialogTitle, {
     paddingBottom: theme.spacing(1),
 }));
 
-export const StyledIconButton = styled(IconButton, {
+const StyledIconButton = styled(IconButton, {
     name: 'GFDialog',
     slot: 'close-icon',
 })(({ theme }) => ({
@@ -58,6 +47,48 @@ export const StyledIconButton = styled(IconButton, {
     top: 8,
     color: theme.palette.grey[500],
 }));
+
+interface DialogViewProps {
+    title: string | ReactNode;
+    dialogContent: ReactNode;
+    dialogAction?: (onClose: MuiDialogProps['onClose']) => ReactNode;
+    ContentProps?: MuiDialogContentProps;
+    ActionsProps?: MuiDialogActionsProps;
+    onClose: MuiDialogProps['onClose']
+};
+
+const DialogView: FC<DialogViewProps> = ({
+    title,
+    dialogContent,
+    dialogAction,
+    ContentProps,
+    ActionsProps,
+    onClose,
+}) => (
+    <>
+        <StyledDialogTitle
+            id='dialog-title'
+        >
+            {title}
+        </StyledDialogTitle>
+        <StyledIconButton
+            aria-label='close'
+            onClick={() => onClose && onClose({}, 'escapeKeyDown')}
+        >
+            <CloseIcon />
+        </StyledIconButton>
+        <DialogContent {...ContentProps}>
+            {dialogContent}
+        </DialogContent>
+        {
+            dialogAction && (
+                <DialogActions {...ActionsProps}>
+                    {dialogAction(onClose)}
+                </DialogActions>
+            )
+        }
+    </>
+);
 
 export interface DialogProps extends Omit<MuiDialogProps, 'title'> {
     title: string | ReactNode;
@@ -82,27 +113,42 @@ const Dialog: FC<DialogProps> = ({
         open={open}
         {...rest}
     >
-        <StyledDialogTitle
-            id='dialog-title'
-        >
-            {title}
-        </StyledDialogTitle>
-        <StyledIconButton
-            aria-label='close'
-            onClick={() => onClose && onClose({}, 'escapeKeyDown')}
-        >
-            <CloseIcon />
-        </StyledIconButton>
-        <DialogContent {...ContentProps}>
-            {dialogContent}
-        </DialogContent>
-        {
-            dialogAction && (
-                <DialogActions {...ActionsProps}>
-                    {dialogAction(onClose)}
-                </DialogActions>
-            )
-        }
+        <DialogView
+            title={title}
+            dialogContent={dialogContent}
+            dialogAction={dialogAction}
+            ContentProps={ContentProps}
+            ActionsProps={ActionsProps}
+            onClose={onClose}
+        />
+    </MuiDialog>
+);
+
+export const FormDialog: FC<DialogProps> = ({
+    onClose,
+    open,
+    title,
+    dialogContent,
+    dialogAction,
+    ContentProps,
+    ActionsProps,
+    ...rest
+}) => (
+    <MuiDialog
+        onClose={onClose}
+        open={open}
+        {...rest}
+    >
+        <Form>
+            <DialogView
+                title={title}
+                dialogContent={dialogContent}
+                dialogAction={dialogAction}
+                ContentProps={ContentProps}
+                ActionsProps={ActionsProps}
+                onClose={onClose}
+            />
+        </Form>
     </MuiDialog>
 );
 

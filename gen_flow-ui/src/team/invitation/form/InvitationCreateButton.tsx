@@ -5,7 +5,7 @@
 import React, { FC } from 'react';
 import RsvpIcon from '@mui/icons-material/Rsvp';
 import {
-    useTranslate, CreateBase, Form, useRecordContext,
+    useTranslate, CreateBase, useRecordContext,
 } from 'react-admin';
 
 import { ButtonWithDialog } from '@/common';
@@ -35,29 +35,27 @@ const InvitationCreateButton: FC<InvitationCreateButtonProps> = () => {
             resource='invitations'
             mutationOptions={{ meta: meta as any }}
         >
-            <Form>
-                <ButtonWithDialog
-                    label='action.invite'
-                    startIcon={<RsvpIcon />}
-                    dialog={{
-                        title: translate('label.invite'),
-                        maxWidth: 'xs',
-                        fullWidth: true,
-                        disableBackdropClick: true,
-                        ContentProps: {
-                            dividers: true,
-                        },
-                        dialogContent: (
-                            <InvitationForm />
-                        ),
-                        dialogAction: (onClose) => (
-                            <InvitationFormActions
-                                onClose={onClose}
-                            />
-                        ),
-                    }}
-                />
-            </Form>
+            <ButtonWithDialog
+                label='action.invite'
+                startIcon={<RsvpIcon />}
+                dialog={{
+                    title: translate('label.invite'),
+                    maxWidth: 'xs',
+                    fullWidth: true,
+                    disableBackdropClick: true,
+                    ContentProps: {
+                        dividers: true,
+                    },
+                    dialogContent: (
+                        <InvitationForm />
+                    ),
+                    dialogAction: (onClose) => (
+                        <InvitationFormActions
+                            onClose={onClose}
+                        />
+                    ),
+                }}
+            />
         </CreateBase>
     );
 };

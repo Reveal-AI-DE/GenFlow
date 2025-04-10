@@ -5,10 +5,22 @@
 import React, { FC } from 'react';
 import clsx from 'clsx';
 import FormControl , { FormControlProps } from '@mui/material/FormControl';
+import Stack from '@mui/material/Stack';
 import Slider, { SliderProps } from '@mui/material/Slider';
+import Chip from '@mui/material/Chip';
+import { styled } from '@mui/material/styles';
 import {
     CommonInputProps, useInput, sanitizeInputRestProps, InputHelperText, FieldTitle
 } from 'react-admin';
+import { Typography } from '@mui/material';
+
+const ValueContainer = styled(Chip, {
+    name: 'GFSliderInput',
+    slot: 'value',
+})(({ theme }) => ({
+    marginLeft: theme.spacing(1),
+    padding: theme.spacing(0, 1),
+}));
 
 const SliderInput: FC<SliderInputProps> = ({
     className,
@@ -28,6 +40,7 @@ const SliderInput: FC<SliderInputProps> = ({
     variant,
     readOnly,
     disabled,
+    InputProps,
     ...rest
 }) => {
     const {
@@ -84,6 +97,11 @@ const SliderInput: FC<SliderInputProps> = ({
     const renderHelperText = helperText !== false || invalid;
     const { ref, ...fieldWithoutRef } = field;
 
+    const {
+        startAdornment,
+        endAdornment,
+    } = InputProps;
+
     return (
         <FormControl
             className={clsx('ra-input', `ra-input-${source}`, className)}
@@ -94,28 +112,53 @@ const SliderInput: FC<SliderInputProps> = ({
             {...sanitizeInputRestProps(rest)}
         >
             <FieldTitle
-                label={`${label} ${sliderValue}`}
+                label={(
+                    <Typography
+                        variant='body1'
+                        component='span'
+                        color='text.secondary'
+                        className='RaLabeled-label'
+                    >
+                        {label}
+                        <ValueContainer
+                            label={sliderValue}
+                            size='small'
+                            variant='outlined'
+                            color='primary'
+                        />
+                    </Typography>
+                )}
                 source={source}
                 resource={resource}
                 isRequired={isRequired}
             />
-            <Slider
-                id={id}
-                {...fieldWithoutRef}
-                ref={ref}
-                name={field.name}
-                min={min}
-                max={max}
-                step={step}
-                value={sliderValue}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                aria-labelledby='slider-label'
-                size='small'
-                valueLabelDisplay='auto'
-                sx={{ width: '90%' }}
-            />
+            <Stack
+                spacing={2}
+                direction='row'
+                sx={{
+                    alignItems: 'center',
+                    mb: 1
+                }}
+            >
+                {startAdornment}
+                <Slider
+                    id={id}
+                    {...fieldWithoutRef}
+                    ref={ref}
+                    name={field.name}
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={sliderValue}
+                    onChange={handleChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    aria-labelledby='slider-label'
+                    size='small'
+                    valueLabelDisplay='auto'
+                />
+                {endAdornment}
+            </Stack>
             {
                 renderHelperText ? (
                     <InputHelperText
@@ -132,6 +175,7 @@ type SliderInputProps = CommonInputProps &
     Omit<SliderProps, 'defaultValue'> &
     FormControlProps & {
         options?: SliderProps;
+        InputProps?: any;
     };
 
 export default SliderInput;

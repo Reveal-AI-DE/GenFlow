@@ -22,7 +22,7 @@ import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
 import { MessageResourceProps } from '@/message';
 import { ModelResourceProps } from '@/provider/model';
-import { PromptGroupResourceProps } from '@/prompt';
+import { PromptGroupResourceProps, PromptResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
 import { SessionResourceProps } from '@/session';
@@ -79,6 +79,9 @@ const App = (): JSX.Element => {
             />
             <Resource
                 {...PromptGroupResourceProps}
+            />
+            <Resource
+                {...PromptResourceProps}
             />
             <Resource
                 {...ProviderResourceProps}

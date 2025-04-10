@@ -4,7 +4,7 @@
 
 import CircularProgress from '@/common/layout/CircularProgress';
 import ControlledAccordion from '@/common/layout/ControlledAccordion';
-import Dialog, { DialogProps } from '@/common/layout/Dialog';
+import Dialog, { DialogProps, FormDialog } from '@/common/layout/Dialog';
 import Popover from '@/common/layout/Popover';
 import PagePlaceholder from '@/common/layout/PagePlaceholder';
 import TabsController, { TabItems } from '@/common/layout/TabsController';
@@ -14,6 +14,7 @@ export {
     CircularProgress,
     ControlledAccordion,
     Dialog,
+    FormDialog,
     Popover,
     PagePlaceholder,
     TabsController,

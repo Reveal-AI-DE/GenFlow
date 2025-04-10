@@ -4,12 +4,12 @@
 
 import React, { FC } from 'react';
 import {
-    Form, useTranslate,
+    useTranslate,
     useGetResourceLabel,
     useResourceContext,
 } from 'react-admin';
 
-import { Dialog } from '@/common';
+import { FormDialog } from '@/common';
 import GroupForm from '@/group/form/GroupForm';
 import GroupFormActions from '@/group/form/GroupFormActions';
 
@@ -30,24 +30,21 @@ const GroupFormDialog: FC<PromptGroupFormDialogProps> = ({
     ) : '';
 
     return (
-        // TODO: <form> cannot appear as a descendant of <form>.
-        <Form>
-            <Dialog
-                open={open}
-                onClose={onClose}
-                title={title}
-                maxWidth='sm'
-                dialogContent={(
-                    <GroupForm />
-                )}
-                dialogAction={() => (
-                    <GroupFormActions
-                        onClose={onClose}
-                    />
-                )}
-                fullWidth
-            />
-        </Form>
+        <FormDialog
+            open={open}
+            onClose={onClose}
+            title={title}
+            maxWidth='sm'
+            dialogContent={(
+                <GroupForm />
+            )}
+            dialogAction={() => (
+                <GroupFormActions
+                    onClose={onClose}
+                />
+            )}
+            fullWidth
+        />
     );
 };
 

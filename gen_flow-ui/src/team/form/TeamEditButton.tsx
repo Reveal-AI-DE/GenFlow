@@ -5,7 +5,7 @@
 import React, { FC } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-    useTranslate, EditBase, Form, useRecordContext,
+    useTranslate, EditBase, useRecordContext,
 } from 'react-admin';
 
 import { Team } from '@/types';
@@ -31,29 +31,27 @@ const TeamEditButton: FC<TeamEditButtonProps> = () => {
             mutationMode='pessimistic'
             redirect={false}
         >
-            <Form>
-                <ButtonWithDialog
-                    label='ra.action.edit'
-                    startIcon={<EditIcon />}
-                    dialog={{
-                        title: translate('label.edit_team', { name: record?.name }),
-                        maxWidth: 'sm',
-                        fullWidth: true,
-                        disableBackdropClick: true,
-                        ContentProps: {
-                            dividers: true,
-                        },
-                        dialogContent: (
-                            <TeamForm />
-                        ),
-                        dialogAction: (onClose) => (
-                            <TeamFormActions
-                                onClose={onClose}
-                            />
-                        ),
-                    }}
-                />
-            </Form>
+            <ButtonWithDialog
+                label='ra.action.edit'
+                startIcon={<EditIcon />}
+                dialog={{
+                    title: translate('label.edit_team', { name: record?.name }),
+                    maxWidth: 'sm',
+                    fullWidth: true,
+                    disableBackdropClick: true,
+                    ContentProps: {
+                        dividers: true,
+                    },
+                    dialogContent: (
+                        <TeamForm />
+                    ),
+                    dialogAction: (onClose) => (
+                        <TeamFormActions
+                            onClose={onClose}
+                        />
+                    ),
+                }}
+            />
         </EditBase>
     );
 };
