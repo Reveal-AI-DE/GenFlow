@@ -46,11 +46,11 @@ const ModelConfigCard: FC<ModelConfigCardProps> = () => {
                 modelConfigWithEntity.entity.parameter_configs && (
                     <FunctionField
                         source='related_model.config.parameters'
-                        render={() => modelConfigWithEntity.entity.parameter_configs && (
+                        render={(record: ModelConfigWithEntity) => record.entity.parameter_configs && (
                             <ModelParameters
                                 namePrefix='related_model.config.parameters'
-                                parameterConfigs={modelConfigWithEntity.entity.parameter_configs}
-                                parameters={modelConfigWithEntity.config.parameters}
+                                parameterConfigs={record.entity.parameter_configs}
+                                parameters={record.config.parameters}
                             />
                         )}
                     />

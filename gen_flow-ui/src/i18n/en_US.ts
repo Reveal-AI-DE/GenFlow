@@ -238,6 +238,7 @@ const enUS: TranslationMessages = {
         upload: 'Upload',
         finish: 'Finish',
         publish: 'Publish',
+        unpublish: 'Unpublish',
         invite: 'Invite',
         new_team: 'New Team',
         create: 'Create',

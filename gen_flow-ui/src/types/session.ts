@@ -10,7 +10,13 @@ import { Prompt } from '@/types/prompt';
 
 export enum SessionType {
     LLM = 'llm',
+    PROMPT = 'prompt',
 };
+
+export enum SessionMode {
+    CHAT = 'chat',
+    COMPLETION = 'completion',
+}
 
 export interface SessionDailyUsage {
     day: string;
@@ -31,8 +37,8 @@ export interface SessionUsage {
 
 export interface Session extends RaRecord {
     name: string;
-    session_type: string;
-    session_mode: string;
+    session_type: SessionType;
+    session_mode: SessionMode;
     related_model?: ModelConfigWithEntity;
     related_prompt?: Prompt | undefined;
     created_at?: string;

@@ -8,6 +8,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import promptDataProvider from '@/prompt/promptDataProvider';
 import { PromptList } from '@/prompt/list';
 import { PromptInterface } from '@/prompt/form';
+import { PromptInfo } from '@/prompt/show';
 
 const PromptGroupResourceProps: ResourceProps = {
     name: 'prompt-groups',
@@ -25,4 +26,5 @@ export {
     PromptGroupResourceProps,
     PromptResourceProps,
     promptDataProvider,
+    PromptInfo,
 };

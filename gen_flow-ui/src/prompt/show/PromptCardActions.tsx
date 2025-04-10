@@ -9,11 +9,12 @@ import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
-    useRecordContext, useCreatePath, Link, useDataProvider,
-    useRedirect, useTranslate, DeleteWithConfirmButton,
+    useRecordContext, useCreatePath, Link,
+    useDataProvider, useRedirect, useTranslate,
+    DeleteWithConfirmButton,
 } from 'react-admin';
 
-import { Prompt, TeamRole, } from '@/types';
+import { Prompt, PromptStatus, TeamRole } from '@/types';
 import { GlobalContext, GlobalContextInterface } from '@/context';
 
 type PromptInfoCardActionsProps = object;
@@ -33,6 +34,9 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
     const isOwnerOrAdmin = currentMembership?.role === TeamRole.OWNER || currentMembership?.role === TeamRole.ADMIN;
 
     const OnUseClick = (): void => {
+        if (prompt.status !== PromptStatus.PUBLISHED) {
+            return;
+        }
         const data = {
             name: 'New Chat',
             session_type: 'prompt',
@@ -67,6 +71,7 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
                     size='small'
                     onClick={OnUseClick}
                     color='primary'
+                    disabled={prompt.status !== PromptStatus.PUBLISHED}
                 >
                     <TerminalIcon />
                 </IconButton>

@@ -31,6 +31,6 @@ export interface Prompt extends RaRecord {
     avatar: string;
     related_model: ModelConfigWithEntity;
     group_id: Identifier;
-    related_test_session: Identifier;
+    related_test_session: Identifier | undefined;
     is_pinned: boolean;
 };

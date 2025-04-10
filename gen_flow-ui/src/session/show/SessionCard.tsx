@@ -12,12 +12,13 @@ import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
 import {
     useRecordContext, DateField, useTranslate,
-    Labeled, RecordContextProvider,
+    Labeled, RecordContextProvider, ResourceContextProvider,
 } from 'react-admin';
 
 import { Session, SessionType } from '@/types';
 import { UserField } from '@/user';
 import { ModelConfigCard } from '@/provider/model';
+import { PromptInfo } from '@/prompt';
 import { SessionName } from '@/session/form';
 
 const StyledStack = styled(Stack, {
@@ -98,6 +99,15 @@ const SessionCard: FC<SessionCardProps> = () => {
                         <RecordContextProvider value={session.related_model}>
                             <ModelConfigCard />
                         </RecordContextProvider>
+                    )
+                }
+                {
+                    session.session_type === SessionType.PROMPT && (
+                        <ResourceContextProvider value='prompts'>
+                            <RecordContextProvider value={session.related_prompt}>
+                                <PromptInfo />
+                            </RecordContextProvider>
+                        </ResourceContextProvider>
                     )
                 }
                 <Divider />
