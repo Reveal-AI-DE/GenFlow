@@ -51,18 +51,20 @@ export interface ModelEntity extends ModelWithProviderEntity {
 
 export interface Parameters {
     [key: string]: number | string | boolean;
-}
+};
 
 export interface Config {
     parameters: Parameters
-}
+};
 
 export interface ModelConfig {
     provider_name: string;
     model_name: string;
     config: Config;
-}
+};
 
 export interface ModelConfigWithEntity extends ModelConfig {
     entity: ModelEntity;
-}
+};
+
+export type ChatModelSetting = Config;

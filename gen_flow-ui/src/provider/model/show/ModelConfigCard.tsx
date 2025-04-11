@@ -50,6 +50,7 @@ const ModelConfigCard: FC<ModelConfigCardProps> = () => {
                             <ModelParameters
                                 namePrefix='related_model.config.parameters'
                                 parameterConfigs={record.entity.parameter_configs}
+                                parameters={record.config.parameters}
                             />
                         )}
                     />

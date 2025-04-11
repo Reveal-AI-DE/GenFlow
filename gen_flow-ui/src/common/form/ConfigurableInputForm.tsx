@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import { useTranslate } from 'react-admin';
 
-import { ConfigurationEntity } from '@/types';
+import { ConfigurationEntity, Parameters } from '@/types';
 import {
     ControlledAccordion, ConfigurableInput,
     ConfigurableInputProps,
@@ -15,11 +15,13 @@ import {
 
 interface ConfigurableInputFormProps {
     parameterConfigs: ConfigurationEntity[],
+    parameters?: Parameters,
     onChange?: ConfigurableInputProps['onChange'],
 };
 
 const ConfigurableInputForm: FC<ConfigurableInputFormProps> = ({
     parameterConfigs,
+    parameters,
     onChange,
 }) => {
     if (!parameterConfigs || parameterConfigs.length === 0) {
@@ -37,7 +39,7 @@ const ConfigurableInputForm: FC<ConfigurableInputFormProps> = ({
     const renderParameter = (config: ConfigurationEntity): JSX.Element => (
         <ConfigurableInput
             configurationEntity={config}
-            defaultValue={config.default}
+            defaultValue={parameters ? parameters[config.name]:config.default}
             onChange={onChange}
         />
     )

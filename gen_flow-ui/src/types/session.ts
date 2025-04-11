@@ -5,8 +5,8 @@
 import { RaRecord } from 'react-admin'
 
 import { FileEntity } from '@/types/common';
-import { ModelConfigWithEntity, Parameters } from '@/types/model';
-import { Prompt } from '@/types/prompt';
+import { ModelConfigWithEntity, Parameters, ChatModelSetting } from '@/types/model';
+import { Prompt, ChatPromptSetting } from '@/types/prompt';
 
 export enum SessionType {
     LLM = 'llm',
@@ -58,3 +58,5 @@ export enum SessionFloatActionKey {
     USAGE = 'usage',
     NEW = 'new',
 };
+
+export type ChatSetting = ChatModelSetting | ChatPromptSetting;

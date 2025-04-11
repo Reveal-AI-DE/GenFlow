@@ -7,16 +7,18 @@ import Grid from '@mui/material/Grid2';
 import Stack from '@mui/material/Stack';
 import { Labeled, TextField, useLocale } from 'react-admin';
 
-import { ConfigurationEntity } from '@/types';
+import { ConfigurationEntity, Parameters } from '@/types';
 
 type ModelParametersProps = {
-    namePrefix?: string;
     parameterConfigs: ConfigurationEntity[];
+    parameters: Parameters;
+    namePrefix?: string;
 };
 
 const ModelParameters: FC<ModelParametersProps> = ({
-    namePrefix,
     parameterConfigs,
+    parameters,
+    namePrefix,
 }) => {
     const locale = useLocale();
     const configs = parameterConfigs
@@ -34,7 +36,7 @@ const ModelParameters: FC<ModelParametersProps> = ({
                 <TextField
                     source={source}
                     defaultValue={
-                        config.default as string
+                        parameters ? parameters[config.name] as string : config.default as string
                     }
                 />
             </Labeled>

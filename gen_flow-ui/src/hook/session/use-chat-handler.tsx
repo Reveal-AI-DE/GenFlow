@@ -26,6 +26,7 @@ const useChatHandler = (): ChatHandlerHook => {
     const {
         setUserInput,
         setIsGenerating,
+        chatSetting,
         setSessionMessages,
         sessionMessages,
         generateURL,
@@ -47,6 +48,7 @@ const useChatHandler = (): ChatHandlerHook => {
             const generateRequest = createGenerateRequest(
                 content,
                 files,
+                chatSetting,
             );
 
             // streaming

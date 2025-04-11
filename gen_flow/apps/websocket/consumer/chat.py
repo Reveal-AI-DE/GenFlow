@@ -84,8 +84,6 @@ class ChatGenerateConsumer(BaseConsumer):
                     'llm_model_bundle': self.generator.generate_entity.llm_model_bundle,
                 }
             )
-            serializer.is_valid(raise_exception=True)
-
             # call model
             session_message = await self.handle_request(serializer)
 
@@ -109,6 +107,7 @@ class ChatGenerateConsumer(BaseConsumer):
         Processes the validated request data, generates a response using the ChatGenerator,
             updates the session model parameters, and creates a SessionMessage instance.
         '''
+        serializer.is_valid(raise_exception=True)
 
         related_model_data = serializer.validated_data.pop('related_model', None)
 

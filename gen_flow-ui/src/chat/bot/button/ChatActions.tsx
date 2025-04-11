@@ -12,12 +12,14 @@ import HardwareIcon from '@mui/icons-material/Hardware';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import ElectricMeterIcon from '@mui/icons-material/ElectricMeter';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useTranslate } from 'react-admin';
 
 import { Popover } from '@/common';
 import { SessionFloatActionKey } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
 import { SessionCard, SessionUsageCard } from '@/session';
+import { ChatSettingForm } from '@/chat/form';
 
 const StyledSpeedDial = styled(SpeedDial, {
     name: 'GFChatActions',
@@ -61,6 +63,30 @@ const ChatActions: FC<ChatActionsProps> = () => {
             onOpen={handleOpen}
             open={open}
         >
+            {
+                floatActions.includes(SessionFloatActionKey.SETTINGS) && (
+                    <Popover
+                        component='fab'
+                        componentProps={{
+                            icon: <SettingsIcon />,
+                            tooltipTitle: translate('label.chat.settings.btn_label'),
+                            open,
+                        }}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <StyledBox>
+                            <ChatSettingForm />
+                        </StyledBox>
+                    </Popover>
+                )
+            }
             {
                 floatActions.includes(SessionFloatActionKey.INFO) && (
                     <Popover

@@ -4,7 +4,8 @@
 
 import { Dispatch, SetStateAction } from 'react';
 import {
-    SessionMessage, Session, FileEntity, GenerateRequest,
+    SessionMessage, Session, FileEntity, ChatSetting,
+    GenerateRequest, ChatModelSetting,
 } from '@/types';
 
 import { ResourceURL } from '@/utils/dataProvider';
@@ -43,10 +44,11 @@ export const createTemporaryMessage = (
 export const createGenerateRequest = (
     query: string,
     files: FileEntity[],
+    chatSetting: ChatSetting,
 ): GenerateRequest | null => ({
     query,
     files,
-    // TODO: add parameters
+    parameters: (chatSetting as ChatModelSetting).parameters,
 });
 
 export const createGenerateURL = (

@@ -34,3 +34,5 @@ export interface Prompt extends RaRecord {
     related_test_session: Identifier | undefined;
     is_pinned: boolean;
 };
+
+export type ChatPromptSetting = object;

@@ -9,8 +9,8 @@ import { BatchItem } from '@rpldy/uploady';
 import { useRecordContext, useDataProvider } from 'react-admin';
 
 import {
-    Session, SessionMessage, FileEntity, SessionFloatActionKey,
-    SessionType,
+    Session, SessionMessage, FileEntity,SessionFloatActionKey,
+    SessionType, ChatSetting, Parameters, ConfigurationEntity,
 } from '@/types';
 import { SessionContext } from '@/context';
 import { createGenerateURL } from '@/utils';
@@ -36,6 +36,7 @@ export const SessionState: FC<SessionStateProps> = ({
     const [userInput, setUserInput] = useState<string>('');
     const [attachedFile, setAttachedFile] = useState<BatchItem | undefined>(undefined);
     const [userFiles, setUserFiles] = useState<FileEntity[]>([]);
+    const [chatSetting, setChatSetting] = useState<ChatSetting>({});
     const [sessionMessages, setSessionMessages] = useState<SessionMessage[] | []>([]);
 
     const [isLoadingInitialData, setIsLoadingInitialData] = useState<boolean>(true);
@@ -54,7 +55,22 @@ export const SessionState: FC<SessionStateProps> = ({
             setSessionMessages(messages);
             if (useResponsiveLayout !== undefined) setIsResponsiveLayout(useResponsiveLayout);
         });
-    }
+    };
+
+    const initializeChatSetting = async (): Promise<void> => {
+        if (!session.related_model || !session.related_model.entity.parameter_configs) return;
+        // initialize chat setting
+        setChatSetting({
+            ...chatSetting,
+            parameters: session.related_model.entity.parameter_configs.reduce(
+                (parameters: Parameters, config: ConfigurationEntity) => {
+                    if (!Object.keys(parameters).includes(config.name)) {
+                        parameters[config.name] = config.default;
+                    }
+                    return parameters;
+                }, {})
+        });
+    };
 
     const fetchInitialData = async (): Promise<void> => {
         switch(session.session_type) {
@@ -76,6 +92,8 @@ export const SessionState: FC<SessionStateProps> = ({
             default:
                 break;
         }
+        // initialize chat setting
+        await initializeChatSetting();
         // get stored messages
         await fetchSessionMessages();
     };
@@ -95,7 +113,8 @@ export const SessionState: FC<SessionStateProps> = ({
         setAttachedFile,
         userFiles,
         setUserFiles,
-
+        chatSetting,
+        setChatSetting,
         sessionMessages,
         setSessionMessages,
 
@@ -108,6 +127,7 @@ export const SessionState: FC<SessionStateProps> = ({
     }), [
         isLoadingInitialData,
         userInput,
+        chatSetting,
         sessionMessages,
         isGenerating,
         attachedFile,

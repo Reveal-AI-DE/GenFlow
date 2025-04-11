@@ -26,7 +26,7 @@ const Root = styled(Box, {
     marginLeft: ownerState.isAssistant ? theme.spacing(2):0,
     marginBottom: ownerState.isLast ? theme.spacing(1):0,
     flexDirection: ownerState.isAssistant ? 'row':'row-reverse',
-    '& > *:not(:first-child)': {
+    '& > *:not(:first-of-type)': {
         marginLeft: ownerState.isAssistant ? theme.spacing(1):0,
         marginRight: ownerState.isAssistant ? 0:theme.spacing(1),
     },

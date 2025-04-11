@@ -52,7 +52,7 @@ export interface CommonConfigurationEntity {
 export interface ConfigurationEntity extends CommonConfigurationEntity {
     help?: TranslationEntity;
     placeholder?: TranslationEntity;
-    default?: string | number | boolean;
+    default?: any;
 };
 
 export interface NumberConfigurationEntity extends ConfigurationEntity {

@@ -5,7 +5,9 @@
 import { Dispatch, SetStateAction, createContext } from 'react';
 import { BatchItem } from '@rpldy/uploady';
 
-import { SessionMessage, FileEntity, SessionFloatActionKey } from '@/types';
+import {
+    SessionMessage, FileEntity, SessionFloatActionKey, ChatSetting,
+} from '@/types';
 
 export interface SessionContextInterface {
     generateURL: string | undefined,
@@ -16,6 +18,8 @@ export interface SessionContextInterface {
     setAttachedFile: Dispatch<SetStateAction<BatchItem | undefined>>,
     userFiles: FileEntity[],
     setUserFiles: Dispatch<SetStateAction<FileEntity[]>>,
+    chatSetting: ChatSetting,
+    setChatSetting: Dispatch<SetStateAction<ChatSetting>>,
     sessionMessages: SessionMessage[] | [],
     setSessionMessages: Dispatch<SetStateAction<SessionMessage[] | []>>
 
@@ -36,6 +40,8 @@ export const SessionContext = createContext<SessionContextInterface>({
     setAttachedFile: () => {},
     userFiles: [],
     setUserFiles: () => {},
+    chatSetting: {},
+    setChatSetting: () => {},
     sessionMessages: [],
     setSessionMessages: () => {},
 
