@@ -28,7 +28,7 @@ class OpenAIProvider(AIProvider):
         '''
 
         try:
-            model_collection_instance = self.get_model_collection_instance(ModelType.LLM)
+            model_collection_instance = self.get_model_collection_instance(model_type=ModelType.LLM.value)
 
             model_collection_instance.validate_credentials(model='gpt-3.5-turbo', credentials=credentials)
         except Exception as ex:

@@ -35,7 +35,9 @@
     "python.testing.cwd": "${workspaceFolder}/tests",
     "git.enableCommitSigning": true,
     "cSpell.words": [
+        "encrypter",
         "filterset",
+        "Uploady",
         "viewset",
         "viewsets"
     ],

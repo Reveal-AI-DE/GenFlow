@@ -7,45 +7,10 @@ import os
 from rest_framework import serializers
 from django.db import transaction
 
-from gen_flow.apps.core.models import ProviderModelConfig
-from gen_flow.apps.core.serializers import ProviderModelConfigReadSerializer, ProviderModelConfigWriteSerializer
-from gen_flow.apps.prompt.models import Prompt, PromptGroup
-
-
-class PromptGroupReadSerializer(serializers.ModelSerializer):
-    '''
-    Serializer for reading PromptGroup data, to be used by get actions.
-    '''
-
-    class Meta:
-        '''
-        Defines the model and fields to be serialized.
-        '''
-
-        model = PromptGroup
-        fields = ['id', 'name', 'description', 'color']
-
-
-class PromptGroupWriteSerializer(serializers.ModelSerializer):
-    '''
-    Serializer for writing PromptGroup data, to be used by post/patch actions.
-    '''
-
-    class Meta:
-        '''
-        Defines the model and fields to be serialized.
-        '''
-
-        model = PromptGroup
-        fields = ['name', 'description', 'color']
-
-    def to_representation(self, instance: PromptGroup) -> dict:
-        '''
-        Converts the given instance into its serialized representation.
-        '''
-
-        serializer = PromptGroupReadSerializer(instance, context=self.context)
-        return serializer.data
+from gen_flow.apps.core.models import EntityGroup, ProviderModelConfig
+from gen_flow.apps.core.serializers import (EntityGroupReadSerializer, ProviderModelConfigReadSerializer,
+    ProviderModelConfigWriteSerializer)
+from gen_flow.apps.prompt.models import Prompt
 
 
 class PromptReadSerializer(serializers.ModelSerializer):
@@ -54,7 +19,7 @@ class PromptReadSerializer(serializers.ModelSerializer):
     '''
 
     related_model = ProviderModelConfigReadSerializer()
-    group = PromptGroupReadSerializer()
+    group = EntityGroupReadSerializer()
 
     class Meta:
         '''
@@ -74,7 +39,7 @@ class PromptWriteSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigWriteSerializer()
     group_id = serializers.PrimaryKeyRelatedField(
-        queryset=PromptGroup.objects.none(),  # Default to none
+        queryset=EntityGroup.objects.none(),  # Default to none
         source='group'
     )
 
@@ -85,7 +50,10 @@ class PromptWriteSerializer(serializers.ModelSerializer):
             team = request.iam_context.team
             if team:
                 # Filter queryset based on the iam_context
-                self.fields['group_id'].queryset = PromptGroup.objects.filter(team=team)
+                self.fields['group_id'].queryset = EntityGroup.objects.filter(
+                    entity_type=self.Meta.model.__name__.lower(),
+                    team=team
+                )
 
     class Meta:
         model = Prompt

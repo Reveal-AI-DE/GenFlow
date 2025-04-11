@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from django.views.generic import RedirectView
 from django.conf import settings
@@ -27,4 +27,8 @@ urlpatterns = [
 
    # entry point for API
    path('api/', include(router.urls)),
+
+   # Custom route for AIModelViewSet to accept IDs with dots
+   re_path(r'^api/models/(?P<pk>[\w\.-]+)$', AIModelViewSet.as_view({'get': 'retrieve'}), name='model-detail'),
+   re_path(r'^api/models/(?P<pk>[\w\.-]+)/parameter_config$', AIModelViewSet.as_view({'get': 'parameter_config'}), name='model-detail'),
 ]

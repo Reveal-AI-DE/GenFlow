@@ -27,6 +27,30 @@ class AboutSystem(BaseModel):
     version: str
 
 
+class EntityGroup(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
+    '''
+    Represents a group with associated metadata, to be used for organizing different entities.
+
+    Attributes:
+        name (str): The name of the group, limited to 255 characters.
+        description (str): A detailed description of the group.
+        color (str): A color code associated with the group, stored as a string with a maximum length of 9 characters.
+        entity_type (str): The type of entity the group is associated with, limited to 50 characters.
+    '''
+
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    color = models.CharField(max_length=9)
+    entity_type = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        '''
+        Returns the name of the prompt group as its string representation.
+        '''
+
+        return self.name
+
+
 class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     '''
     Represents an AI service provider enabled by the user with associated credentials.

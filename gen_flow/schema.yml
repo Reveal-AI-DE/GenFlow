@@ -691,11 +691,11 @@ paths:
       responses:
         '200':
           description: No response body
-  /api/prompt-groups:
+  /api/prompt/groups:
     get:
       operationId: prompt_groups_list
-      description: List all prompt groups
-      summary: List prompt groups
+      description: List all groups
+      summary: List groups
       parameters:
       - name: X-Team
         in: header
@@ -742,22 +742,22 @@ paths:
           content:
             application/vnd.gen_flow+json:
               schema:
-                $ref: '#/components/schemas/PaginatedPromptGroupReadList'
+                $ref: '#/components/schemas/PaginatedEntityGroupReadList'
           description: ''
     post:
       operationId: prompt_groups_create
-      description: Create a new prompt group
-      summary: Create a prompt group
+      description: Create a new group
+      summary: Create a group
       tags:
       - prompt-groups
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PromptGroupWriteRequest'
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PromptGroupWriteRequest'
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
         required: true
       security:
       - tokenAuth: []
@@ -768,19 +768,19 @@ paths:
           content:
             application/vnd.gen_flow+json:
               schema:
-                $ref: '#/components/schemas/PromptGroupRead'
+                $ref: '#/components/schemas/EntityGroupRead'
           description: ''
-  /api/prompt-groups/{id}:
+  /api/prompt/groups/{id}:
     get:
       operationId: prompt_groups_retrieve
-      description: Get details of a prompt group
-      summary: Get prompt group details
+      description: Get details of a group
+      summary: Get group details
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this prompt group.
+        description: A unique integer value identifying this entity group.
         required: true
       tags:
       - prompt-groups
@@ -793,17 +793,18 @@ paths:
           content:
             application/vnd.gen_flow+json:
               schema:
-                $ref: '#/components/schemas/PromptGroupRead'
+                $ref: '#/components/schemas/EntityGroupRead'
           description: ''
     put:
       operationId: prompt_groups_update
-      description: Provides CRUD operations for the PromptGroup model.
+      description: Provides CRUD operations for the EntityGroup model associated with
+        prompts.
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this prompt group.
+        description: A unique integer value identifying this entity group.
         required: true
       tags:
       - prompt-groups
@@ -811,10 +812,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PromptGroupWriteRequest'
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PromptGroupWriteRequest'
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
         required: true
       security:
       - tokenAuth: []
@@ -825,18 +826,18 @@ paths:
           content:
             application/vnd.gen_flow+json:
               schema:
-                $ref: '#/components/schemas/PromptGroupWrite'
+                $ref: '#/components/schemas/EntityGroupWrite'
           description: ''
     patch:
       operationId: prompt_groups_partial_update
-      description: Update an existing prompt group
-      summary: Update a prompt group
+      description: Update an existing group
+      summary: Update a group
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this prompt group.
+        description: A unique integer value identifying this entity group.
         required: true
       tags:
       - prompt-groups
@@ -844,10 +845,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedPromptGroupWriteRequest'
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedPromptGroupWriteRequest'
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
       security:
       - tokenAuth: []
       - cookieAuth: []
@@ -857,18 +858,18 @@ paths:
           content:
             application/vnd.gen_flow+json:
               schema:
-                $ref: '#/components/schemas/PromptGroupRead'
+                $ref: '#/components/schemas/EntityGroupRead'
           description: ''
     delete:
       operationId: prompt_groups_destroy
-      description: Delete an existing prompt group
-      summary: Delete a prompt group
+      description: Delete an existing group
+      summary: Delete a group
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: A unique integer value identifying this prompt group.
+        description: A unique integer value identifying this entity group.
         required: true
       tags:
       - prompt-groups
@@ -878,7 +879,7 @@ paths:
       - basicAuth: []
       responses:
         '204':
-          description: The prompt group has been deleted
+          description: The group has been deleted
   /api/prompts:
     get:
       operationId: prompts_list
@@ -1523,6 +1524,12 @@ paths:
       operationId: sessions_create
       description: Create a new session with the given data.
       summary: Create a session
+      parameters:
+      - in: query
+        name: testing
+        schema:
+          type: boolean
+        description: Whether the created session is a prompt test session.
       tags:
       - sessions
       requestBody:
@@ -1835,6 +1842,24 @@ paths:
       responses:
         '204':
           description: The team has been deleted
+  /api/users/self:
+    get:
+      operationId: users_self_retrieve
+      description: Retrieve the details of the currently authenticated user.
+      summary: Get current user
+      tags:
+      - users
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.gen_flow+json:
+              schema:
+                $ref: '#/components/schemas/MetaUser'
+          description: ''
 components:
   schemas:
     AboutSystem:
@@ -1885,6 +1910,66 @@ components:
           maxLength: 150
       required:
       - username
+    EntityGroupRead:
+      type: object
+      description: Serializer for reading EntityGroup data, to be used by get actions.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        color:
+          type: string
+          maxLength: 9
+        entity_type:
+          type: string
+          maxLength: 50
+      required:
+      - color
+      - description
+      - entity_type
+      - name
+    EntityGroupWrite:
+      type: object
+      description: Serializer for writing EntityGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        color:
+          type: string
+          maxLength: 9
+      required:
+      - color
+      - description
+      - name
+    EntityGroupWriteRequest:
+      type: object
+      description: Serializer for writing EntityGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+          maxLength: 9
+      required:
+      - color
+      - description
+      - name
     InvitationRead:
       type: object
       description: |-
@@ -1981,6 +2066,33 @@ components:
           readOnly: true
       required:
       - user
+    MetaUser:
+      oneOf:
+      - $ref: '#/components/schemas/User'
+      - $ref: '#/components/schemas/BasicUser'
+    PaginatedEntityGroupReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityGroupRead'
     PaginatedInvitationReadList:
       type: object
       required:
@@ -2027,29 +2139,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MembershipRead'
-    PaginatedPromptGroupReadList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/PromptGroupRead'
     PaginatedPromptReadList:
       type: object
       required:
@@ -2189,6 +2278,22 @@ components:
           minLength: 1
       required:
       - email
+    PatchedEntityGroupWriteRequest:
+      type: object
+      description: Serializer for writing EntityGroup data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        color:
+          type: string
+          minLength: 1
+          maxLength: 9
     PatchedInvitationWriteRequest:
       type: object
       description: |-
@@ -2211,22 +2316,6 @@ components:
           type: boolean
         role:
           $ref: '#/components/schemas/RoleEnum'
-    PatchedPromptGroupWriteRequest:
-      type: object
-      description: Serializer for writing PromptGroup data, to be used by post/patch
-        actions.
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 255
-        description:
-          type: string
-          minLength: 1
-        color:
-          type: string
-          minLength: 1
-          maxLength: 9
     PatchedPromptWriteRequest:
       type: object
       description: Serializer for writing Prompt data, to be used by post/patch actions.
@@ -2288,62 +2377,6 @@ components:
           maxLength: 255
         description:
           type: string
-    PromptGroupRead:
-      type: object
-      description: Serializer for reading PromptGroup data, to be used by get actions.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          maxLength: 255
-        description:
-          type: string
-        color:
-          type: string
-          maxLength: 9
-      required:
-      - color
-      - description
-      - name
-    PromptGroupWrite:
-      type: object
-      description: Serializer for writing PromptGroup data, to be used by post/patch
-        actions.
-      properties:
-        name:
-          type: string
-          maxLength: 255
-        description:
-          type: string
-        color:
-          type: string
-          maxLength: 9
-      required:
-      - color
-      - description
-      - name
-    PromptGroupWriteRequest:
-      type: object
-      description: Serializer for writing PromptGroup data, to be used by post/patch
-        actions.
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 255
-        description:
-          type: string
-          minLength: 1
-        color:
-          type: string
-          minLength: 1
-          maxLength: 9
-      required:
-      - color
-      - description
-      - name
     PromptRead:
       type: object
       description: Serializer for reading Prompt data, to be used by get actions.
@@ -2369,7 +2402,7 @@ components:
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigRead'
         group:
-          $ref: '#/components/schemas/PromptGroupRead'
+          $ref: '#/components/schemas/EntityGroupRead'
         group_id:
           type: integer
           readOnly: true
@@ -2681,6 +2714,10 @@ components:
           readOnly: true
         owner:
           $ref: '#/components/schemas/BasicUser'
+        usage:
+          type: object
+          additionalProperties: {}
+          readOnly: true
       required:
       - name
       - owner
@@ -2820,6 +2857,67 @@ components:
       description: |-
         * `simple` - Simple
         * `advanced` - Advanced
+    User:
+      type: object
+      description: |-
+        Serializer for the User model tha returns a serialized representation
+        of the User model with the all fields and their associated groups.
+
+        Attributes:
+            groups (SlugRelatedField): A field that represents the user's groups using the
+                group's name as the slug field. It allows multiple groups to be associated
+                with a user.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        groups:
+          type: array
+          items:
+            type: string
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - groups
+      - username
   securitySchemes:
     basicAuth:
       type: http

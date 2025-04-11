@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: MIT
 
+from typing import Dict, List, Any
 from os import path as osp
 
 from django.db import models
 from django.conf import settings
 
 from gen_flow.apps.common.models import TimeAuditModel, UserOwnedModel, TeamAssociatedModel
+from gen_flow.apps.ai.llm.entities import Usage
 from gen_flow.apps.core.models import ProviderModelConfig
 from gen_flow.apps.prompt.models import Prompt
 
@@ -62,6 +64,23 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         full_path = osp.join(settings.SESSIONS_ROOT, str(self.id))
         return osp.relpath(full_path, settings.BASE_DIR)
 
+    def get_usage(self) -> List[Dict[str, Any]]:
+        '''
+        Returns the usage data as a list of objects with the message creation date
+        '''
+        data = []
+        messages: List[SessionMessage] = self.sessionmessage_set.all()
+        for message in messages:
+            if message.usage is not None:
+                item = {
+                    'created_date': message.created_date,
+                }
+                usage = message.get_usage()
+                for key, value in usage.model_dump().items():
+                    item[key] = value
+                data.append(item)
+        return data
+
 
 class SessionMessage(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     '''
@@ -83,3 +102,14 @@ class SessionMessage(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     answer = models.TextField(null=True, blank=True)
     usage = models.JSONField(null=True, blank=True)
     session = models.ForeignKey(Session, null=False, on_delete=models.CASCADE)
+
+
+    def get_usage(self) -> Usage:
+        '''
+        Returns the usage data as a dictionary.
+        If usage is None, returns an empty dictionary.
+        '''
+
+        if self.usage is None:
+            return {}
+        return Usage.model_validate_json(json_data=self.usage)

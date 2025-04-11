@@ -66,7 +66,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         '''
 
         # get model mode
-        model_mode = self.get_model_mode(model)
+        model_mode = self.get_model_mode(model=model)
 
         if model_mode == LLMMode.CHAT:
             # chat model
@@ -177,7 +177,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         if stream:
             extra_model_kwargs['stream_options'] = {'include_usage': True}
         # get model mode
-        model_mode = self.get_model_mode(model, credentials)
+        model_mode = self.get_model_mode(model=model)
 
         if model_mode == LLMMode.CHAT:
             # chat model
@@ -296,8 +296,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
                     )
 
                 new_messages.append(message)
+            messages = new_messages
 
-        return new_messages
+        return messages
 
     def _process_chat_completions_stream_response(
         self,

@@ -5,7 +5,8 @@
 from django.contrib.auth.models import User
 
 from gen_flow.apps.team.models import Team
-from gen_flow.apps.prompt.models import PromptGroup, Prompt
+from gen_flow.apps.core.models import EntityGroup
+from gen_flow.apps.prompt.models import Prompt
 
 
 PROMPT_GROUP_DATA = {
@@ -34,10 +35,11 @@ PROVIDER_DATA = {
 }
 
 
-def create_prompt_group(team: Team, owner: User, data: dict) -> PromptGroup:
-    prompt_group = PromptGroup.objects.create(
+def create_prompt_group(team: Team, owner: User, data: dict) -> EntityGroup:
+    prompt_group = EntityGroup.objects.create(
         team=team,
         owner=owner,
+        entity_type=Prompt.__name__.lower(),
         **data
     )
     return prompt_group
