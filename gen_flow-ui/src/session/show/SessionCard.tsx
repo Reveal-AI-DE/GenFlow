@@ -85,6 +85,55 @@ const SessionCard: FC<SessionCardProps> = () => {
         return null;
     }
 
+    const translate = useTranslate();
+
+    const renderRelatedModel = (): JSX.Element => (session.related_model ?
+        (
+            <RecordContextProvider value={session.related_model}>
+                <ModelConfigCard />
+            </RecordContextProvider>
+        ) : (
+            <span>
+                {translate(
+                    'message.related_deleted',
+                    {
+                        resource: translate('resources.models.name', {smart_count: 1})
+                    }
+                )}
+            </span>
+        )
+    );
+
+    const renderRelatedPrompt = (): JSX.Element => (session.related_prompt ?
+        (
+            <ResourceContextProvider value='prompts'>
+                <RecordContextProvider value={session.related_prompt}>
+                    <PromptInfo />
+                </RecordContextProvider>
+            </ResourceContextProvider>
+        ) : (
+            <span>
+                {translate(
+                    'message.related_deleted',
+                    {
+                        resource: translate('resources.prompts.name', {smart_count: 1})
+                    }
+                )}
+            </span>
+        )
+    );
+
+    const renderRelatedInfo = (): JSX.Element | null => {
+        switch (session.session_type) {
+            case SessionType.LLM:
+                return renderRelatedModel();
+            case SessionType.PROMPT:
+                return renderRelatedPrompt();
+            default:
+                return null;
+        }
+    };
+
     return (
         <StyledCard>
             <CardHeader
@@ -95,22 +144,8 @@ const SessionCard: FC<SessionCardProps> = () => {
             />
             <CardContent>
                 {
-                    session.session_type === SessionType.LLM && (
-                        <RecordContextProvider value={session.related_model}>
-                            <ModelConfigCard />
-                        </RecordContextProvider>
-                    )
+                    renderRelatedInfo()
                 }
-                {
-                    session.session_type === SessionType.PROMPT && (
-                        <ResourceContextProvider value='prompts'>
-                            <RecordContextProvider value={session.related_prompt}>
-                                <PromptInfo />
-                            </RecordContextProvider>
-                        </ResourceContextProvider>
-                    )
-                }
-                <Divider />
             </CardContent>
         </StyledCard>
     );

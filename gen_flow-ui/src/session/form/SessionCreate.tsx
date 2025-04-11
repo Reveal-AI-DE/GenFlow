@@ -13,8 +13,11 @@ import {
     required, AutocompleteInput,
 } from 'react-admin';
 
-import { SessionType, Session, ModelType } from '@/types';
+import {
+    SessionType, Session, ModelType, PromptStatus,
+} from '@/types';
 import { ModelSelectInput } from '@/provider/model';
+import { PromptSelectInput } from '@/prompt';
 import { getChoicesFromEnum } from '@/utils';
 
 const SelectRelated: FC = () => {
@@ -39,6 +42,19 @@ const SelectRelated: FC = () => {
                 variant='outlined'
                 validate={required()}
                 filter={{ model_type: ModelType.LLM, enabled_only: true }}
+            />
+        );
+    }
+
+    if (sessionType === 'prompt') {
+        return (
+            <PromptSelectInput
+                source='related_prompt'
+                label={false}
+                disabled={!sessionType}
+                validate={required()}
+                filter={{ status: PromptStatus.PUBLISHED }}
+                sort={{ field: 'group__name', order: 'ASC' }}
             />
         );
     }

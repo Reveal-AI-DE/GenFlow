@@ -268,7 +268,8 @@ const deDE: TranslationMessages = {
         prompt: {
             start_test_title: 'Start der Testsitzung',
             start_test_content: 'um die Prompt zu überprüfen ...',
-        }
+        },
+        related_deleted: 'Verwandte %{resource} wurde gelöscht',
     },
     action: {
         test: 'Test',

@@ -66,6 +66,13 @@ export const SessionState: FC<SessionStateProps> = ({
                     SessionFloatActionKey.NEW,
                 ]);
                 break;
+            case SessionType.PROMPT:
+                setFloatActions([
+                    SessionFloatActionKey.INFO,
+                    SessionFloatActionKey.USAGE,
+                    SessionFloatActionKey.NEW,
+                ]);
+                break;
             default:
                 break;
         }

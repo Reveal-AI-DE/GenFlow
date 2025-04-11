@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 
 import { SessionContext } from '@/context';
 import { Message } from '@/message';
@@ -15,7 +15,7 @@ const SessionMessages: FC<SessionMessagesProps> = () => {
     return sessionMessages
         .sort((a, b) => a.sequence - b.sequence)
         .map((sessionMessage, index, array) => (
-            <>
+            <Fragment key={index}>
                 <Message
                     key={`${index}-user`}
                     isLast={false}
@@ -36,7 +36,7 @@ const SessionMessages: FC<SessionMessagesProps> = () => {
                         references: sessionMessage.references,
                     }}
                 />
-            </>
+            </Fragment>
         ));
 };
 

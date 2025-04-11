@@ -227,7 +227,8 @@ const enUS: TranslationMessages = {
         prompt: {
             start_test_title: 'Start Testing session',
             start_test_content: 'to verify the prompt ...',
-        }
+        },
+        related_deleted: 'Related %{resource} was deleted',
     },
     action: {
         test: 'Test',
