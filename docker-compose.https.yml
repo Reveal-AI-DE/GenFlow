@@ -1,0 +1,33 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+
+services:
+  gen_flow_server:
+    labels:
+      traefik.http.routers.gen_flow.entrypoints: websecure
+      traefik.http.routers.gen_flow.tls.certresolver: lets-encrypt
+
+  gen_flow_ui:
+    labels:
+      traefik.http.routers.gen_flow-ui.entrypoints: websecure
+      traefik.http.routers.gen_flow-ui.tls.certresolver: lets-encrypt
+
+  traefik:
+    environment:
+      TRAEFIK_ENTRYPOINTS_web_ADDRESS: :80
+      TRAEFIK_ENTRYPOINTS_web_HTTP_REDIRECTIONS_ENTRYPOINT_TO: websecure
+      TRAEFIK_ENTRYPOINTS_web_HTTP_REDIRECTIONS_ENTRYPOINT_SCHEME: https
+      TRAEFIK_ENTRYPOINTS_websecure_ADDRESS: :443
+      TRAEFIK_CERTIFICATESRESOLVERS_lets-encrypt_ACME_EMAIL: "${ACME_EMAIL:?Please set the ACME_EMAIL env variable}"
+      TRAEFIK_CERTIFICATESRESOLVERS_lets-encrypt_ACME_TLSCHALLENGE: "true"
+      TRAEFIK_CERTIFICATESRESOLVERS_lets-encrypt_ACME_STORAGE: /letsencrypt/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - gen_flow_letsencrypt:/letsencrypt
+
+volumes:
+  gen_flow_letsencrypt:
