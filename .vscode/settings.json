@@ -37,6 +37,8 @@
     "cSpell.words": [
         "encrypter",
         "filterset",
+        "letsencrypt",
+        "traefik",
         "Uploady",
         "viewset",
         "viewsets"
