@@ -28,7 +28,7 @@ platformdirs==4.3.7
     # via
     #   pylint
     #   pytoolconfig
-pycodestyle==2.12.1
+pycodestyle==2.13.0
     # via autopep8
 pylint==3.3.2
     # via

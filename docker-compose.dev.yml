@@ -1,0 +1,38 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+services:
+  gen_flow_db:
+    ports:
+      - '5432:5432'
+
+  gen_flow_server:
+    build:
+      context: .
+      args:
+        http_proxy:
+        https_proxy:
+        socks_proxy:
+        CLAM_AV:
+        GEN_FLOW_DEBUG_ENABLED:
+        COVERAGE_PROCESS_START:
+    environment:
+      # Use this with GEN_FLOW_DEBUG_ENABLED to avoid server response timeouts
+      GEN_FLOW_DEBUG_ENABLED: '${GEN_FLOW_DEBUG_ENABLED:-no}'
+      GEN_FLOW_DEBUG_PORT: '9090'
+      # If 'yes', wait for a debugger connection on startup
+      GEN_FLOW_DEBUG_WAIT: '${GEN_FLOW_DEBUG_WAIT_CLIENT:-no}'
+      COVERAGE_PROCESS_START:
+    ports:
+      - '9090:9090'
+
+  gen_flow_ui:
+    build:
+      context: .
+      args:
+        http_proxy:
+        https_proxy:
+        no_proxy:
+        socks_proxy:
+      dockerfile: Dockerfile.ui

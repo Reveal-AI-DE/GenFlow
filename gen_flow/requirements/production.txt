@@ -14,13 +14,13 @@ httptools==0.6.4
     # via uvicorn
 psycopg2-binary==2.9.10
     # via -r gen_flow/requirements/production.in
-python-dotenv==1.0.1
+python-dotenv==1.1.0
     # via uvicorn
 uvicorn[standard]==0.32.1
     # via -r gen_flow/requirements/production.in
 uvloop==0.21.0
     # via uvicorn
-watchfiles==1.0.4
+watchfiles==1.0.5
     # via uvicorn
 websockets==15.0.1
     # via uvicorn
