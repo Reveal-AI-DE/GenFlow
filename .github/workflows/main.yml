@@ -86,14 +86,14 @@ jobs:
         run: |
           docker load --input /tmp/genflow_server/image.tar
           docker run --rm "genflow/server:${GF_VERSION}" bash \
-            -c 'python manage.py spectacular' > genflow/schema-expected.yml
+            -c 'python manage.py spectacular' > gen_flow/schema-expected.yml
 
-          if ! git diff --no-index genflow/schema.yml genflow/schema-expected.yml; then
+          if ! git diff --no-index gen_flow/schema.yml gen_flow/schema-expected.yml; then
             echo
-            echo 'API schema has changed! Please update genflow/schema.yml:'
+            echo 'API schema has changed! Please update gen_flow/schema.yml:'
             echo
             echo '  docker run --rm genflow/server:dev bash \'
-            echo "    -c 'python manage.py spectacular' > genflow/schema.yml"
+            echo "    -c 'python manage.py spectacular' > gen_flow/schema.yml"
             exit 1
           fi
 
@@ -126,7 +126,7 @@ jobs:
           name: genflow_server
           path: /tmp/genflow_server/
 
-      - name: Load Docker server image
+      - name: Load Docker images
         run: |
           docker load --input /tmp/genflow_server/image.tar
           docker image ls -a
@@ -139,7 +139,7 @@ jobs:
           docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d genflow_server genflow_db
 
           docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml run genflow_ci /bin/bash \
-            -c 'coverage run -a manage.py test -v 2 genflow/apps && coverage json && mv coverage.json ${CONTAINER_COVERAGE_DATA_DIR}/unit_tests_coverage.json'
+            -c 'coverage run -a manage.py test -v 2 gen_flow/apps && coverage json && mv coverage.json ${CONTAINER_COVERAGE_DATA_DIR}/unit_tests_coverage.json'
 
       - name: Uploading code coverage results as an artifact
         uses: actions/upload-artifact@v4
