@@ -55,6 +55,7 @@ jobs:
         run: |
           mkdir /tmp/genflow_server
           mkdir /tmp/genflow_ui
+          mkdir /tmp/genflow_ci
 
       - name: GF server. Build and push
         uses: docker/build-push-action@v6
@@ -80,6 +81,14 @@ jobs:
           file: Dockerfile.ui
           tags: genflow/ui:${{ env.GF_VERSION }}
           outputs: type=docker,dest=/tmp/genflow_ui/image.tar
+
+      - name: GF CI. Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.ci
+          tags: genflow_ci
+          outputs: type=docker,dest=/tmp/genflow_ci/image.tar
 
       - name: Verify API schema
         id: verify_schema
@@ -120,23 +129,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create artifact directories
-        run: |
-          mkdir /tmp/genflow_ci
-
-      - name: GF CI. Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile.ci
-          tags: genflow_ci
-          outputs: type=docker,dest=/tmp/genflow_ci/image.tar
-
       - name: Download GF server image
         uses: actions/download-artifact@v4
         with:
           name: genflow_server
           path: /tmp/genflow_server/
+
+      - name: Download GF ci image
+        uses: actions/download-artifact@v4
+        with:
+          name: genflow_ci
+          path: /tmp/genflow_ci/
+
 
       - name: Load Docker images
         run: |
