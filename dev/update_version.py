@@ -146,8 +146,8 @@ REPLACEMENT_RULES = [
     ),
     ReplacementRule(
         "gen_flow-ui/package.json",
-        re.compile(r'^  "version": "[\d.]+",$', re.M),
-        lambda v, m: f'  "version": "{v.major}.{v.minor}.{v.patch}",',
+        re.compile(r'^    "version": "[\d.]+",$', re.M),
+        lambda v, m: f'    "version": "{v.major}.{v.minor}.{v.patch}",',
     ),
 ]
 
