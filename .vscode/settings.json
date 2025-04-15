@@ -35,9 +35,12 @@
     "python.testing.cwd": "${workspaceFolder}/tests",
     "git.enableCommitSigning": true,
     "cSpell.words": [
-        "encrypter",
+        "ciphertext",
+        "decryptor",
+        "encryptor",
         "filterset",
         "letsencrypt",
+        "OAEP",
         "traefik",
         "Uploady",
         "viewset",

@@ -24,8 +24,5 @@ def encrypt_token(team_id: str, token: str):
 def decrypt_token(team_id: str, token: str):
     return rsa.decrypt(base64.b64decode(token), team_id)
 
-def get_decrypt_decoding(team_id: str):
-    return rsa.get_decrypt_decoding(team_id)
-
-def decrypt_token_with_decoding(token: str, rsa_key, cipher_rsa):
-    return rsa.decrypt_token_with_decoding(base64.b64decode(token), rsa_key, cipher_rsa)
+def decrypt_token_with_decoding(token: str, rsa_key):
+    return rsa.decrypt_token_with_decoding(base64.b64decode(token), rsa_key)

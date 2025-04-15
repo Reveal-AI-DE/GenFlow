@@ -5,22 +5,33 @@
 import os
 from os import path as osp
 
-from Crypto.Cipher import AES
-from Crypto.PublicKey import RSA
-from Crypto.Random import get_random_bytes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric.types import PrivateKeyTypes
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.ciphers import algorithms, Cipher, modes
 from django.conf import settings
 
 
-from gen_flow.apps.common.security import gmpy2_pkcs10aep_cipher
+def generate_key_pair(team_id: str) -> str:
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048
+    )
+    public_key = private_key.public_key()
 
-def generate_key_pair(team_id):
-    private_key = RSA.generate(2048)
-    public_key = private_key.publickey()
+    pem_private = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption(),  # No password protection
+    )
 
-    pem_private = private_key.export_key()
-    pem_public = public_key.export_key()
+    pem_public = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo,
+    )
 
-    key_dir = osp.join(settings.BASE_DIR, 'keys', 'teams', str(team_id))
+    key_dir = osp.join(settings.BASE_DIR, 'keys', 'teams', team_id)
     os.makedirs(key_dir, exist_ok=True)
     key_file = 'private.pem'
     with open( osp.join(key_dir, key_file), 'wb') as f:
@@ -28,26 +39,42 @@ def generate_key_pair(team_id):
 
     return pem_public.decode()
 
+
 prefix_hybrid = b'HYBRID:'
 
 
-def encrypt(text, public_key):
+def encrypt(text: str, public_key: str | bytes) -> bytes:
     if isinstance(public_key, str):
         public_key = public_key.encode()
 
-    aes_key = get_random_bytes(16)
-    cipher_aes = AES.new(aes_key, AES.MODE_EAX)
+    # Generate a random AES key
+    aes_key = os.urandom(16)
 
-    ciphertext, tag = cipher_aes.encrypt_and_digest(text.encode())
+    # Generate a random nonce
+    nonce = os.urandom(12)
 
-    rsa_key = RSA.import_key(public_key)
-    cipher_rsa = gmpy2_pkcs10aep_cipher.new(rsa_key)
+    # Encrypt the plaintext using AES in GCM mode
+    cipher_aes = Cipher(algorithms.AES(aes_key), modes.GCM(nonce), backend=default_backend())
+    encryptor = cipher_aes.encryptor()
+    ciphertext = encryptor.update(text.encode()) + encryptor.finalize()
+    tag = encryptor.tag
 
-    enc_aes_key = cipher_rsa.encrypt(aes_key)
+    # Encrypt the AES key using the RSA public key
+    rsa_key = serialization.load_pem_public_key(public_key, backend=default_backend())
+    enc_aes_key = rsa_key.encrypt(
+        aes_key,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
 
-    encrypted_data = enc_aes_key + cipher_aes.nonce + tag + ciphertext
+    # Combine the encrypted AES key, nonce, tag, and ciphertext
+    encrypted_data = enc_aes_key + nonce + tag + ciphertext
 
     return prefix_hybrid + encrypted_data
+
 
 def get_decrypt_decoding(team_id: str):
     key_dir = osp.join(settings.BASE_DIR, 'keys', 'teams', team_id)
@@ -57,36 +84,53 @@ def get_decrypt_decoding(team_id: str):
         with open(key_file, 'r') as f:
             private_key = f.read()
     except FileNotFoundError:
-        raise PrivkeyNotFoundError('Private key not found, tenant_id: {tenant_id}'.format(tenant_id=team_id))
+        raise Exception('Private key not found, team_id: {team_id}'.format(team_id=team_id))
 
-    rsa_key = RSA.import_key(private_key)
-    cipher_rsa = gmpy2_pkcs10aep_cipher.new(rsa_key)
+    rsa_key = serialization.load_pem_private_key(private_key, password=None, backend=default_backend())
 
-    return rsa_key, cipher_rsa
+    return rsa_key
 
-def decrypt_token_with_decoding(encrypted_text, rsa_key, cipher_rsa):
+
+def decrypt_token_with_decoding(encrypted_text: str, rsa_key: PrivateKeyTypes) -> str:
     if encrypted_text.startswith(prefix_hybrid):
         encrypted_text = encrypted_text[len(prefix_hybrid) :]
 
-        enc_aes_key = encrypted_text[: rsa_key.size_in_bytes()]
-        nonce = encrypted_text[rsa_key.size_in_bytes() : rsa_key.size_in_bytes() + 16]
-        tag = encrypted_text[rsa_key.size_in_bytes() + 16 : rsa_key.size_in_bytes() + 32]
-        ciphertext = encrypted_text[rsa_key.size_in_bytes() + 32 :]
+        # Extract the encrypted AES key, nonce, tag, and ciphertext
+        rsa_key_size = rsa_key.key_size // 8
+        enc_aes_key = encrypted_text[:rsa_key_size]
+        nonce = encrypted_text[rsa_key_size:rsa_key_size + 12]
+        tag = encrypted_text[rsa_key_size + 12:rsa_key_size + 28]
+        ciphertext = encrypted_text[rsa_key_size + 28:]
 
-        aes_key = cipher_rsa.decrypt(enc_aes_key)
+        # Decrypt the AES key using the RSA private key
+        aes_key = rsa_key.decrypt(
+            enc_aes_key,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
 
-        cipher_aes = AES.new(aes_key, AES.MODE_EAX, nonce=nonce)
-        decrypted_text = cipher_aes.decrypt_and_verify(ciphertext, tag)
+        # Decrypt the ciphertext using AES in GCM mode
+        cipher_aes = Cipher(algorithms.AES(aes_key), modes.GCM(nonce, tag), backend=default_backend())
+        decryptor = cipher_aes.decryptor()
+        decrypted_text = decryptor.update(ciphertext) + decryptor.finalize()
     else:
-        decrypted_text = cipher_rsa.decrypt(encrypted_text)
+        # If not hybrid encryption, decrypt directly using RSA
+        decrypted_text = rsa_key.decrypt(
+            encrypted_text,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
 
     return decrypted_text.decode()
 
 
-def decrypt(encrypted_text, tenant_id):
-    rsa_key, cipher_rsa = get_decrypt_decoding(tenant_id)
+def decrypt(encrypted_text, team_id):
+    rsa_key = get_decrypt_decoding(team_id)
 
-    return decrypt_token_with_decoding(encrypted_text, rsa_key, cipher_rsa)
-
-class PrivkeyNotFoundError(Exception):
-    pass
+    return decrypt_token_with_decoding(encrypted_text, rsa_key)

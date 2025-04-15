@@ -9,7 +9,7 @@ from json import dumps as json_dumps
 from django.conf import settings
 from rest_framework import serializers
 
-from gen_flow.apps.common.security.encrypter import encrypt_token, decrypt_token
+from gen_flow.apps.common.security.encryptor import encrypt_token, decrypt_token
 from gen_flow.apps.common.entities import TranslationEntity, ConfigurationEntity
 from gen_flow.apps.common.file_utils import create_media_symbolic_links
 from gen_flow.apps.ai import ai_provider_factory
