@@ -139,7 +139,7 @@ jobs:
           docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d genflow_server genflow_db
 
           docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml run genflow_ci /bin/bash \
-            -c 'coverage run -a manage.py test -v 2 genflow/apps && coverage json && mv coverage.json ${CONTAINER_COVERAGE_DATA_DIR}/unit_tests_coverage.json'
+            -c 'coverage run -a manage.py test -v 2 gen_flow/apps && coverage json && mv coverage.json ${CONTAINER_COVERAGE_DATA_DIR}/unit_tests_coverage.json'
 
       - name: Uploading code coverage results as an artifact
         uses: actions/upload-artifact@v4
