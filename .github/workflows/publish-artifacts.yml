@@ -2,6 +2,7 @@ name: Publish artifacts
 on:
   release:
     types: [released]
+  workflow_dispatch:
 
 jobs:
   docker-images:
