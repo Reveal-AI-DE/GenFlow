@@ -123,7 +123,7 @@ class TeamWriteSerializer(serializers.ModelSerializer):
 
         team = super().create(validated_data)
         # generate public key
-        team.encrypt_public_key = generate_key_pair(team.id)
+        team.encrypt_public_key = generate_key_pair(str(team.id))
         team.save()
         models.Membership.objects.create(
             user=team.owner,

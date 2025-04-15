@@ -10,7 +10,7 @@ from django.db import models
 
 from gen_flow.apps.common.entities import TranslationEntity, ConfigurationType, ConfigurationEntity
 from gen_flow.apps.common.models import TimeAuditModel, UserOwnedModel, TeamAssociatedModel
-from gen_flow.apps.common.security import encrypter
+from gen_flow.apps.common.security.encryptor import decrypt_token, obfuscated_token
 from gen_flow.apps.ai import ai_provider_factory
 from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.core.config.entities import UserProviderConfiguration, SystemConfiguration
@@ -96,14 +96,11 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
             # fix origin data
             provider_credentials = self.fix_encrypted_config()
 
-            # Get decoding rsa key and cipher for decrypting credentials
-            decoding_rsa_key, decoding_cipher_rsa = encrypter.get_decrypt_decoding(str(self.team.id))
-
             for variable in provider_credential_secret_variables:
                 if variable in provider_credentials:
                     try:
-                        provider_credentials[variable] = encrypter.decrypt_token_with_decoding(
-                            provider_credentials.get(variable), decoding_rsa_key, decoding_cipher_rsa
+                        provider_credentials[variable] = decrypt_token(
+                            str(self.team.id), provider_credentials.get(variable)
                         )
                     except ValueError:
                         pass
@@ -147,7 +144,7 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         # Obfuscate credentials
         for key, value in credentials.items():
             if key in credential_secret_variables:
-                credentials[key] = encrypter.obfuscated_token(value)
+                credentials[key] = obfuscated_token(value)
 
         return credentials
 

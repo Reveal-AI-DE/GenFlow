@@ -77,7 +77,7 @@ def create_dummy_team(owner, team_data, team_role: TeamRole=TeamRole.OWNER):
         membership.is_active = True
         membership.save()
     # generate public key
-    team.encrypt_public_key = generate_key_pair(team.id)
+    team.encrypt_public_key = generate_key_pair(str(team.id))
     team.save()
     return team, membership
 
