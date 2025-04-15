@@ -55,7 +55,6 @@ jobs:
         run: |
           mkdir /tmp/genflow_server
           mkdir /tmp/genflow_ui
-          mkdir /tmp/genflow_ci
 
       - name: GF server. Build and push
         uses: docker/build-push-action@v6
@@ -81,19 +80,6 @@ jobs:
           file: Dockerfile.ui
           tags: genflow/ui:${{ env.GF_VERSION }}
           outputs: type=docker,dest=/tmp/genflow_ui/image.tar
-
-      - name: Load Docker images
-        run: |
-          docker load --input /tmp/genflow_server/image.tar
-          docker image ls -a
-
-      - name: GF CI. Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile.ci
-          tags: genflow_ci
-          outputs: type=docker,dest=/tmp/genflow_ci/image.tar
 
       - name: Verify API schema
         id: verify_schema
@@ -149,7 +135,6 @@ jobs:
       - name: Load Docker images
         run: |
           docker load --input /tmp/genflow_server/image.tar
-          docker load --input /tmp/genflow_ci/image.tar
           docker image ls -a
 
       - name: Running unit tests
