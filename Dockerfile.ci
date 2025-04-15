@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM gen_flow/server:local
+FROM genflow/server:local
 
 ENV DJANGO_SETTINGS_MODULE=gen_flow.settings.testing
 USER root
