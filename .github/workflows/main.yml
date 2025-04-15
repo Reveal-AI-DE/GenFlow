@@ -177,8 +177,8 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::<AWS_ACCOUNT_ID>:role/<GITHUB_OIDC_ROLE>
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
@@ -202,11 +202,11 @@ jobs:
 
       - name: Push to AWS ECR
         env:
-          ECR_NAMESPACE: ${{ secrets.ECR_NAMESPACE }}
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SERVER_IMAGE_REPO: ${{ secrets.ECR_REPOSITORY }}/server
-          UI_IMAGE_REPO: ${{ secrets.ECR_REPOSITORY }}/ui
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          SERVER_IMAGE_REPO: ${{ vars.ECR_REPOSITORY }}/server
+          UI_IMAGE_REPO: ${{ vars.ECR_REPOSITORY }}/ui
           IMAGE_TAG: dev
         run: |
           ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAMESPACE}"
