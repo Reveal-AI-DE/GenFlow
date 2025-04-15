@@ -4,7 +4,7 @@
 
 import os
 from os import path as osp
-import xml.etree.ElementTree as ET
+from defusedxml import ElementTree as ET
 
 from PIL import Image
 

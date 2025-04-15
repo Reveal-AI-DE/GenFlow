@@ -107,7 +107,7 @@ class ConfigurationType(Enum):
     BOOLEAN = 'boolean'
     TEXT = 'text'
     OBJECT = 'object'
-    SECRET = 'secret'
+    SECRET = 'secret'  # nosec B105
 
 
 class CommonConfigurationEntity(BaseModel):
