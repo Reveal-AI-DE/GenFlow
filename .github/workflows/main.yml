@@ -181,7 +181,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Download GF server images
         uses: actions/download-artifact@v4
@@ -199,14 +199,15 @@ jobs:
         run: |
           docker load --input /tmp/genflow_server/image.tar
           docker load --input /tmp/genflow_ui/image.tar
+          docker image ls -a
 
       - name: Push to AWS ECR
         env:
           ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-          SERVER_IMAGE_REPO: ${{ vars.ECR_REPOSITORY }}/server
-          UI_IMAGE_REPO: ${{ vars.ECR_REPOSITORY }}/ui
+          SERVER_IMAGE_REPO: server
+          UI_IMAGE_REPO: ui
           IMAGE_TAG: dev
         run: |
           ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAMESPACE}"
