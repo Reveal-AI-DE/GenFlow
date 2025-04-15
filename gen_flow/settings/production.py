@@ -12,10 +12,10 @@ DEBUG = False
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": os.getenv("GEN_FLOW_POSTGRES_HOST", "db"),
-        "NAME": os.getenv("GEN_FLOW_POSTGRES_DBNAME", "gen_flow"),
-        "USER": os.getenv("GEN_FLOW_POSTGRES_USER", "root"),
-        "PASSWORD": os.getenv("GEN_FLOW_POSTGRES_PASSWORD", ""),
-        "PORT": os.getenv("GEN_FLOW_POSTGRES_PORT", 5432),
+        "HOST": os.getenv("GF_POSTGRES_HOST", "db"),
+        "NAME": os.getenv("GF_POSTGRES_DBNAME", "gen_flow"),
+        "USER": os.getenv("GF_POSTGRES_USER", "root"),
+        "PASSWORD": os.getenv("GF_POSTGRES_PASSWORD", ""),
+        "PORT": os.getenv("GF_POSTGRES_PORT", 5432),
     }
 }

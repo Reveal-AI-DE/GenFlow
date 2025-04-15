@@ -12,7 +12,7 @@ fail() {
 }
 
 wait_for_db() {
-    wait-for-it "${GEN_FLOW_POSTGRES_HOST}:${GEN_FLOW_POSTGRES_PORT:-5432}" -t 0
+    wait-for-it "${GF_POSTGRES_HOST}:${GF_POSTGRES_PORT:-5432}" -t 0
 }
 
 cmd_bash() {

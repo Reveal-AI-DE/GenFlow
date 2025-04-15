@@ -3,60 +3,60 @@
 # SPDX-License-Identifier: MIT
 
 services:
-  gen_flow_db:
-    container_name: gen_flow_db
+  genflow_db:
+    container_name: genflow_db
     image: postgres:16-alpine
     restart: always
     environment:
       POSTGRES_USER: root
-      POSTGRES_DB: gen_flow
+      POSTGRES_DB: genflow
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - gen_flow_db:/var/lib/postgresql/data
+      - genflow_db:/var/lib/postgresql/data
     networks:
-      - gen_flow
+      - genflow
 
-  gen_flow_server:
-    container_name: gen_flow_server
-    image: gen_flow/server:${GEN_FLOW_VERSION:-dev}
+  genflow_server:
+    container_name: genflow_server
+    image: genflow/server:${GENFLOW_VERSION:-dev}
     restart: always
     depends_on:
-      gen_flow_db:
+      genflow_db:
         condition:
           service_started
     environment:
       DJANGO_MODWSGI_EXTRA_ARGS: ''
       ALLOWED_HOSTS: '*'
-      GEN_FLOW_POSTGRES_HOST: gen_flow_db
+      GENFLOW_POSTGRES_HOST: genflow_db
       no_proxy: ${no_proxy:-}
       NUMPROCS: 2
     command: init run server
     labels:
       traefik.enable: 'true'
-      traefik.http.services.gen_flow.loadbalancer.server.port: '8080'
-      traefik.http.routers.gen_flow.rule: Host(`${GEN_FLOW_HOST:-localhost}`) &&
+      traefik.http.services.genflow.loadbalancer.server.port: '8080'
+      traefik.http.routers.genflow.rule: Host(`${GENFLOW_HOST:-localhost}`) &&
         (PathPrefix(`/api/`) || PathPrefix(`/statics/`) || PathPrefix(`/admin`) || PathPrefix(`/ws`) || PathPrefix(`/media`))
-      traefik.http.routers.gen_flow.entrypoints: web
+      traefik.http.routers.genflow.entrypoints: web
     volumes:
-      - gen_flow_data:/home/django/data
-      - gen_flow_keys:/home/django/keys
+      - genflow_data:/home/django/data
+      - genflow_keys:/home/django/keys
       - ./config:/home/django/config
     networks:
-      - gen_flow
+      - genflow
 
-  gen_flow_ui:
-    container_name: gen_flow_ui
-    image: gen_flow/ui:${GEN_FLOW_VERSION:-dev}
+  genflow_ui:
+    container_name: genflow_ui
+    image: genflow/ui:${GENFLOW_VERSION:-dev}
     restart: always
     depends_on:
-      - gen_flow_server
+      - genflow_server
     labels:
       traefik.enable: 'true'
-      traefik.http.services.gen_flow-ui.loadbalancer.server.port: '80'
-      traefik.http.routers.gen_flow-ui.rule: Host(`${GEN_FLOW_HOST:-localhost}`)
-      traefik.http.routers.gen_flow-ui.entrypoints: web
+      traefik.http.services.genflow-ui.loadbalancer.server.port: '80'
+      traefik.http.routers.genflow-ui.rule: Host(`${GENFLOW_HOST:-localhost}`)
+      traefik.http.routers.genflow-ui.entrypoints: web
     networks:
-      - gen_flow
+      - genflow
 
   traefik:
     image: traefik:v3.3
@@ -83,7 +83,7 @@ services:
       TRAEFIK_LOG_FORMAT: json
       TRAEFIK_ENTRYPOINTS_web_ADDRESS: :8080
       TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT: "false"
-      TRAEFIK_PROVIDERS_DOCKER_NETWORK: gen_flow
+      TRAEFIK_PROVIDERS_DOCKER_NETWORK: genflow
       TRAEFIK_PROVIDERS_FILE_DIRECTORY: /etc/traefik/rules
     # Uncomment to get Traefik dashboard
       TRAEFIK_API_DASHBOARD: "true"
@@ -92,11 +92,11 @@ services:
       traefik.enable: "true"
       traefik.http.routers.dashboard.entrypoints: dashboard
       traefik.http.routers.dashboard.service: api@internal
-      traefik.http.routers.dashboard.rule: Host(`${GEN_FLOW_HOST:-localhost}`)
+      traefik.http.routers.dashboard.rule: Host(`${GENFLOW_HOST:-localhost}`)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - gen_flow
+      - genflow
     logging:
       driver: 'json-file'
       options:
@@ -104,9 +104,9 @@ services:
         max-file: '10'
 
 volumes:
-  gen_flow_db:
-  gen_flow_data:
-  gen_flow_keys:
+  genflow_db:
+  genflow_data:
+  genflow_keys:
 
 networks:
-  gen_flow:
+  genflow:
