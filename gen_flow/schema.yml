@@ -2361,6 +2361,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
@@ -2738,6 +2740,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWrite'
         related_prompt:
@@ -2754,6 +2758,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
