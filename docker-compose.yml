@@ -40,7 +40,6 @@ services:
     volumes:
       - genflow_data:/home/django/data
       - genflow_keys:/home/django/keys
-      - ./config:/home/django/config
     networks:
       - genflow
 

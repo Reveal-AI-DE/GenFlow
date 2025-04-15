@@ -115,6 +115,7 @@ COPY gen_flow/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=${USER} supervisord/ ${HOME}/supervisord
 COPY --chown=${USER} manage.py backend_entrypoint.sh wait-for-deps.sh ${HOME}/
 COPY --chown=${USER} gen_flow/ ${HOME}/gen_flow
+COPY --chown=${USER} config/ ${HOME}/config
 
 ARG COVERAGE_PROCESS_START
 RUN if [ "${COVERAGE_PROCESS_START}" ]; then \
