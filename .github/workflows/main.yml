@@ -82,6 +82,11 @@ jobs:
           tags: genflow/ui:${{ env.GF_VERSION }}
           outputs: type=docker,dest=/tmp/genflow_ui/image.tar
 
+      - name: Load Docker images
+        run: |
+          docker load --input /tmp/genflow_server/image.tar
+          docker image ls -a
+
       - name: GF CI. Build and push
         uses: docker/build-push-action@v6
         with:
@@ -140,7 +145,6 @@ jobs:
         with:
           name: genflow_ci
           path: /tmp/genflow_ci/
-
 
       - name: Load Docker images
         run: |
