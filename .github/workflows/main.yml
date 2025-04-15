@@ -120,6 +120,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create artifact directories
+        run: |
+          mkdir /tmp/genflow_ci
+
       - name: GF CI. Build and push
         uses: docker/build-push-action@v6
         with:
