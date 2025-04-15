@@ -86,14 +86,14 @@ jobs:
         run: |
           docker load --input /tmp/genflow_server/image.tar
           docker run --rm "genflow/server:${GF_VERSION}" bash \
-            -c 'python manage.py spectacular' > genflow/schema-expected.yml
+            -c 'python manage.py spectacular' > gen_flow/schema-expected.yml
 
-          if ! git diff --no-index genflow/schema.yml genflow/schema-expected.yml; then
+          if ! git diff --no-index gen_flow/schema.yml gen_flow/schema-expected.yml; then
             echo
-            echo 'API schema has changed! Please update genflow/schema.yml:'
+            echo 'API schema has changed! Please update gen_flow/schema.yml:'
             echo
             echo '  docker run --rm genflow/server:dev bash \'
-            echo "    -c 'python manage.py spectacular' > genflow/schema.yml"
+            echo "    -c 'python manage.py spectacular' > gen_flow/schema.yml"
             exit 1
           fi
 
