@@ -120,15 +120,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: GF CI. Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.ci
+          tags: genflow_ci
+          outputs: type=docker,dest=/tmp/genflow_ci/image.tar
+
       - name: Download GF server image
         uses: actions/download-artifact@v4
         with:
           name: genflow_server
           path: /tmp/genflow_server/
 
-      - name: Load Docker server image
+      - name: Load Docker images
         run: |
           docker load --input /tmp/genflow_server/image.tar
+          docker load --input /tmp/genflow_ci/image.tar
           docker image ls -a
 
       - name: Running unit tests
