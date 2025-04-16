@@ -9,6 +9,8 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Validate version number
         env:
@@ -60,8 +62,6 @@ jobs:
             commit -a -m "Prepare release v${{ inputs.newVersion }}"
 
       - name: Push release branch
-        env:
-          GH_TOKEN: "${{ steps.gen-token.outputs.token }}"
         run:
           git push -u origin "release-${{ inputs.newVersion }}"
 
