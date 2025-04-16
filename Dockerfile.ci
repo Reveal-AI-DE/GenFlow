@@ -1,0 +1,24 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+FROM genflow/server:local
+
+ENV DJANGO_SETTINGS_MODULE=gen_flow.settings.testing
+USER root
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends install -yq \
+        build-essential \
+        python3-dev \
+        && \
+    rm -rf /var/lib/apt/lists/*;
+
+COPY gen_flow/requirements/ /tmp/gen_flow/requirements/
+
+RUN python3 -m ensurepip
+RUN python3 -m pip install --no-cache-dir -r /tmp/gen_flow/requirements/testing.txt
+
+COPY .coveragerc .
+
+ENTRYPOINT []

@@ -20,6 +20,8 @@ import tempfile
 from pathlib import Path
 from corsheaders.defaults import default_headers
 
+from gen_flow import __version__
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = str(Path(__file__).parents[2])
 
@@ -292,7 +294,7 @@ SPECTACULAR_SETTINGS = {
     # Statically set schema version. May also be an empty string. When used together with
     # view versioning, will become '0.0.0 (v2)' for 'v2' versioned requests.
     # Set VERSION to None if only the request version should be rendered.
-    'VERSION': '1.0.0',
+    'VERSION': __version__,
     'CONTACT': {
         'name': 'Reveal AI team',
         'url': 'https://github.com/Reveal-AI-DE/GenFlow',

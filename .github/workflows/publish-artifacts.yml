@@ -1,0 +1,51 @@
+name: Publish artifacts
+on:
+  release:
+    types: [released]
+
+jobs:
+  docker-images:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write  # Required for OIDC auth
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build images
+        run: |
+          GF_VERSION=latest CLAM_AV=yes docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+
+      - name: Push to AWS ECR
+        env:
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          SERVER_IMAGE_REPO: server
+          UI_IMAGE_REPO: ui
+          IMAGE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAMESPACE}"
+
+          # SERVER IMAGE
+          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
+          docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
+          docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
+
+          # UI IMAGE
+          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:latest"
+          docker push "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
+          docker push "${ECR_URI}/${UI_IMAGE_REPO}:latest"

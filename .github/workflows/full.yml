@@ -1,0 +1,126 @@
+name: Full
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "The branch or tag to build from"
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "The branch or tag to build from"
+        type: string
+        required: true
+
+env:
+  WORKFLOW_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  GF_VERSION: "local"
+
+jobs:
+  search_cache:
+    uses: ./.github/workflows/search-cache.yml
+
+  build:
+    needs: search_cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: GF server. Getting cache from the default branch
+        uses: actions/cache@v4
+        with:
+          path: /tmp/genflow_cache_server
+          key: ${{ runner.os }}-build-server-${{ needs.search_cache.outputs.sha }}
+
+      - name: GF UI. Getting cache from the default branch
+        uses: actions/cache@v4
+        with:
+          path: /tmp/genflow_cache_ui
+          key: ${{ runner.os }}-build-ui-${{ needs.search_cache.outputs.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create artifact directories
+        run: |
+          mkdir /tmp/genflow_server
+          mkdir /tmp/genflow_ui
+
+      - name: GF server. Build and push
+        uses: docker/build-push-action@v6
+        with:
+          build-args: |
+              "COVERAGE_PROCESS_START=.coveragerc"
+          cache-from: type=local,src=/tmp/genflow_cache_server
+          context: .
+          file: Dockerfile
+          tags: genflow/server:${{ env.GF_VERSION }}
+          outputs: type=docker,dest=/tmp/genflow_server/image.tar
+
+      - name: GF UI. Build and push
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=local,src=/tmp/genflow_cache_ui
+          context: .
+          file: Dockerfile.ui
+          tags: genflow/ui:${{ env.GF_VERSION }}
+          outputs: type=docker,dest=/tmp/genflow_ui/image.tar
+
+      - name: Upload GF server artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: genflow_server
+          path: /tmp/genflow_server/image.tar
+
+      - name: Upload GF UI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: genflow_ui
+          path: /tmp/genflow_ui/image.tar
+
+  unit_testing:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Download GF server image
+        uses: actions/download-artifact@v4
+        with:
+          name: genflow_server
+          path: /tmp/genflow_server/
+
+      - name: Load Docker images
+        run: |
+          docker load --input /tmp/genflow_server/image.tar
+          docker image ls -a
+
+      - name: Running unit tests
+        env:
+          HOST_COVERAGE_DATA_DIR: ${{ github.workspace }}
+          CONTAINER_COVERAGE_DATA_DIR: "/coverage_data"
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d genflow_server genflow_db
+
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml run genflow_ci /bin/bash \
+            -c 'python manage.py test gen_flow/apps -v 2'
+
+      - name: Creating a log file from genflow containers
+        if: failure()
+        env:
+          LOGS_DIR: "${{ github.workspace }}/unit_testing"
+        run: |
+            mkdir $LOGS_DIR
+            docker logs genflow_server > $LOGS_DIR/genflow_server.log
+
+      - name: Uploading "genflow" container logs as an artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit_tests_container_logs
+          path: "${{ github.workspace }}/unit_testing"

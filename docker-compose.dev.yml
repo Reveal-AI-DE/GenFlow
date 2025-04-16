@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 services:
-  gen_flow_db:
+  genflow_db:
     ports:
       - '5432:5432'
 
-  gen_flow_server:
+  genflow_server:
     build:
       context: .
       args:
@@ -15,19 +15,19 @@ services:
         https_proxy:
         socks_proxy:
         CLAM_AV:
-        GEN_FLOW_DEBUG_ENABLED:
+        GF_DEBUG_ENABLED:
         COVERAGE_PROCESS_START:
     environment:
-      # Use this with GEN_FLOW_DEBUG_ENABLED to avoid server response timeouts
-      GEN_FLOW_DEBUG_ENABLED: '${GEN_FLOW_DEBUG_ENABLED:-no}'
-      GEN_FLOW_DEBUG_PORT: '9090'
+      # Use this with GF_DEBUG_ENABLED to avoid server response timeouts
+      GF_DEBUG_ENABLED: '${GF_DEBUG_ENABLED:-no}'
+      GF_DEBUG_PORT: '9090'
       # If 'yes', wait for a debugger connection on startup
-      GEN_FLOW_DEBUG_WAIT: '${GEN_FLOW_DEBUG_WAIT_CLIENT:-no}'
+      GF_DEBUG_WAIT: '${GF_DEBUG_WAIT_CLIENT:-no}'
       COVERAGE_PROCESS_START:
     ports:
       - '9090:9090'
 
-  gen_flow_ui:
+  genflow_ui:
     build:
       context: .
       args:

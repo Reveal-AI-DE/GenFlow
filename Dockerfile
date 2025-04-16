@@ -25,11 +25,11 @@ FROM build-image-base AS build-image
 
 COPY gen_flow/requirements/ /tmp/gen_flow/requirements/
 
-ARG GEN_FLOW_CONFIGURATION="production"
+ARG GF_CONFIGURATION="production"
 
 RUN --mount=type=cache,target=/root/.cache/pip/http-v2 \
     python3 -m pip wheel --no-deps \
-    -r /tmp/gen_flow/requirements/${GEN_FLOW_CONFIGURATION}.txt \
+    -r /tmp/gen_flow/requirements/${GF_CONFIGURATION}.txt \
     -w /tmp/wheelhouse
 
 FROM ${BASE_IMAGE}
@@ -50,8 +50,8 @@ ENV TERM=xterm \
     TZ=${TZ}
 
 ARG USER="django"
-ARG GEN_FLOW_CONFIGURATION="production"
-ENV DJANGO_SETTINGS_MODULE="gen_flow.settings.${GEN_FLOW_CONFIGURATION}"
+ARG GF_CONFIGURATION="production"
+ENV DJANGO_SETTINGS_MODULE="gen_flow.settings.${GF_CONFIGURATION}"
 
 # Install necessary apt packages
 RUN apt-get update && \
@@ -105,16 +105,17 @@ ENV NUMPROCS=1
 
 # These variables are required for supervisord substitutions in files
 # This library allows remote python debugging with VS Code
-ARG GEN_FLOW_DEBUG_ENABLED
-RUN if [ "${GEN_FLOW_DEBUG_ENABLED}" = "yes" ]; then \
+ARG GF_DEBUG_ENABLED
+RUN if [ "${GF_DEBUG_ENABLED}" = "yes" ]; then \
     python3 -m pip install --no-cache-dir debugpy; \
     fi
 
-# Install and initialize GEN_FLOW, copy all necessary files
+# Install and initialize GF, copy all necessary files
 COPY gen_flow/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=${USER} supervisord/ ${HOME}/supervisord
 COPY --chown=${USER} manage.py backend_entrypoint.sh wait-for-deps.sh ${HOME}/
 COPY --chown=${USER} gen_flow/ ${HOME}/gen_flow
+COPY --chown=${USER} config/ ${HOME}/config
 
 ARG COVERAGE_PROCESS_START
 RUN if [ "${COVERAGE_PROCESS_START}" ]; then \

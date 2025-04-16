@@ -1,0 +1,23 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+services:
+  genflow_ci:
+    image: genflow_ci
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    depends_on:
+      - genflow_server
+    environment:
+      CONTAINER_COVERAGE_DATA_DIR:
+      GITHUB_ACTIONS:
+      GITHUB_TOKEN:
+      GITHUB_WORKSPACE:
+      GITHUB_REF:
+      GITHUB_HEAD_REF:
+      GITHUB_RUN_ID:
+    volumes:
+      - ${HOST_COVERAGE_DATA_DIR}:${CONTAINER_COVERAGE_DATA_DIR}

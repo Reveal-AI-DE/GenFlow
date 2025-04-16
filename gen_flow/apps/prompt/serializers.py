@@ -20,6 +20,16 @@ class PromptReadSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigReadSerializer()
     group = EntityGroupReadSerializer()
+    related_test_session = serializers.SerializerMethodField()
+
+    def get_related_test_session(self, obj: Prompt) -> int:
+        '''
+        Returns the related test session for the given Prompt instance.
+        '''
+
+        if hasattr(obj, 'related_test_session'):
+            return obj.related_test_session
+        return None
 
     class Meta:
         '''

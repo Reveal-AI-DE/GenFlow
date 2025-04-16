@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: GenFlow REST API
-  version: 1.0.0
+  version: 0.1.0
   description: REST API for GenFlow project
   termsOfService: https://www.google.com/policies/terms/
   contact:
@@ -2361,6 +2361,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
@@ -2412,10 +2414,8 @@ components:
           nullable: true
         related_test_session:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-          nullable: true
+          description: Returns the related test session for the given Prompt instance.
+          readOnly: true
       required:
       - description
       - group
@@ -2738,6 +2738,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWrite'
         related_prompt:
@@ -2754,6 +2756,8 @@ components:
           maxLength: 255
         session_type:
           $ref: '#/components/schemas/SessionTypeEnum'
+        session_mode:
+          $ref: '#/components/schemas/SessionModeEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:

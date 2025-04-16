@@ -13,9 +13,6 @@ django-allauth==0.57.2
 
 channels[daphne]==4.2.0
 
-pycryptodome==3.21.0
-gmpy2==2.2.1
-
 openai==1.66.3
 tiktoken==0.9.0
 

@@ -23,7 +23,7 @@ export const createTemporaryMessage = (
         answer: '',
     };
 
-    let newMessages = [];
+    let newMessages: SessionMessage[] = [];
 
     if (isRegeneration) {
         const lastMessageIndex = sessionMessages.length - 1
