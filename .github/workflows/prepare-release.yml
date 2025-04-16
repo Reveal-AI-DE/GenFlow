@@ -60,6 +60,8 @@ jobs:
             commit -a -m "Prepare release v${{ inputs.newVersion }}"
 
       - name: Push release branch
+        env:
+          GH_TOKEN: "${{ steps.gen-token.outputs.token }}"
         run:
           git push -u origin "release-${{ inputs.newVersion }}"
 
