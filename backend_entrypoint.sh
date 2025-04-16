@@ -53,7 +53,7 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-for init_script in /etc/gen_flow/init.d/*; do
+for init_script in /etc/genflow/init.d/*; do
     if [ -r "$init_script" ]; then
         . "$init_script"
     fi

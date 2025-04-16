@@ -10,7 +10,7 @@
             "directory": "${cwd}",
         },
         {
-            "pattern": "gen_flow-*"
+            "pattern": "genflow-*"
         },
         {
             "directory": "tests",
@@ -42,6 +42,7 @@
         "genflow",
         "letsencrypt",
         "OAEP",
+        "scriv",
         "traefik",
         "Uploady",
         "viewset",

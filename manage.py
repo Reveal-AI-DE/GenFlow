@@ -3,10 +3,10 @@
 import os
 import sys
 
-
 if __name__ == "__main__":
-    """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gen_flow.settings.development')
+    # Run administrative tasks.
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "genflow.settings.development")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

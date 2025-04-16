@@ -18,7 +18,7 @@ GF_VERSION_PATTERN = re.compile(
 
 REPO_ROOT_DIR = Path(__file__).resolve().parents[1]
 
-GF_INIT_PY_REL_PATH = "gen_flow/__init__.py"
+GF_INIT_PY_REL_PATH = "genflow/__init__.py"
 GF_INIT_PY_PATH = REPO_ROOT_DIR / GF_INIT_PY_REL_PATH
 
 
@@ -33,7 +33,7 @@ class Version:
     def __str__(self) -> str:
         return f"{self.major}.{self.minor}.{self.patch}-{self.prerelease}.{self.prerelease_number}"
 
-    def gen_flow_repr(self):
+    def genflow_repr(self):
         return f'({self.major}, {self.minor}, {self.patch}, "{self.prerelease}", {self.prerelease_number})'
 
     def compose_repr(self):
@@ -132,7 +132,7 @@ REPLACEMENT_RULES = [
     ReplacementRule(
         GF_INIT_PY_REL_PATH,
         GF_VERSION_PATTERN,
-        lambda v, m: f"VERSION = {v.gen_flow_repr()}",
+        lambda v, m: f"VERSION = {v.genflow_repr()}",
     ),
     ReplacementRule(
         "docker-compose.yml",
@@ -140,12 +140,12 @@ REPLACEMENT_RULES = [
         lambda v, m: m[1] + v.compose_repr() + m[3],
     ),
     ReplacementRule(
-        "gen_flow/schema.yml",
+        "genflow/schema.yml",
         re.compile(r"^  version: [\d.]+$", re.M),
         lambda v, m: f"  version: {v.major}.{v.minor}.{v.patch}",
     ),
     ReplacementRule(
-        "gen_flow-ui/package.json",
+        "genflow-ui/package.json",
         re.compile(r'^    "version": "[\d.]+",$', re.M),
         lambda v, m: f'    "version": "{v.major}.{v.minor}.{v.patch}",',
     ),

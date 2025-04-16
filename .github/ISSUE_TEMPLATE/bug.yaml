@@ -58,7 +58,7 @@ body:
       - Code example or link to GitHub repo or gist to reproduce problem:
       - Other diagnostic information / logs:
         <details>
-        <summary>Logs from `gen_flow` container</summary>
+        <summary>Logs from `genflow` container</summary>
         </details>
     render: Markdown
   validations:

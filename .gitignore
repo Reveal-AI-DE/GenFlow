@@ -28,7 +28,7 @@ yarn-error.log*
 node_modules
 
 # Ignore all js dists
-gen_flow-ui/build
+genflow-ui/build
 
 # produced by prepare in the root package.json script
 .husky

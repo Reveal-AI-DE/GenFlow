@@ -16,15 +16,14 @@ see how your change affects other areas of the code, etc. -->
 
 ### Checklist
 <!-- Go over all the following points, and put an `x` in all the boxes that apply.
-If an item isn't applicable for some reason, then ~~explicitly strikethrough~~ the whole
+If an item isn't applicable for some reason, then ~~explicitly strike through~~ the whole
 line. If you don't do that, GitHub will show incorrect progress for the pull request.
 If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - [ ] I submit my changes into the `develop` branch
 - [ ] I have created a changelog fragment <!-- see top comment in CHANGELOG.md -->
 - [ ] I have updated the documentation accordingly
 - [ ] I have added tests to cover my changes
-- [ ] I have linked related issues (see [GitHub docs](
-  https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword))
+- [ ] I have linked related issues (see [GitHub docs](https://help.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword))
 
 ### License
 
