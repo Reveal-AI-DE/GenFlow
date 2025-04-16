@@ -4,6 +4,8 @@ on:
 jobs:
   main:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Discover pending release
         id: discover
