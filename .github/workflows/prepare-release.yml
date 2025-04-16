@@ -56,7 +56,7 @@ jobs:
 
       - name: Commit release preparation changes
         run: |
-          git -c user.name='genflow-bot[bot]' -c user.email='1218202+genflow-bot[bot]@users.noreply.github.com' \
+          git -c user.name='genflow-bot[bot]' -c user.email='1218421+genflow-bot[bot]@users.noreply.github.com' \
             commit -a -m "Prepare release v${{ inputs.newVersion }}"
 
       - name: Push release branch

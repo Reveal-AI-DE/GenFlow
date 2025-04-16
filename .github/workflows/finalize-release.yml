@@ -69,7 +69,7 @@ jobs:
 
       - name: Commit post-release changes
         run: |
-          git -c user.name='genflow-bot[bot]' -c user.email='1218202+genflow-bot[bot]@users.noreply.github.com' \
+          git -c user.name='genflow-bot[bot]' -c user.email='1218421+genflow-bot[bot]@users.noreply.github.com' \
             commit -a -m "Update ${{ github.ref_name }} after v${{ steps.discover.outputs.version }}"
 
       - name: Push post-release branch
