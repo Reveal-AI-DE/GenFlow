@@ -4,9 +4,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    """
-    Run administrative tasks.
-    """
+    # Run administrative tasks.
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gen_flow.settings.development")
     try:
