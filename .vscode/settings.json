@@ -42,6 +42,7 @@
         "genflow",
         "letsencrypt",
         "OAEP",
+        "scriv",
         "traefik",
         "Uploady",
         "viewset",
