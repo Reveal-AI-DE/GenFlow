@@ -4,14 +4,16 @@
 
 from unittest import TestCase
 
-from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.ai_provider_factory import AIProviderFactory
+from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 
 
 class RegisteredAIProviderTest(TestCase):
     @classmethod
     def setUpClass(cls):
-        import gen_flow.apps.ai.tests.register_providers # noqa
+        # pylint: disable=unused-import
+        import gen_flow.apps.ai.tests.register_providers  # noqa
+
         cls.ai_provider_factory = AIProviderFactory()
 
     def test_get_ai_provider_schemas(self):
@@ -21,12 +23,12 @@ class RegisteredAIProviderTest(TestCase):
         self.assertEqual(len(ai_provider_schemas[0].models), 2)
 
     def test_get_ai_provider_instance(self):
-        ai_provider_instance = self.ai_provider_factory.get_ai_provider_instance('dummy')
+        ai_provider_instance = self.ai_provider_factory.get_ai_provider_instance("dummy")
         self.assertIsNotNone(ai_provider_instance)
 
     def test_get_ai_provider_instance_invalid(self):
         with self.assertRaises(Exception):
-            self.ai_provider_factory.get_ai_provider_instance('invalid_provider')
+            self.ai_provider_factory.get_ai_provider_instance("invalid_provider")
 
     def test_validate_credentials(self):
         ai_provider_schemas = self.ai_provider_factory.get_ai_provider_schemas()
@@ -43,8 +45,10 @@ class RegisteredAIProviderTest(TestCase):
         credentials = {}
         for configuration_input in ai_provider_schema.credential_form:
             if configuration_input.required:
-                credentials[configuration_input.name] = 'test'
-        filtered_credentials = self.ai_provider_factory.validate_credentials(ai_provider_schema.id, credentials)
+                credentials[configuration_input.name] = "test"
+        filtered_credentials = self.ai_provider_factory.validate_credentials(
+            ai_provider_schema.id, credentials
+        )
         self.assertEqual(len(filtered_credentials), len(credentials))
 
     def validate_credentials_invalid(self, ai_provider_schema: AIProviderEntity):

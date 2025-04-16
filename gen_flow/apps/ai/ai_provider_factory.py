@@ -2,36 +2,36 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Optional
 from collections.abc import Sequence
+from typing import Optional
 
-from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.base.ai_provider import AIProvider
+from gen_flow.apps.ai.base.entities.provider import AIProviderEntity
 from gen_flow.apps.ai.providers.registry import AI_PROVIDERS, AIProviderExtension
 
+
 class AIProviderFactory:
-    '''
+    """
     Manages AI providers and their models.
-    '''
+    """
 
     schemas: Optional[Sequence[AIProviderEntity]] = None
 
     def __init__(self) -> None:
-        '''
+        """
         Initializes the factory and retrieves AI providers
-        '''
+        """
 
         self.schemas = self.get_ai_provider_schemas()
 
     def get_ai_provider_schemas(self) -> Sequence[AIProviderEntity]:
-        '''
+        """
         Retrieves and returns a list of AI provider schemas with their supported models.
-        '''
+        """
 
         ai_provider_extensions = self._get_ai_provider_map()
 
-        if self.schemas is not None and \
-            len(self.schemas) == len(ai_provider_extensions.items()):
+        if self.schemas is not None and len(self.schemas) == len(ai_provider_extensions.items()):
             return self.schemas
 
         ai_provider_schemas = []
@@ -58,9 +58,9 @@ class AIProviderFactory:
         return ai_provider_schemas
 
     def get_ai_provider_instance(self, provider_name: str) -> AIProvider:
-        '''
+        """
         Retrieves and returns the instance of the specified ai provider.
-        '''
+        """
 
         # scan all providers
         ai_provider_extensions = self._get_ai_provider_map()
@@ -68,7 +68,8 @@ class AIProviderFactory:
         # get the provider extension
         ai_provider_extension = ai_provider_extensions.get(provider_name)
         if not ai_provider_extension:
-            raise Exception(f'Invalid AI provider: {provider_name}')
+            # TODO: fix Raising too general exception: Exception
+            raise Exception(f"Invalid AI provider: {provider_name}")
 
         # get the provider instance
         ai_provider_instance = ai_provider_extension.ai_provider_instance
@@ -76,15 +77,15 @@ class AIProviderFactory:
         return ai_provider_instance
 
     def validate_credentials(self, provider_name: str, credentials: dict) -> dict:
-        '''
+        """
         Validates the credentials for a given ai provider and returns the filtered credentials.
-        '''
+        """
 
         ai_provider_instance = self.get_ai_provider_instance(provider_name)
         ai_provider_schema = ai_provider_instance.get_schema()
 
         if not ai_provider_schema.credential_form:
-            raise ValueError(f'AI Provider {provider_name} does not have credential_form')
+            raise ValueError(f"AI Provider {provider_name} does not have credential_form")
 
         # validate credential form
         filtered_credentials = ai_provider_schema.validate_credential_form(credentials)
@@ -95,8 +96,8 @@ class AIProviderFactory:
         return filtered_credentials
 
     def _get_ai_provider_map(self) -> dict[str, AIProviderExtension]:
-        '''
+        """
         Retrieves and returns the map of AI provider extensions.
-        '''
+        """
 
         return AI_PROVIDERS

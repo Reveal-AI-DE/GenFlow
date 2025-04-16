@@ -4,9 +4,11 @@
 
 from django.apps import AppConfig
 
+
 class TeamConfig(AppConfig):
-    name = 'gen_flow.apps.team'
+    name = "gen_flow.apps.team"
 
     def ready(self):
         from gen_flow.apps.team.signals import register_signals
+
         register_signals(self)

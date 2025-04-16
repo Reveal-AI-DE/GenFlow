@@ -6,7 +6,7 @@ from django.apps import AppConfig
 
 
 class PromptConfig(AppConfig):
-    name = 'gen_flow.apps.prompt'
+    name = "gen_flow.apps.prompt"
 
     def ready(self):
         pass

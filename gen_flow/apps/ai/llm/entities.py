@@ -7,7 +7,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from gen_flow.apps.ai.llm.messages import Message, AssistantMessage
+from gen_flow.apps.ai.llm.messages import AssistantMessage, Message
+
 
 class Usage(BaseModel):
     input_tokens: int
@@ -27,16 +28,16 @@ class Usage(BaseModel):
     def empty_usage(cls):
         return cls(
             input_tokens=0,
-            input_unit_price=Decimal('0.0'),
-            input_price_unit=Decimal('0.0'),
-            input_price=Decimal('0.0'),
+            input_unit_price=Decimal("0.0"),
+            input_price_unit=Decimal("0.0"),
+            input_price=Decimal("0.0"),
             output_tokens=0,
-            output_unit_price=Decimal('0.0'),
-            output_price_unit=Decimal('0.0'),
-            output_price=Decimal('0.0'),
+            output_unit_price=Decimal("0.0"),
+            output_price_unit=Decimal("0.0"),
+            output_price=Decimal("0.0"),
             total_tokens=0,
-            total_price=Decimal('0.0'),
-            currency='USD',
+            total_price=Decimal("0.0"),
+            currency="USD",
             latency=0.0,
         )
 
@@ -47,6 +48,7 @@ class Result(BaseModel):
     message: AssistantMessage
     usage: Usage
     system_fingerprint: Optional[str] = None
+
 
 class ResultChunkDelta(BaseModel):
     index: int

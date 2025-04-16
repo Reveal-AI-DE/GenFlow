@@ -3,11 +3,7 @@ profile = "black"
 forced_separate = ["tests"]
 line_length = 100
 skip_gitignore = true # align tool behavior with Black
-extend_skip=[
-    # Sorting the imports in this folder causes test failures;
-    # TODO: fix them and remove this ignore.
-    "gen_flow/apps/ai/providers",
-]
+extend_skip=[]
 
 [tool.black]
 line-length = 100

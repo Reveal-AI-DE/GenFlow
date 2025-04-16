@@ -6,7 +6,7 @@ from django.apps import AppConfig
 
 
 class CoreConfig(AppConfig):
-    name = 'gen_flow.apps.core'
+    name = "gen_flow.apps.core"
 
     def ready(self):
         pass

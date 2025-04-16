@@ -2,33 +2,33 @@
 #
 # SPDX-License-Identifier: MIT
 
-import time
 import re
-from enum import Enum
+import time
 from abc import abstractmethod
-from typing import Optional, Union, Generator
+from enum import Enum
+from typing import Generator, Optional, Union
 
-from gen_flow.apps.common.entities import ConfigurationEntity
-from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.entities.model import PricingType, PropertyKey
+from gen_flow.apps.ai.base.entities.shared import ModelType
 from gen_flow.apps.ai.base.model_collection import ModelCollection
-from gen_flow.apps.ai.llm.messages import Message
 from gen_flow.apps.ai.llm.entities import Result, Usage
+from gen_flow.apps.ai.llm.messages import Message
+from gen_flow.apps.common.entities import ConfigurationEntity
 
 
 class LLMMode(Enum):
-    '''
+    """
     Enum class for large language model mode.
-    '''
+    """
 
-    COMPLETION = 'completion'
-    CHAT = 'chat'
+    COMPLETION = "completion"
+    CHAT = "chat"
 
 
 class LLMModelCollection(ModelCollection):
-    '''
+    """
     Abstract base class that defines the interface for a collection of language models (LLMs).
-    '''
+    """
 
     model_type: ModelType = ModelType.LLM
 
@@ -38,13 +38,13 @@ class LLMModelCollection(ModelCollection):
         model: str,
         messages: list[Message],
     ) -> int:
-        '''
+        """
         Gets the token counts for a given model and messages.
-        '''
+        """
 
         raise NotImplementedError
 
-
+    # pylint: disable=too-many-positional-arguments
     @abstractmethod
     def _call(
         self,
@@ -56,16 +56,16 @@ class LLMModelCollection(ModelCollection):
         stream: bool = True,
         user: Optional[str] = None,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Calls the model with the given parameters and messages.
-        '''
+        """
 
         raise NotImplementedError
 
     def get_model_mode(self, model: str) -> LLMMode:
-        '''
+        """
         Returns model mode
-        '''
+        """
         model_schema = self.get_model_schema(model)
 
         mode = LLMMode.CHAT
@@ -75,9 +75,9 @@ class LLMModelCollection(ModelCollection):
         return mode
 
     def get_parameter_configs(self, model_name: str) -> list[ConfigurationEntity]:
-        ''''
+        """'
         Retrieves the parameter configurations for a given model.
-        '''
+        """
 
         schema = self.get_model_schema(model_name)
 
@@ -87,9 +87,9 @@ class LLMModelCollection(ModelCollection):
         return []
 
     def _process_model_parameters(self, model: str, model_parameters: dict) -> dict:
-        '''
+        """
         Processes and validates the model parameters based on the parameter configurations.
-        '''
+        """
 
         parameter_configs = self.get_parameter_configs(model)
 
@@ -100,7 +100,10 @@ class LLMModelCollection(ModelCollection):
             parameter_value = model_parameters.get(parameter_name)
             if parameter_value is None:
                 # use template value if available
-                if parameter_config.use_template and parameter_config.use_template in model_parameters:
+                if (
+                    parameter_config.use_template
+                    and parameter_config.use_template in model_parameters
+                ):
                     parameter_value = model_parameters[parameter_config.use_template]
                 else:
                     if parameter_config.required:
@@ -108,23 +111,23 @@ class LLMModelCollection(ModelCollection):
                             processed_parameters[parameter_name] = parameter_config.default
                             continue
                         else:
-                            raise ValueError(f'Model {model} parameter {parameter_name} is required.')
+                            raise ValueError(
+                                f"Model {model} parameter {parameter_name} is required."
+                            )
                     else:
                         continue
 
             # validate value
-            parameter_config.validate(parameter_value, prefix=f'Model {model} parameter')
+            parameter_config.validate_value(parameter_value, prefix=f"Model {model} parameter")
 
             processed_parameters[parameter_name] = parameter_value
 
         return processed_parameters
 
-    def _calculate_usage(
-        self, model: str, input_tokens: int, output_tokens: int
-    ) -> Usage:
-        '''
+    def _calculate_usage(self, model: str, input_tokens: int, output_tokens: int) -> Usage:
+        """
         Calculates the usage and cost based on the input and output tokens.
-        '''
+        """
 
         # get input price info
         input_price_info = self.get_price(
@@ -155,6 +158,7 @@ class LLMModelCollection(ModelCollection):
         )
         return usage
 
+    # pylint: disable=too-many-positional-arguments
     def call(
         self,
         model: str,
@@ -165,9 +169,9 @@ class LLMModelCollection(ModelCollection):
         stream: bool = True,
         user: Optional[str] = None,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Calls the model with the given parameters and messages, and returns the result.
-        '''
+        """
 
         # process parameters
         if parameters is None:
@@ -187,7 +191,7 @@ class LLMModelCollection(ModelCollection):
         return result
 
     def truncate_at_stop_tokens(self, text: str, stop: list[str]) -> str:
-        '''
+        """
         Truncates the given text at the first occurrence of any stop tokens.
 
         This function splits the input text at the first occurrence of any of the stop tokens
@@ -195,6 +199,6 @@ class LLMModelCollection(ModelCollection):
 
         Returns:
             str: The portion of the text before the first stop token.
-        '''
+        """
 
-        return re.split('|'.join(stop), text, maxsplit=1)[0]
+        return re.split("|".join(stop), text, maxsplit=1)[0]

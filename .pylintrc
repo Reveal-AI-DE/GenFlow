@@ -82,7 +82,7 @@ persistent=yes
 
 # Minimum Python version to use for version dependent checks. Will default to
 # the version used to run pylint.
-py-version=3.7
+py-version=3.10
 
 # Discover python modules and packages in the file system subtree.
 recursive=no
@@ -286,7 +286,6 @@ disable=raw-checker-failed,
         raise-missing-from,
         raising-format-tuple,
         wrong-exception-operation,
-        wildcard-import,
         deprecated-module,
         import-self,
         preferred-module,
@@ -515,7 +514,8 @@ enable=singleton-comparison,
        logging-unsupported-format,
        logging-format-truncated,
        logging-too-many-args,
-       logging-too-few-args
+       logging-too-few-args,
+       wildcard-import
 
 
 [BASIC]

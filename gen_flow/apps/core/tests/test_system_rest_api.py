@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from http.client import HTTPResponse
+
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -18,7 +19,7 @@ class ServerAboutTestCase(APITestCase):
         cls.admin_user, cls.regular_users = create_dummy_users()
 
     def get_about(self, user=None) -> HTTPResponse:
-        url = '/api/system/about'
+        url = "/api/system/about"
         if user is None:
             response = self.client.get(url)
         else:
@@ -27,15 +28,15 @@ class ServerAboutTestCase(APITestCase):
         return response
 
     def test_about_anonymous(self):
-        response = self.client.get('/api/system/about')
+        response = self.client.get("/api/system/about")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_about_admin(self):
         response = self.get_about(self.admin_user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['version'], gen_flow_version)
+        self.assertEqual(response.data["version"], gen_flow_version)
 
     def test_about_user(self):
-        response = self.get_about(self.regular_users[0]['user'])
+        response = self.get_about(self.regular_users[0]["user"])
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['version'], gen_flow_version)
+        self.assertEqual(response.data["version"], gen_flow_version)

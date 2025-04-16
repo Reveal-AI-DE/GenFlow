@@ -3,29 +3,31 @@
 # SPDX-License-Identifier: MIT
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
-from django.db.models.signals import post_save, post_migrate
+from django.contrib.auth.models import Group, User
+from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
+
 
 # post_migrate is different from other signals
 @receiver(post_migrate)
 def create_groups(sender, **kwargs):
-    '''
+    """
     The `post_migrate` signal handler to create groups corresponding to system roles.
 
     Args:
         sender (Any): The sender of the signal.
         **kwargs: Additional keyword arguments passed by the signal.
-    '''
-    from django.contrib.auth.models import Group
+    """
 
     # Create all groups which corresponds system roles
     for role in settings.IAM_ROLES:
         Group.objects.get_or_create(name=role)
 
-if settings.IAM_TYPE == 'BASIC':
+
+if settings.IAM_TYPE == "BASIC":
+
     def add_group(sender, instance, created, **kwargs):
-        '''
+        """
         Signal receiver that handles the creation of a user.
 
         - If the user is a superuser and staff, it adds the user to the IAM_ADMIN_ROLE group and creates
@@ -38,7 +40,7 @@ if settings.IAM_TYPE == 'BASIC':
             instance (User): The instance of the user being created.
             created (bool): A boolean indicating whether the user instance was created.
             **kwargs: Additional keyword arguments.
-        '''
+        """
         from allauth.account import app_settings as allauth_settings
         from allauth.account.models import EmailAddress
 
@@ -48,18 +50,20 @@ if settings.IAM_TYPE == 'BASIC':
 
             # create and verify EmailAddress for superuser accounts
             if allauth_settings.EMAIL_REQUIRED:
-                EmailAddress.objects.get_or_create(user=instance,
-                    email=instance.email, primary=True, verified=True)
-        else: # don't need to add default groups for superuser
-            if created and not getattr(instance, 'skip_group_assigning', None):
+                EmailAddress.objects.get_or_create(
+                    user=instance, email=instance.email, primary=True, verified=True
+                )
+        else:  # don't need to add default groups for superuser
+            if created and not getattr(instance, "skip_group_assigning", None):
                 db_group = Group.objects.get(name=settings.IAM_DEFAULT_ROLE)
                 instance.groups.add(db_group)
 
-def register_signals():
-    '''
-    Registers Django signals for the IAM app.
-    '''
 
-    if settings.IAM_TYPE == 'BASIC':
+def register_signals():
+    """
+    Registers Django signals for the IAM app.
+    """
+
+    if settings.IAM_TYPE == "BASIC":
         # Add default groups and add admin rights to super users.
         post_save.connect(add_group, sender=User)

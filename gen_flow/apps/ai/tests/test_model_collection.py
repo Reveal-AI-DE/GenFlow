@@ -2,25 +2,28 @@
 #
 # SPDX-License-Identifier: MIT
 
-from os import path as osp
 import decimal
+from os import path as osp
 from unittest import TestCase
 
 from django.conf import settings
 
-from gen_flow.apps.ai.tests.utils import DummyAIProvider, DummyModelCollection, create_dummy_model_config, remove_dummy_model_config
 from gen_flow.apps.ai.base.entities.model import PricingType
+from gen_flow.apps.ai.tests.utils import (
+    DummyAIProvider,
+    DummyModelCollection,
+    create_dummy_model_config,
+    remove_dummy_model_config,
+)
 
 
 class ModelCollectionTest(TestCase):
     @classmethod
     def setUpClass(cls):
         create_dummy_model_config()
-        cls.model_type = 'llm'
+        cls.model_type = "llm"
         cls.config_path = osp.join(
-            settings.MODEL_CONFIG_ROOT,
-            DummyAIProvider.PROVIDER_FOLDER,
-            cls.model_type
+            settings.MODEL_CONFIG_ROOT, DummyAIProvider.PROVIDER_FOLDER, cls.model_type
         )
 
     @classmethod
@@ -61,6 +64,6 @@ class ModelCollectionTest(TestCase):
                 self.assertIsNotNone(price)
                 self.assertEqual(price.unit_price, model.pricing.input)
                 total = tokens * model.pricing.unit * model.pricing.input
-                total = total.quantize(decimal.Decimal('0.0000001'), rounding=decimal.ROUND_HALF_UP)
+                total = total.quantize(decimal.Decimal("0.0000001"), rounding=decimal.ROUND_HALF_UP)
                 self.assertEqual(price.total_amount, total)
                 self.assertEqual(price.unit, model.pricing.unit)

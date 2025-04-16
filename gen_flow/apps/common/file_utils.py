@@ -4,12 +4,13 @@
 
 import os
 from os import path as osp
-from defusedxml import ElementTree as ET
 
+from defusedxml import ElementTree as ET
 from PIL import Image
 
+
 def is_image(file_path):
-    '''
+    """
     Check if the given file path points to a valid image file.
 
     This function attempts to open the file as an image using the PIL library.
@@ -21,7 +22,7 @@ def is_image(file_path):
 
     Returns:
         bool: True if the file is a valid image or SVG file, False otherwise.
-    '''
+    """
 
     try:
         with Image.open(file_path) as img:
@@ -32,14 +33,15 @@ def is_image(file_path):
         try:
             tree = ET.parse(file_path)
             root = tree.getroot()
-            if root.tag.endswith('svg'):
+            if root.tag.endswith("svg"):
                 return True
         except ET.ParseError:
             return False
     return False
 
+
 def create_media_symbolic_links(source_folder: str, destination_folder: str):
-    '''
+    """
     Creates symbolic links for image files from the source folder to the destination folder.
 
     Args:
@@ -54,7 +56,7 @@ def create_media_symbolic_links(source_folder: str, destination_folder: str):
         - Only files identified as images by the `is_image` function will have symbolic links created.
         - The destination folder will be created if it does not exist.
         - Existing symbolic links in the destination folder will not be overwritten.
-    '''
+    """
 
     if osp.exists(source_folder) and osp.isdir(source_folder):
         # get image files

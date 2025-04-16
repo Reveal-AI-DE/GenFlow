@@ -6,7 +6,7 @@ from django.apps import AppConfig
 
 
 class SessionConfig(AppConfig):
-    name = 'gen_flow.apps.session'
+    name = "gen_flow.apps.session"
 
     def ready(self):
         pass

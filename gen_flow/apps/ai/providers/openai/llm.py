@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Optional, Union, Generator, cast
+from typing import Generator, Optional, Union, cast
 
 import tiktoken
 from openai import Stream
@@ -10,24 +10,29 @@ from openai.types import Completion
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
 from gen_flow.apps.ai.base.entities.shared import ModelType
-from gen_flow.apps.ai.llm.messages import Message, UserMessage, AssistantMessage, SystemMessage, MessageContentType
 from gen_flow.apps.ai.llm.entities import Result, ResultChunk, ResultChunkDelta
 from gen_flow.apps.ai.llm.llm_model_collection import LLMMode, LLMModelCollection
-from gen_flow.apps.ai.providers.registry import register_model_collection
+from gen_flow.apps.ai.llm.messages import (
+    AssistantMessage,
+    Message,
+    MessageContentType,
+    SystemMessage,
+    UserMessage,
+)
 from gen_flow.apps.ai.providers.openai.client import OpenAIClient
+from gen_flow.apps.ai.providers.registry import register_model_collection
 
 
-@register_model_collection(ai_provider='openai', model_type=ModelType.LLM.value)
+@register_model_collection(ai_provider="openai", model_type=ModelType.LLM.value)
 class OpenAILargeLanguageModel(LLMModelCollection):
-    '''
+    """
     Defines the interface for a collection of language models (LLMs) provided by OpenAI.
-    '''
-
+    """
 
     def validate_credentials(self, model: str, credentials: dict) -> None:
-        '''
+        """
         Validates model credentials
-        '''
+        """
         try:
             client = OpenAIClient(credentials=credentials)
 
@@ -37,7 +42,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             if model_mode == LLMMode.CHAT:
                 # chat model
                 client.chat.completions.create(
-                    messages=[{'role': 'user', 'content': 'ping'}],
+                    messages=[{"role": "user", "content": "ping"}],
                     model=model,
                     temperature=0,
                     max_tokens=20,
@@ -46,7 +51,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             else:
                 # text completion model
                 client.completions.create(
-                    prompt='ping',
+                    prompt="ping",
                     model=model,
                     temperature=0,
                     max_tokens=20,
@@ -61,9 +66,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         model: str,
         messages: list[Message],
     ) -> int:
-        '''
+        """
         Gets the token counts for a given model and messages.
-        '''
+        """
 
         # get model mode
         model_mode = self.get_model_mode(model=model)
@@ -77,37 +82,37 @@ class OpenAILargeLanguageModel(LLMModelCollection):
                 return 0
             return self._get_tokens_count_from_string(model, messages[0].content)
 
-    def _get_tokens_count_from_messages(
-        self,
-        model: str,
-        messages: list[Message]
-    ) -> int:
-        '''
+    def _get_tokens_count_from_messages(self, model: str, messages: list[Message]) -> int:
+        """
         Return the number of tokens used by a list of messages.
         Official documentation: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_format_inputs_to_ChatGPT_models.ipynb
         Information on how messages are converted to tokens: https://platform.openai.com/docs/advanced-usage/managing-tokens
-        '''
+        """
 
         # Use gpt4o to calculate chatgpt-4o-latest's token.
-        if model == 'chatgpt-4o-latest' or model.startswith('o1'):
-            model = 'gpt-4o'
+        if model == "chatgpt-4o-latest" or model.startswith("o1"):
+            model = "gpt-4o"
 
         try:
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
             # TODO: log -> 'Warning: model not found. Using cl100k_base encoding.'
-            model = 'cl100k_base'
+            model = "cl100k_base"
             encoding = tiktoken.get_encoding(model)
 
-        if model.startswith('gpt-3.5-turbo-0301'):
-            tokens_per_message = 4 # every message follows <im_start>{role/name}\n{content}<im_end>\n
-            tokens_per_name = -1 # if there's a name, the role is omitted
-        elif model.startswith('gpt-3.5-turbo') or model.startswith('gpt-4') or model.startswith('o1'):
+        if model.startswith("gpt-3.5-turbo-0301"):
+            tokens_per_message = (
+                4  # every message follows <im_start>{role/name}\n{content}<im_end>\n
+            )
+            tokens_per_name = -1  # if there's a name, the role is omitted
+        elif (
+            model.startswith("gpt-3.5-turbo") or model.startswith("gpt-4") or model.startswith("o1")
+        ):
             tokens_per_message = 3
             tokens_per_name = 1
         else:
             raise NotImplementedError(
-                f'_get_tokens_count_from_messages() is not implemented for model {model}.'
+                f"_get_tokens_count_from_messages() is not implemented for model {model}."
             )
 
         num_tokens = 0
@@ -117,39 +122,40 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             for key, value in message.items():
                 # 'content' my be a list
                 if isinstance(value, list):
-                    text = ''
+                    text = ""
                     for item in value:
-                        if isinstance(item, dict) and item['type'] == 'text':
-                            text += item['text']
+                        if isinstance(item, dict) and item["type"] == "text":
+                            text += item["text"]
 
                     value = text
 
                 num_tokens += len(encoding.encode(str(value)))
-                if key == 'name':
+                if key == "name":
                     num_tokens += tokens_per_name
 
-        num_tokens += 3 # every reply is primed with <|start|>assistant<|message|>
+        num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
 
         return num_tokens
 
     def _get_tokens_count_from_string(
-            self,
-            model: str,
-            text: str,
-        ) -> int:
-        '''
+        self,
+        model: str,
+        text: str,
+    ) -> int:
+        """
         Return the number of tokens used by a text.
-        '''
+        """
 
         try:
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
             # TODO: log -> 'Warning: model not found. Using cl100k_base encoding.'
-            encoding = tiktoken.get_encoding('cl100k_base')
+            encoding = tiktoken.get_encoding("cl100k_base")
 
         num_tokens = len(encoding.encode(text))
         return num_tokens
 
+    # pylint: disable=too-many-positional-arguments
     def _call(
         self,
         model: str,
@@ -160,22 +166,22 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         stream: bool = True,
         user: Optional[str] = None,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Calls the model with the given parameters and messages.
-        '''
+        """
 
         # init model client
         client = OpenAIClient(credentials=credentials)
 
         extra_model_kwargs = {}
         if stop:
-            extra_model_kwargs['stop'] = stop
+            extra_model_kwargs["stop"] = stop
 
         if user:
-            extra_model_kwargs['user'] = user
+            extra_model_kwargs["user"] = user
 
         if stream:
-            extra_model_kwargs['stream_options'] = {'include_usage': True}
+            extra_model_kwargs["stream_options"] = {"include_usage": True}
         # get model mode
         model_mode = self.get_model_mode(model=model)
 
@@ -194,14 +200,14 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             # text completion model
             return self._completions(
                 model=model,
-                credentials=credentials,
+                client=client,
                 messages=messages,
                 parameters=parameters,
-                stop=stop,
+                extra_model_kwargs=extra_model_kwargs,
                 stream=stream,
-                user=user,
             )
 
+    # pylint: disable=too-many-positional-arguments
     def _chat_completions(
         self,
         model: str,
@@ -212,24 +218,24 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         stop: Optional[list[str]] = None,
         stream: bool = True,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Calls llm chat model
-        '''
+        """
 
         # clear illegal prompt messages
         messages = self._fix_messages(model, messages)
 
         block_as_stream = False
-        if model.startswith('o1'):
+        if model.startswith("o1"):
             if stream:
                 block_as_stream = True
                 stream = False
 
-                if 'stream_options' in extra_model_kwargs:
-                    del extra_model_kwargs['stream_options']
+                if "stream_options" in extra_model_kwargs:
+                    del extra_model_kwargs["stream_options"]
 
-            if 'stop' in extra_model_kwargs:
-                del extra_model_kwargs['stop']
+            if "stop" in extra_model_kwargs:
+                del extra_model_kwargs["stop"]
 
         # chat model
         response = client.chat.completions.create(
@@ -246,43 +252,34 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         block_result = self._process_chat_completions_response(model, response, messages)
 
         if block_as_stream:
-            return self._process_chat_completions_block_as_stream_response(block_result, messages, stop)
+            return self._process_chat_completions_block_as_stream_response(
+                block_result, messages, stop
+            )
 
         return block_result
 
-    def _fix_messages(
-            self,
-            model: str,
-            messages: list[Message]
-        ) -> list[Message]:
-        '''
+    def _fix_messages(self, model: str, messages: list[Message]) -> list[Message]:
+        """
         Fix messages for OpenAI API based on the model
-        '''
+        """
 
-        if model in ['gpt-4-turbo', 'gpt-4-turbo-2024-04-09']:
+        if model in ["gpt-4-turbo", "gpt-4-turbo-2024-04-09"]:
             # user messages content should be str
             # and not a list of MessageContent
             for message in messages:
                 if isinstance(message, UserMessage):
                     if isinstance(message.content, list):
-                        message.content = '\n'.join(
+                        message.content = "\n".join(
                             [
-                                item.data
-                                if item.type == MessageContentType.TEXT
-                                else ''
+                                item.data if item.type == MessageContentType.TEXT else ""
                                 for item in message.content
                             ]
                         )
 
-        if model.startswith('o1'):
+        if model.startswith("o1"):
             # system messages content should be converted to user messages
 
-            count = len(
-                filter(
-                    lambda x: isinstance(x, SystemMessage),
-                    messages
-                )
-            )
+            count = len(filter(lambda x: isinstance(x, SystemMessage), messages))
             if count == 0:
                 return messages
 
@@ -306,20 +303,20 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         response: Stream[ChatCompletionChunk],
         messages: list[Message],
     ) -> Generator:
-        '''
+        """
         Processes llm chat stream response
-        '''
+        """
 
         final_chunk = ResultChunk(
             model=model,
             messages=messages,
             delta=ResultChunkDelta(
                 index=0,
-                message=AssistantMessage(content=''),
+                message=AssistantMessage(content=""),
             ),
         )
 
-        full_assistant_content = ''
+        full_assistant_content = ""
         input_tokens = 0
         output_tokens = 0
         for chunk in response:
@@ -333,16 +330,13 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             delta = chunk.choices[0]
             has_finish_reason = delta.finish_reason is not None
 
-            if (
-                not has_finish_reason
-                and (delta.delta.content is None or delta.delta.content == '')
-            ):
+            if not has_finish_reason and (delta.delta.content is None or delta.delta.content == ""):
                 continue
 
             # transform assistant message to message
-            assistant_message = AssistantMessage(content=delta.delta.content or '')
+            assistant_message = AssistantMessage(content=delta.delta.content or "")
 
-            full_assistant_content += delta.delta.content or ''
+            full_assistant_content += delta.delta.content or ""
 
             if has_finish_reason:
                 final_chunk = ResultChunk(
@@ -372,13 +366,13 @@ class OpenAILargeLanguageModel(LLMModelCollection):
 
         # calculate output tokens
         if not output_tokens:
-            full_assistant_message = AssistantMessage(
-                content=full_assistant_content
-            )
+            full_assistant_message = AssistantMessage(content=full_assistant_content)
             output_tokens = self._get_tokens_count_from_messages(model, [full_assistant_message])
 
         # build usage entity
-        usage = self._calculate_usage(model=model, input_tokens=input_tokens, output_tokens=output_tokens)
+        usage = self._calculate_usage(
+            model=model, input_tokens=input_tokens, output_tokens=output_tokens
+        )
         final_chunk.delta.usage = usage
 
         yield final_chunk
@@ -389,9 +383,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         response: ChatCompletion,
         messages: list[Message],
     ) -> Result:
-        '''
+        """
         Processes llm chat response
-        '''
+        """
 
         assistant_message = response.choices[0].message
 
@@ -428,9 +422,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         messages: list[Message],
         stop: Optional[list[str]] = None,
     ) -> Generator[ResultChunk, None, None]:
-        '''
+        """
         Processes llm chat block_as_stream response
-        '''
+        """
 
         text = block_result.message.content
         text = cast(str, text)
@@ -450,6 +444,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             ),
         )
 
+    # pylint: disable=too-many-positional-arguments
     def _completions(
         self,
         model: str,
@@ -459,13 +454,17 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         extra_model_kwargs: dict,
         stream: bool = True,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Calls llm completion model
-        '''
+        """
 
         # text completion model
         response = client.completions.create(
-            prompt=messages[0].content, model=model, stream=stream, **parameters, **extra_model_kwargs
+            prompt=messages[0].content,
+            model=model,
+            stream=stream,
+            **parameters,
+            **extra_model_kwargs,
         )
 
         if stream:
@@ -474,25 +473,22 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         return self._process_completions_response(model, response, messages)
 
     def _process_completions_stream_response(
-        self,
-        model: str,
-        response: Stream[Completion],
-        messages: list[Message]
+        self, model: str, response: Stream[Completion], messages: list[Message]
     ) -> Generator:
-        '''
+        """
         Processes llm completion stream response
-        '''
+        """
 
         final_chunk = ResultChunk(
             model=model,
             messages=messages,
             delta=ResultChunkDelta(
                 index=0,
-                message=AssistantMessage(content=''),
+                message=AssistantMessage(content=""),
             ),
         )
 
-        full_text = ''
+        full_text = ""
         input_tokens = 0
         output_tokens = 0
         for chunk in response:
@@ -505,11 +501,11 @@ class OpenAILargeLanguageModel(LLMModelCollection):
 
             delta = chunk.choices[0]
 
-            if delta.finish_reason is None and (delta.text is None or delta.text == ''):
+            if delta.finish_reason is None and (delta.text is None or delta.text == ""):
                 continue
 
             # transform assistant message to message
-            text = delta.text or ''
+            text = delta.text or ""
             assistant_message = AssistantMessage(content=text)
 
             full_text += text
@@ -545,19 +541,19 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             output_tokens = self._get_tokens_count_from_string(model=model, text=full_text)
 
         # build usage entity
-        usage = self._calculate_usage(model=model, input_tokens=input_tokens, output_tokens=output_tokens)
+        usage = self._calculate_usage(
+            model=model, input_tokens=input_tokens, output_tokens=output_tokens
+        )
         final_chunk.delta.usage = usage
 
         yield final_chunk
 
     def _process_completions_response(
-        self, model: str,
-        response: Completion,
-        messages: list[Message]
+        self, model: str, response: Completion, messages: list[Message]
     ) -> Result:
-        '''
+        """
         Processes llm completion response
-        '''
+        """
 
         assistant_text = response.choices[0].text
 
@@ -575,7 +571,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
             output_tokens = self._get_tokens_count_from_string(model=model, text=assistant_text)
 
         # build usage entity
-        usage = self._calculate_usage(model=model, input_tokens=input_tokens, output_tokens=output_tokens)
+        usage = self._calculate_usage(
+            model=model, input_tokens=input_tokens, output_tokens=output_tokens
+        )
 
         # build result entity
         result = Result(

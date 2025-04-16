@@ -2,21 +2,20 @@
 #
 # SPDX-License-Identifier: MIT
 
-from enum import Enum
+from typing import Any, Callable, List, Mapping, Optional
 
-from typing import Mapping, Any, Optional, Callable, List
 from pydantic import BaseModel, ConfigDict
 
 from gen_flow.apps.common.entities import FileEntity
 from gen_flow.apps.core.config.llm_model_bundle import LLMModelBundle
-from gen_flow.apps.session.transform.base import PromptTemplateEntity
 from gen_flow.apps.session.models import Session
+from gen_flow.apps.session.transform.base import PromptTemplateEntity
 
 
 class GenerateRequest(BaseModel):
-    '''
+    """
     Represents a user request to call LLM model and generate text response.
-    '''
+    """
 
     query: str
     files: Optional[List[FileEntity]] = None
@@ -27,9 +26,9 @@ class GenerateRequest(BaseModel):
 
 
 class GenerateEntity(BaseModel):
-    '''
+    """
     Represents an entity to handle user request to call LLM model.
-    '''
+    """
 
     db_session: Session
     llm_model_bundle: LLMModelBundle

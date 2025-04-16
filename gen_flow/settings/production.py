@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+# pylint: disable=wildcard-import
 from .base import *
 
 DEBUG = False

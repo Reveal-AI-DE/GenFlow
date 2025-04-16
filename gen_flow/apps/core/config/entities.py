@@ -2,49 +2,49 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Optional, Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, field_serializer
 
-from gen_flow.apps.ai.base.entities.shared import ModelType
-from gen_flow.apps.ai.base.entities.model import CommonModelEntity, ModelEntity
-from gen_flow.apps.ai.base.entities.provider import CommonAIProviderEntity, AIProviderEntity
-from gen_flow.apps.ai.base.ai_provider import AIProvider
-from gen_flow.apps.ai.base.model_collection import ModelCollection
 from gen_flow.apps.ai import ai_provider_factory
+from gen_flow.apps.ai.base.ai_provider import AIProvider
+from gen_flow.apps.ai.base.entities.model import CommonModelEntity, ModelEntity
+from gen_flow.apps.ai.base.entities.provider import AIProviderEntity, CommonAIProviderEntity
+from gen_flow.apps.ai.base.entities.shared import ModelType
+from gen_flow.apps.ai.base.model_collection import ModelCollection
 
 
 class UserModelConfiguration(BaseModel):
-    '''
+    """
     Represents a model configuration provided by the user.
-    '''
+    """
 
     model: str
     credentials: dict
 
 
 class UserProviderConfiguration(BaseModel):
-    '''
+    """
     Represents an AI provider configuration provided by the user.
-    '''
+    """
 
     provider_id: str
     credentials: dict
 
 
 class UserConfiguration(BaseModel):
-    '''
+    """
     Represents configuration provided by the user for an AI provider and a list of its models.
-    '''
+    """
 
     provider: Optional[UserProviderConfiguration] = None
     models: list[UserModelConfiguration] = []
 
 
 class SystemConfiguration(BaseModel):
-    '''
+    """
     Represents configuration provided by the system.
-    '''
+    """
 
     provider: Optional[str] = None
     enabled: bool
@@ -52,30 +52,31 @@ class SystemConfiguration(BaseModel):
 
 
 class ModelWithProviderEntity(CommonModelEntity):
-    '''
+    """
     Extends CommonModelEntity to include a provider and an active status.
-    '''
+    """
 
     active: bool
     provider: CommonAIProviderEntity
 
 
 class AIProviderConfiguration(AIProviderEntity):
-    '''
+    """
     Configuration entity for AI providers, inheriting from AIProviderEntity.
-    '''
+    """
 
     user_configuration: Optional[UserConfiguration] = None
     system_configuration: Optional[SystemConfiguration] = None
 
-    def __init__(self,
-            ai_provider_entity: AIProviderEntity,
-            user_configuration: Optional[UserConfiguration] = None,
-            system_configuration: Optional[SystemConfiguration] = None,
-        ) -> 'AIProviderConfiguration':
-        '''
+    def __init__(
+        self,
+        ai_provider_entity: AIProviderEntity,
+        user_configuration: Optional[UserConfiguration] = None,
+        system_configuration: Optional[SystemConfiguration] = None,
+    ) -> "AIProviderConfiguration":
+        """
         Initializes an AIProviderConfiguration instance with the given parameters.
-        '''
+        """
 
         super().__init__(
             id=ai_provider_entity.id,
@@ -88,40 +89,43 @@ class AIProviderConfiguration(AIProviderEntity):
             help=ai_provider_entity.help,
             credential_form=ai_provider_entity.credential_form,
         )
-        self.user_configuration=user_configuration
-        self.system_configuration=system_configuration
+        self.user_configuration = user_configuration
+        self.system_configuration = system_configuration
 
-    @field_serializer('user_configuration')
+    @field_serializer("user_configuration")
     def get_user_configuration(self, user_configuration: UserConfiguration) -> dict[str, Any]:
-        '''
+        """
         Serializes UserConfiguration into a dictionary.
-        '''
+        """
 
-        active =  user_configuration is not None and \
-            (user_configuration.provider is not None or len(user_configuration.models) > 0)
-        provider = user_configuration.provider.provider_id \
-            if user_configuration is not None and user_configuration.provider is not None \
+        active = user_configuration is not None and (
+            user_configuration.provider is not None or len(user_configuration.models) > 0
+        )
+        provider = (
+            user_configuration.provider.provider_id
+            if user_configuration is not None and user_configuration.provider is not None
             else None
+        )
         return {
-            'active': active,
-            'provider': provider,
+            "active": active,
+            "provider": provider,
         }
 
-    @field_serializer('system_configuration')
+    @field_serializer("system_configuration")
     def get_system_configuration(self, system_configuration: SystemConfiguration) -> dict[str, Any]:
-        '''
+        """
         Serializes SystemConfiguration into a dictionary.
-        '''
+        """
 
         active = system_configuration is not None and system_configuration.enabled
         return {
-            'active': active,
+            "active": active,
         }
 
-    def get_provider_models(self, model_type: ModelType=None):
-        '''
+    def get_provider_models(self, model_type: ModelType = None):
+        """
         Retrieves models from the AI provider instance based on the specified model type.
-        '''
+        """
 
         ai_provider_instance = ai_provider_factory.get_ai_provider_instance(provider_name=self.id)
 
@@ -152,10 +156,10 @@ class AIProviderConfiguration(AIProviderEntity):
 
 
 class ModelCollectionBundle(BaseModel):
-    '''
+    """
     Encapsulates the configuration and instances
     related to an AI provider and specific model type.
-    '''
+    """
 
     configuration: AIProviderConfiguration
     ai_provider_instance: AIProvider
@@ -166,10 +170,10 @@ class ModelCollectionBundle(BaseModel):
 
 
 class ModelBundle(ModelCollectionBundle):
-    '''
+    """
     Encapsulates the ModelCollectionBundle along with specific model schema
     and provided parameters and credentials.
-    '''
+    """
 
     model_schema: ModelEntity
     parameters: dict[str, Any] = {}

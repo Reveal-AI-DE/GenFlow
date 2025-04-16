@@ -4,18 +4,18 @@
 
 from os import path as osp
 
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.utils.text import get_valid_filename
 
-from gen_flow.apps.common.models import TimeAuditModel, UserOwnedModel, TeamAssociatedModel
+from gen_flow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
 from gen_flow.apps.core.models import EntityGroup, ProviderModelConfig
 
 
-def get_prompt_media_path(instance: 'Prompt', filename: str) -> str:
-    '''
+def get_prompt_media_path(instance: "Prompt", filename: str) -> str:
+    """
     Generates a relative file path for storing media files associated with a Prompt instance.
-    '''
+    """
 
     filename = get_valid_filename(filename)
     absolute_path = osp.join(settings.PROMPTS_MEDIA_ROOT, str(instance.id), filename)
@@ -24,25 +24,25 @@ def get_prompt_media_path(instance: 'Prompt', filename: str) -> str:
 
 
 class PromptType(models.TextChoices):
-    '''
+    """
     An enumeration of text choices representing different types of prompts.
-    '''
+    """
 
-    SIMPLE = 'simple'
-    ADVANCED = 'advanced'
+    SIMPLE = "simple"
+    ADVANCED = "advanced"
 
 
 class PromptStatus(models.TextChoices):
-    '''
+    """
     An enumeration of text choices representing prompt status.
-    '''
+    """
 
-    DRAFTED = 'drafted'
-    PUBLISHED = 'published'
+    DRAFTED = "drafted"
+    PUBLISHED = "published"
 
 
 class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
-    '''
+    """
     Represents a Prompt entity with various attributes and relationships.
 
     Attributes:
@@ -57,14 +57,16 @@ class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         related_model (OneToOneField, optional): A one-to-one relationship with `ProviderModelConfig`. Can be null.
         related_test_session (int, optional): An integer field representing a related test session. Can be null.
         is_pinned (bool): A boolean indicating whether the prompt is pinned. Defaults to `False`.
-    '''
+    """
 
     name = models.CharField(max_length=255)
     description = models.TextField()
     pre_prompt = models.TextField()
     suggested_questions = models.JSONField(null=True)
     type = models.CharField(max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE)
-    status = models.CharField(max_length=10, choices=PromptStatus.choices, default=PromptStatus.DRAFTED)
+    status = models.CharField(
+        max_length=10, choices=PromptStatus.choices, default=PromptStatus.DRAFTED
+    )
     avatar = models.ImageField(upload_to=get_prompt_media_path, null=True, blank=True)
     group = models.ForeignKey(EntityGroup, null=False, on_delete=models.CASCADE)
     related_model = models.OneToOneField(ProviderModelConfig, null=True, on_delete=models.CASCADE)
@@ -72,15 +74,15 @@ class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     is_pinned = models.BooleanField(default=False)
 
     def media_dir(self) -> str:
-        '''
+        """
         Returns the directory path for storing media files related to the prompt.
-        '''
+        """
 
         return osp.join(settings.PROMPTS_MEDIA_ROOT, str(self.id))
 
     def __str__(self) -> str:
-        '''
+        """
         Returns the string representation of the prompt, which is its name.
-        '''
+        """
 
         return self.name

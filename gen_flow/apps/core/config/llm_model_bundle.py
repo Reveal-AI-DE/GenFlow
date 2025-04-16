@@ -2,20 +2,20 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Any, cast, Optional, Generator, Union
+from typing import Any, Generator, Optional, Union, cast
 
 from pydantic import ConfigDict
 
+from gen_flow.apps.ai.llm.entities import Result
 from gen_flow.apps.ai.llm.llm_model_collection import LLMModelCollection
 from gen_flow.apps.ai.llm.messages import Message
-from gen_flow.apps.ai.llm.entities import Result
 from gen_flow.apps.core.config.entities import ModelBundle, ModelCollectionBundle
 
 
 class LLMModelBundle(ModelBundle):
-    '''
+    """
     Represents a model bundle for LLM.
-    '''
+    """
 
     model_collection_instance: LLMModelCollection
 
@@ -24,11 +24,11 @@ class LLMModelBundle(ModelBundle):
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
         if not isinstance(self.model_collection_instance, LLMModelCollection):
-            raise Exception('Model collection instance is not LLMModelCollection')
+            raise Exception("Model collection instance is not LLMModelCollection")
 
         self.model_collection_instance = cast(LLMModelCollection, self.model_collection_instance)
 
-
+    # pylint: disable=too-many-positional-arguments
     def call(
         self,
         messages: list[Message],
@@ -37,9 +37,9 @@ class LLMModelBundle(ModelBundle):
         stream: bool = True,
         user: Optional[str] = None,
     ) -> Union[Result, Generator]:
-        '''
+        """
         Call large language model
-        '''
+        """
 
         return self.model_collection_instance.call(
             model=self.model_schema.id,
@@ -51,14 +51,10 @@ class LLMModelBundle(ModelBundle):
             user=user,
         )
 
-
-    def get_tokens_count(
-        self,
-        messages: list[Message]
-    ) -> int:
-        '''
+    def get_tokens_count(self, messages: list[Message]) -> int:
+        """
         Get number of tokens for llm
-        '''
+        """
 
         return self.model_collection_instance.get_tokens_count(
             model=self.model_schema.id,
@@ -66,15 +62,17 @@ class LLMModelBundle(ModelBundle):
         )
 
     @staticmethod
-    def _fetch_credentials_from_bundle(model: str, model_collection_bundle: ModelCollectionBundle) -> dict:
-        '''
+    def _fetch_credentials_from_bundle(
+        model: str, model_collection_bundle: ModelCollectionBundle
+    ) -> dict:
+        """
         Fetch credentials from model collection bundle
-        '''
+        """
 
         configuration = model_collection_bundle.configuration
         credentials = configuration.user_configuration.provider.credentials
 
         if credentials is None:
-            raise Exception(f'Model {model} credentials is not initialized.')
+            raise Exception(f"Model {model} credentials is not initialized.")
 
         return credentials

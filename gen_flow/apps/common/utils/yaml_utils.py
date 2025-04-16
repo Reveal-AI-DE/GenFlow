@@ -7,8 +7,9 @@ from typing import Any
 import yaml
 from yaml import YAMLError
 
-def load_yaml_file(file_path: str, ignore_error: bool = True, default_value: Any = {}) -> Any:
-    '''
+
+def load_yaml_file(file_path: str, ignore_error: bool = True, default_value: Any = None) -> Any:
+    """
     Load and parse a YAML file.
 
     Args:
@@ -25,15 +26,18 @@ def load_yaml_file(file_path: str, ignore_error: bool = True, default_value: Any
     Raises:
         YAMLError: If there is an error loading the YAML file and ignore_error is False.
         Exception: If there is an error opening the file and ignore_error is False.
-    '''
+    """
+
+    if default_value is None:
+        default_value = {}
 
     try:
-        with open(file_path, encoding='utf-8') as yaml_file:
+        with open(file_path, encoding="utf-8") as yaml_file:
             try:
                 yaml_content = yaml.safe_load(yaml_file)
                 return yaml_content or default_value
             except Exception as e:
-                raise YAMLError(f'Failed to load YAML file {file_path}: {e}')
+                raise YAMLError(f"Failed to load YAML file {file_path}: {e}")
     except Exception as e:
         if ignore_error:
             return default_value

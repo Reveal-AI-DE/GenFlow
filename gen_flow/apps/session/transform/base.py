@@ -7,35 +7,32 @@ from typing import Optional
 from pydantic import BaseModel
 
 from gen_flow.apps.ai.base.entities.model import PropertyKey
-from gen_flow.apps.ai.llm.messages import Message, UserMessage, AssistantMessage
+from gen_flow.apps.ai.llm.messages import AssistantMessage, Message, UserMessage
 from gen_flow.apps.core.config.llm_model_bundle import LLMModelBundle
 from gen_flow.apps.prompt.models import PromptType
 from gen_flow.apps.session.models import Session, SessionMessage
 
 
 class PromptTemplateEntity(BaseModel):
-    '''
+    """
     Prompt Template Entity.
-    '''
+    """
 
     prompt_type: PromptType
     simple_prompt_template: Optional[str] = None
 
 
 class BasePromptTransform:
-    '''
+    """
     Responsible for managing and transforming chat session messages
     to ensure they fit within the constraints of a language model's token limit. It interacts with
     a session object and a LLM model bundle to process and retrieve chat histories.
-    '''
+    """
 
-    def __init__(self,
-            db_session: Session,
-            llm_model_bundle: LLMModelBundle
-        ):
-        '''
+    def __init__(self, db_session: Session, llm_model_bundle: LLMModelBundle):
+        """
         Initializes the BasePromptTransform with a session and model bundle.
-        '''
+        """
 
         self.db_session = db_session
         self.llm_model_bundle = llm_model_bundle
@@ -44,10 +41,10 @@ class BasePromptTransform:
         self,
         messages: list[Message],
     ) -> list[Message]:
-        '''
+        """
         Appends historical chat messages to the provided list of messages, ensuring
             the total token count remains within the model's constraints.
-        '''
+        """
 
         remaining_token = self._calculate_remaining_token(messages)
 
@@ -56,25 +53,24 @@ class BasePromptTransform:
 
         return messages
 
-    def _calculate_remaining_token(
-        self,
-        messages: list[Message]
-    ) -> int:
-        '''
+    def _calculate_remaining_token(self, messages: list[Message]) -> int:
+        """
         Calculates the remaining token capacity available for additional messages
             based on the model's context size and current message tokens.
-        '''
+        """
 
         rest_tokens = 2000
 
-        model_context_tokens = self.llm_model_bundle.model_schema.properties.get(PropertyKey.CONTEXT_SIZE)
+        model_context_tokens = self.llm_model_bundle.model_schema.properties.get(
+            PropertyKey.CONTEXT_SIZE
+        )
         if model_context_tokens:
             curr_message_tokens = self.llm_model_bundle.get_tokens_count(messages)
 
             max_tokens = 0
             for parameter_config in self.llm_model_bundle.model_schema.parameter_configs:
-                if parameter_config.name == 'max_tokens' or (
-                    parameter_config.use_template and parameter_config.use_template == 'max_tokens'
+                if parameter_config.name == "max_tokens" or (
+                    parameter_config.use_template and parameter_config.use_template == "max_tokens"
                 ):
                     max_tokens = (
                         self.llm_model_bundle.parameters.get(parameter_config.name)
@@ -86,13 +82,15 @@ class BasePromptTransform:
 
         return rest_tokens
 
-    def _get_message_history(self, max_token_limit: int = 2000, message_limit: Optional[int] = None) -> list[Message]:
-        '''
+    def _get_message_history(
+        self, max_token_limit: int = 2000, message_limit: Optional[int] = None
+    ) -> list[Message]:
+        """
         Retrieves historical chat messages from the session database, prunes them
             if they exceed the maximum token limit, and returns the processed messages.
-        '''
+        """
 
-        query_set = SessionMessage.objects.filter(session=self.db_session).order_by('-created_date')
+        query_set = SessionMessage.objects.filter(session=self.db_session).order_by("-created_date")
 
         if message_limit and message_limit > 0:
             message_limit = min(message_limit, 500)

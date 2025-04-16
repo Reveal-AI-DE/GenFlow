@@ -2,41 +2,46 @@
 #
 # SPDX-License-Identifier: MIT
 
-import os
 import decimal
-from os import path as osp
-from typing import Optional, Mapping
+import os
 from abc import ABC, abstractmethod
+from os import path as osp
+from typing import Mapping, Optional
 
+from gen_flow.apps.ai.base.entities.model import (
+    ConfigurationEntity,
+    DefaultParameterName,
+    ModelEntity,
+    PricingConfig,
+    PricingDetails,
+    PricingType,
+)
 from gen_flow.apps.common.utils.yaml_utils import load_yaml_file
-from gen_flow.apps.ai.base.entities.shared import ModelType
-from gen_flow.apps.ai.base.entities.model import (ConfigurationEntity, ModelEntity,
-    DefaultParameterName, PricingConfig, PricingType, PricingDetails)
 
 
 class ModelCollection(ABC):
-    '''
+    """
     Represents a collection of models of the same type and same provider.
-    '''
+    """
 
-    DEFAULT_PARAMETERS_FILE_NAME = '_defaults.yaml'
-    LISTING_FILE_NAME = '_listing.yaml'
+    DEFAULT_PARAMETERS_FILE_NAME = "_defaults.yaml"
+    LISTING_FILE_NAME = "_listing.yaml"
 
     def __init__(self) -> None:
         # .../provider/type/**schemas.yaml
-        self.config_path: str = ''
+        self.config_path: str = ""
         self.schemas: Optional[list[ModelEntity]] = None
         self.default_parameter_configs: Optional[dict] = None
 
     @abstractmethod
     def validate_credentials(self, model: str, credentials: Mapping) -> None:
-        '''
+        """
         Validate model credentials
-        '''
+        """
         raise NotImplementedError
 
     def get_models(self) -> list[ModelEntity]:
-        '''
+        """
         Retrieves and returns a list of model schemas as ModelEntity objects.
 
         Returns:
@@ -44,7 +49,7 @@ class ModelCollection(ABC):
 
         Raises:
             Exception: If there is an error loading or processing a model schema YAML file.
-        '''
+        """
 
         if self.schemas:
             return self.schemas
@@ -52,19 +57,19 @@ class ModelCollection(ABC):
         schemas = []
 
         # get type
-        model_type = self.config_path.split('/')[-1]
+        model_type = self.config_path.split("/")[-1]
 
         # get provider name
-        provider_name = self.config_path.split('/')[-2]
+        provider_name = self.config_path.split("/")[-2]
 
         # get all yaml files path under provider_model_type_path that do not start with _
         schema_yaml_paths = [
             osp.join(self.config_path, model_schema_yaml)
             for model_schema_yaml in os.listdir(self.config_path)
-            if not model_schema_yaml.startswith('__')
-            and not model_schema_yaml.startswith('_')
+            if not model_schema_yaml.startswith("__")
+            and not model_schema_yaml.startswith("_")
             and os.path.isfile(os.path.join(self.config_path, model_schema_yaml))
-            and model_schema_yaml.endswith('.yaml')
+            and model_schema_yaml.endswith(".yaml")
         ]
 
         # get _order.yaml file path
@@ -77,45 +82,49 @@ class ModelCollection(ABC):
                 yaml_data = load_yaml_file(file_path=schema_yaml_path, ignore_error=False)
             except Exception as e:
                 # TODO: log error
-                raise Exception(f'Failed to load model schema from {schema_yaml_path}: {str(e)}')
+                raise Exception(f"Failed to load model schema from {schema_yaml_path}: {str(e)}")
 
             new_parameter_configs = []
-            for parameter_config in yaml_data.get('parameter_configs', []):
-                if 'use_template' in parameter_config:
+            for parameter_config in yaml_data.get("parameter_configs", []):
+                if "use_template" in parameter_config:
                     try:
-                        default_parameter_name = DefaultParameterName.value_of(parameter_config['use_template'])
-                        default_parameter_config = self._get_default_parameter_config(default_parameter_name)
+                        default_parameter_name = DefaultParameterName.value_of(
+                            parameter_config["use_template"]
+                        )
+                        default_parameter_config = self._get_default_parameter_config(
+                            default_parameter_name
+                        )
                         copy_default_parameter_rule = default_parameter_config.copy()
                         copy_default_parameter_rule.update(parameter_config)
                         parameter_config = copy_default_parameter_rule
                     except ValueError:
                         pass
 
-                if 'label' not in parameter_config:
-                    parameter_config['label'] = {'en_US': parameter_config['name']}
+                if "label" not in parameter_config:
+                    parameter_config["label"] = {"en_US": parameter_config["name"]}
 
                 new_parameter_configs.append(parameter_config)
 
-            yaml_data['parameter_configs'] = new_parameter_configs
+            yaml_data["parameter_configs"] = new_parameter_configs
 
-            if 'label' not in yaml_data:
-                yaml_data['label'] = {'en_US': yaml_data['model']}
+            if "label" not in yaml_data:
+                yaml_data["label"] = {"en_US": yaml_data["model"]}
 
             try:
                 # yaml_data to entity
                 model_schema = ModelEntity(**yaml_data)
             except Exception as e:
-                model_schema_yaml_file_name = os.path.basename(schema_yaml_path).rstrip('.yaml')
+                model_schema_yaml_file_name = os.path.basename(schema_yaml_path).rstrip(".yaml")
                 # TODO: log error
                 raise Exception(
-                    f'Invalid model schema for {provider_name}.{model_type}.{model_schema_yaml_file_name}: {str(e)}'
+                    f"Invalid model schema for {provider_name}.{model_type}.{model_schema_yaml_file_name}: {str(e)}"
                 )
 
             # cache model schema
             schemas.append(model_schema)
 
         # resort model schemas by position
-        schemas = sorted(schemas, key=lambda x: model_listing_order.get(x.id, float('inf')))
+        schemas = sorted(schemas, key=lambda x: model_listing_order.get(x.id, float("inf")))
 
         # cache model schemas
         self.schemas = schemas
@@ -123,9 +132,9 @@ class ModelCollection(ABC):
         return schemas
 
     def get_model_schema(self, model_name: str) -> Optional[ModelEntity]:
-        '''
+        """
         Get model schema by model name
-        '''
+        """
 
         # get predefined models (predefined_models)
         models = self.get_models()
@@ -155,15 +164,17 @@ class ModelCollection(ABC):
 
         if unit_price is None:
             return PricingDetails(
-                unit_price=decimal.Decimal('0.0'),
-                unit=decimal.Decimal('0.0'),
-                total_amount=decimal.Decimal('0.0'),
-                currency='USD',
+                unit_price=decimal.Decimal("0.0"),
+                unit=decimal.Decimal("0.0"),
+                total_amount=decimal.Decimal("0.0"),
+                currency="USD",
             )
 
         # calculate total amount
         total_amount = tokens * unit_price * price_config.unit
-        total_amount = total_amount.quantize(decimal.Decimal('0.0000001'), rounding=decimal.ROUND_HALF_UP)
+        total_amount = total_amount.quantize(
+            decimal.Decimal("0.0000001"), rounding=decimal.ROUND_HALF_UP
+        )
 
         return PricingDetails(
             unit_price=unit_price,
@@ -173,7 +184,7 @@ class ModelCollection(ABC):
         )
 
     def _get_default_parameter_configs(self) -> dict:
-        '''
+        """
         Retrieves the default parameter configurations.
 
         Returns:
@@ -181,7 +192,7 @@ class ModelCollection(ABC):
 
         Raises:
             Exception: If there is an error loading the YAML file or if the YAML data is invalid.
-        '''
+        """
 
         if self.default_parameter_configs:
             return self.default_parameter_configs
@@ -194,18 +205,22 @@ class ModelCollection(ABC):
             yaml_data = load_yaml_file(file_path=default_parameters_file_path, ignore_error=False)
         except Exception as e:
             # TODO: log error
-            raise Exception(f'Failed to load default parameters from {default_parameters_file_path}: {str(e)}')
+            raise Exception(
+                f"Failed to load default parameters from {default_parameters_file_path}: {str(e)}"
+            )
 
         try:
             for parameter, parameter_config in yaml_data.items():
-                if 'label' not in parameter_config:
-                    parameter_config['label'] = {'en_US': parameter_config['name']}
+                if "label" not in parameter_config:
+                    parameter_config["label"] = {"en_US": parameter_config["name"]}
 
                 ConfigurationEntity(name=parameter, **parameter_config)
                 default_parameter_configs[parameter] = parameter_config
         except Exception as e:
             # TODO: log error
-            raise Exception(f'Invalid default parameters in {default_parameters_file_path}: {str(e)}')
+            raise Exception(
+                f"Invalid default parameters in {default_parameters_file_path}: {str(e)}"
+            )
 
         # cache model schemas
         self.default_parameter_configs = default_parameter_configs
@@ -213,7 +228,7 @@ class ModelCollection(ABC):
         return default_parameter_configs
 
     def _get_default_parameter_config(self, name: DefaultParameterName) -> dict:
-        '''
+        """
         Retrieve the default parameter configuration for a given parameter name.
 
         Returns:
@@ -221,7 +236,7 @@ class ModelCollection(ABC):
 
         Raises:
             Exception: If the parameter configuration name is invalid or not found.
-        '''
+        """
 
         if not self.default_parameter_configs:
             self._get_default_parameter_configs()
@@ -230,13 +245,12 @@ class ModelCollection(ABC):
 
         if not default_parameter_config:
             # TODO: log error
-            raise Exception(f'Invalid model parameter config name {name.value}')
+            raise Exception(f"Invalid model parameter config name {name.value}")
 
         return default_parameter_config
 
-
     def _get_listing(self) -> dict[str, int]:
-        '''
+        """
         Retrieves a dictionary mapping model names to their positions from a YAML listing file.
 
         Returns:
@@ -244,15 +258,19 @@ class ModelCollection(ABC):
 
         Raises:
             Exception: If there is an error reading or processing the YAML file.
-        '''
+        """
 
         listing_file_path = osp.join(self.config_path, self.LISTING_FILE_NAME)
 
         try:
             # read yaml data from yaml file
             yaml_content = load_yaml_file(file_path=listing_file_path, ignore_error=False)
-            positions = [item.strip() for item in yaml_content if item and isinstance(item, str) and item.strip()]
+            positions = [
+                item.strip()
+                for item in yaml_content
+                if item and isinstance(item, str) and item.strip()
+            ]
             return {name: index for index, name in enumerate(positions)}
         except Exception as e:
             # TODO: log error
-            raise Exception(f'Failed to load models listing from {listing_file_path}: {str(e)}')
+            raise Exception(f"Failed to load models listing from {listing_file_path}: {str(e)}")

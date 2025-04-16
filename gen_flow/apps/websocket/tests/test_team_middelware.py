@@ -10,9 +10,9 @@ from gen_flow.apps.websocket.team_middleware import ContextMiddleware
 
 
 class TeamMiddlewareTestCase(TransactionTestCase):
-    '''
+    """
     Test the TeamMiddleware to ensure it populates the scope correctly.
-    '''
+    """
 
     def setUp(self):
         async def dummy_app(scope, receive, send):
@@ -24,16 +24,16 @@ class TeamMiddlewareTestCase(TransactionTestCase):
 
         # Create a fake ASGI scope
         self.scope = {
-            'type': 'websocket',
-            'path': '/ws/some-endpoint/',
-            'session': '',
-            'query_string': b'',
-            'subprotocols': ['json', '2', '3']
+            "type": "websocket",
+            "path": "/ws/some-endpoint/",
+            "session": "",
+            "query_string": b"",
+            "subprotocols": ["json", "2", "3"],
         }
 
     async def test_call(self):
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
-        await communicator.send_input({'type': 'websocket.connect'})
+        await communicator.send_input({"type": "websocket.connect"})
         await communicator.receive_nothing()

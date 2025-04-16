@@ -4,75 +4,72 @@
 
 from typing import cast
 
-from drf_spectacular.utils import (
-    OpenApiResponse,
-    extend_schema_view, extend_schema
-)
-from rest_framework.permissions import SAFE_METHODS
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import viewsets
+from rest_framework.permissions import SAFE_METHODS
 
-from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 from gen_flow.apps.core.models import EntityGroup
 from gen_flow.apps.core.serializers import EntityGroupReadSerializer, EntityGroupWriteSerializer
+from gen_flow.apps.team.middleware import HttpRequestWithIamContext
 
 
 @extend_schema_view(
     list=extend_schema(
-        summary='List groups',
-        description='List all groups',
+        summary="List groups",
+        description="List all groups",
         responses={
-            '200': EntityGroupReadSerializer(many=True),
-        }
+            "200": EntityGroupReadSerializer(many=True),
+        },
     ),
     create=extend_schema(
-        summary='Create a group',
-        description='Create a new group',
+        summary="Create a group",
+        description="Create a new group",
         request=EntityGroupWriteSerializer,
         responses={
-            '201': EntityGroupReadSerializer,
-        }
+            "201": EntityGroupReadSerializer,
+        },
     ),
     retrieve=extend_schema(
-        summary='Get group details',
-        description='Get details of a group',
+        summary="Get group details",
+        description="Get details of a group",
         responses={
-            '200': EntityGroupReadSerializer,
-        }
+            "200": EntityGroupReadSerializer,
+        },
     ),
     partial_update=extend_schema(
-        summary='Update a group',
-        description='Update an existing group',
+        summary="Update a group",
+        description="Update an existing group",
         request=EntityGroupWriteSerializer,
         responses={
-            '200': EntityGroupReadSerializer,
-        }
+            "200": EntityGroupReadSerializer,
+        },
     ),
     destroy=extend_schema(
-        summary='Delete a group',
-        description='Delete an existing group',
+        summary="Delete a group",
+        description="Delete an existing group",
         responses={
-            '204': OpenApiResponse(description='The group has been deleted'),
-        }
-    )
+            "204": OpenApiResponse(description="The group has been deleted"),
+        },
+    ),
 )
 class EntityGroupViewSetMixin(viewsets.ModelViewSet):
-    '''
+    """
     A mixin that filters EntityGroup by entity_type based on the model class name.
     Assumes `queryset` and `serializer_class` are defined.
-    '''
+    """
 
-    queryset = EntityGroup.objects.all().order_by('name')
-    iam_team_field = 'team'
+    queryset = EntityGroup.objects.all().order_by("name")
+    iam_team_field = "team"
     group_entity_type = None
 
     def get_entity_type(self):
         # Default to model name if not overridden
-        return self.group_entity_type or self.basename.replace('-group', '')
+        return self.group_entity_type or self.basename.replace("-group", "")
 
     def get_serializer_class(self):
-        '''
+        """
         Returns the appropriate serializer class based on the HTTP method
-        '''
+        """
 
         if self.request.method in SAFE_METHODS:
             return EntityGroupReadSerializer
@@ -80,10 +77,10 @@ class EntityGroupViewSetMixin(viewsets.ModelViewSet):
             return EntityGroupWriteSerializer
 
     def get_queryset(self):
-        '''
+        """
         Retrieves the queryset for the view, applying additional filtering
         based on the action being performed.
-        '''
+        """
         queryset = super().get_queryset()
 
         # Apply filtering based on entity_type
@@ -93,9 +90,9 @@ class EntityGroupViewSetMixin(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        '''
+        """
         Saves a new EntityGroup instance with additional fields:
-        '''
+        """
 
         request = cast(HttpRequestWithIamContext, self.request)
         serializer.save(

@@ -9,9 +9,9 @@ from gen_flow.apps.websocket.auth_middleware import TokenAuthMiddleware
 
 
 class TokenAuthMiddlewareTestCase(TransactionTestCase):
-    '''
+    """
     Test the TokenAuthMiddleware to ensure it populates the scope correctly.
-    '''
+    """
 
     def setUp(self):
         async def dummy_app(scope, receive, send):
@@ -23,10 +23,10 @@ class TokenAuthMiddlewareTestCase(TransactionTestCase):
 
         # Create a fake ASGI scope
         self.scope = {
-            'type': 'websocket',
-            'path': '/ws/some-endpoint/',
-            'session': '',
-            'query_string': b'',
+            "type": "websocket",
+            "path": "/ws/some-endpoint/",
+            "session": "",
+            "query_string": b"",
         }
 
     async def test_populate_scope_no_subprotocols(self):
@@ -35,57 +35,56 @@ class TokenAuthMiddlewareTestCase(TransactionTestCase):
 
         with self.assertRaises(Exception):
             # Call the middleware
-            await communicator.send_input({'type': 'websocket.connect'})
+            await communicator.send_input({"type": "websocket.connect"})
             await communicator.receive_output()
 
     async def test_populate_scope_subprotocols_invalid(self):
         # invalid type
-        self.scope['subprotocols'] = '123'
+        self.scope["subprotocols"] = "123"
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
         with self.assertRaises(Exception):
             # Call the middleware
-            await communicator.send_input({'type': 'websocket.connect'})
+            await communicator.send_input({"type": "websocket.connect"})
             await communicator.receive_output()
 
         # invalid length
-        self.scope['subprotocols'] = ['1', '2']
+        self.scope["subprotocols"] = ["1", "2"]
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
         with self.assertRaises(Exception):
             # Call the middleware
-            await communicator.send_input({'type': 'websocket.connect'})
+            await communicator.send_input({"type": "websocket.connect"})
             await communicator.receive_output()
 
         # invalid format
-        self.scope['subprotocols'] = ['1', '2', '3']
+        self.scope["subprotocols"] = ["1", "2", "3"]
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
         with self.assertRaises(Exception):
             # Call the middleware
-            await communicator.send_input({'type': 'websocket.connect'})
+            await communicator.send_input({"type": "websocket.connect"})
             await communicator.receive_output()
 
-
         # invalid type
-        self.scope['subprotocols'] = ['json', 2, '3']
+        self.scope["subprotocols"] = ["json", 2, "3"]
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
         with self.assertRaises(Exception):
             # Call the middleware
-            await communicator.send_input({'type': 'websocket.connect'})
+            await communicator.send_input({"type": "websocket.connect"})
             await communicator.receive_output()
 
     async def test_resolve_scope(self):
-        self.scope['subprotocols'] = ['json', '2', '3']
+        self.scope["subprotocols"] = ["json", "2", "3"]
 
         # Create an ApplicationCommunicator
         communicator = ApplicationCommunicator(self.middleware, self.scope)
 
         # Call the middleware
-        await communicator.send_input({'type': 'websocket.connect'})
+        await communicator.send_input({"type": "websocket.connect"})
         await communicator.receive_nothing()

@@ -6,7 +6,7 @@ from typing import Optional
 
 
 class WebSocketError(Exception):
-    '''Base class for all websocket exceptions.'''
+    """Base class for all websocket exceptions."""
 
     description: Optional[str] = None
 
@@ -18,17 +18,18 @@ class WebSocketError(Exception):
 
 
 class BadRequestError(WebSocketError):
-    '''Raised when the request contains invalid data.'''
+    """Raised when the request contains invalid data."""
 
-    description = 'Bad Request'
+    description = "Bad Request"
+
 
 class ForbiddenError(WebSocketError):
-    '''Raised when the request contains invalid data.'''
+    """Raised when the request contains invalid data."""
 
-    description = 'Request not allowed'
+    description = "Request not allowed"
 
 
 class NotFoundError(WebSocketError):
-    '''Raised when the request contains invalid data.'''
+    """Raised when the request contains invalid data."""
 
-    description = 'Requested resource not found'
+    description = "Requested resource not found"
