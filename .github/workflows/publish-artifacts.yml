@@ -2,7 +2,6 @@ name: Publish artifacts
 on:
   release:
     types: [released]
-  workflow_dispatch:
 
 jobs:
   docker-images:
@@ -18,36 +17,35 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::<AWS_ACCOUNT_ID>:role/<GITHUB_OIDC_ROLE>
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build images
         run: |
           GF_VERSION=latest CLAM_AV=yes docker compose -f docker-compose.yml -f docker-compose.dev.yml build
 
-      - name: Push to Docker Hub
+      - name: Push to AWS ECR
         env:
-          ECR_NAMESPACE: ${{ secrets.ECR_NAMESPACE }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          ECR_NAMESPACE: ${{ vars.ECR_NAMESPACE }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          SERVER_IMAGE_REPO: 'server'
-          UI_IMAGE_REPO: 'ui'
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          SERVER_IMAGE_REPO: server
+          UI_IMAGE_REPO: ui
           IMAGE_TAG: ${{ github.event.release.tag_name }}
         run: |
           ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAMESPACE}"
 
           # SERVER IMAGE
-          docker tag "${ECR_REPOSITORY}/${SERVER_IMAGE_REPO}:latest" "${ECR_URI}/${ECR_REPOSITORY}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
-          docker tag "${ECR_REPOSITORY}/${SERVER_IMAGE_REPO}:latest" "${ECR_URI}/${ECR_REPOSITORY}/${ECR_REPOSITORY_SERVER}:latest"
-          docker push "${ECR_URI}/${ECR_REPOSITORY}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
-          docker push "${ECR_URI}/${ECR_REPOSITORY_SERVER}:latest"
+          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
+          docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
+          docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
 
           # UI IMAGE
-          docker tag "${ECR_REPOSITORY}/${UI_IMAGE_REPO}:latest" "${ECR_URI}/${ECR_REPOSITORY}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
-          docker tag "${ECR_REPOSITORY}/${UI_IMAGE_REPO}:latest" "${ECR_URI}/${ECR_REPOSITORY_SERVER}:latest"
-          docker push "${ECR_URI}/${ECR_REPOSITORY}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
-          docker push "${ECR_URI}/${ECR_REPOSITORY_SERVER}:latest"
+          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:latest"
+          docker push "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
+          docker push "${ECR_URI}/${UI_IMAGE_REPO}:latest"

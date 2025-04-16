@@ -165,12 +165,14 @@ jobs:
           path: "${{ github.workspace }}/unit_testing"
 
   publish_dev_images:
-    # if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/develop'
     needs: [unit_testing]
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write  # Required for OIDC auth
       contents: read
+
     steps:
       - uses: actions/checkout@v4
 
