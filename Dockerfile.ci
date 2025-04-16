@@ -4,7 +4,7 @@
 
 FROM genflow/server:local
 
-ENV DJANGO_SETTINGS_MODULE=gen_flow.settings.testing
+ENV DJANGO_SETTINGS_MODULE=genflow.settings.testing
 USER root
 
 RUN apt-get update && \
@@ -14,10 +14,10 @@ RUN apt-get update && \
         && \
     rm -rf /var/lib/apt/lists/*;
 
-COPY gen_flow/requirements/ /tmp/gen_flow/requirements/
+COPY genflow/requirements/ /tmp/genflow/requirements/
 
 RUN python3 -m ensurepip
-RUN python3 -m pip install --no-cache-dir -r /tmp/gen_flow/requirements/testing.txt
+RUN python3 -m pip install --no-cache-dir -r /tmp/genflow/requirements/testing.txt
 
 COPY .coveragerc .
 

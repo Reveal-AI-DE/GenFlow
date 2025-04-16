@@ -23,7 +23,7 @@ jobs:
 
             pipx inject pylint \
               $(grep "^pylint-.\+==" ./dev/requirements.txt) \
-              $(grep "^django==" ./gen_flow/requirements/base.txt)
+              $(grep "^django==" ./genflow/requirements/base.txt)
 
             echo "Pylint version: "$(pylint --version | head -1)
             echo "The files will be checked: "$(echo $CHANGED_FILES)

@@ -46,8 +46,8 @@
             "args": [
                 "test",
                 "--settings",
-                "gen_flow.settings.testing",
-                "gen_flow/apps"
+                "genflow.settings.testing",
+                "genflow/apps"
             ],
             "django": true,
             "cwd": "${workspaceFolder}",
@@ -65,7 +65,7 @@
             "args": [
                 "spectacular",
                 "--file",
-                "${workspaceFolder}/gen_flow/schema.yml"
+                "${workspaceFolder}/genflow/schema.yml"
             ],
             "django": true,
             "cwd": "${workspaceFolder}",

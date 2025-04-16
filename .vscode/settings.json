@@ -10,7 +10,7 @@
             "directory": "${cwd}",
         },
         {
-            "pattern": "gen_flow-*"
+            "pattern": "genflow-*"
         },
         {
             "directory": "tests",

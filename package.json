@@ -1,11 +1,11 @@
 {
-    "name": "gen-flow",
+    "name": "genflow",
     "version": "0.1.0",
     "description": "Eslint && remarklint dependencies",
     "main": ".eslintrc.cjs",
     "private": true,
     "workspaces": [
-        "gen_flow-ui"
+        "genflow-ui"
     ],
     "devDependencies": {
         "@babel/cli": "^7.25.6",
@@ -75,14 +75,14 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "coverage": "yarn run instrument && yarn run cp && yarn run rm",
-        "instrument": "nyc instrument gen_flow-ui gen_flow-ui_cov",
-        "cp": "cp -r gen_flow-ui_cov/* gen_flow-ui",
-        "rm": "rm -rf gen_flow-ui_cov",
+        "instrument": "nyc instrument genflow-ui genflow-ui_cov",
+        "cp": "cp -r genflow-ui_cov/* genflow-ui",
+        "rm": "rm -rf genflow-ui_cov",
         "prepare": "if [ -z \"${DISABLE_HUSKY}\" ]; then yarn run setup:husky; fi && husky install",
         "setup:husky": "npx husky-init && rm -f .husky/pre-commit && echo 'npx lint-staged' > .husky/pre-commit && chmod +x .husky/pre-commit",
-        "precommit:gen_flow-ui": "cd gen_flow-ui && eslint --fix",
-        "build:gen_flow-ui": "yarn workspace gen_flow-ui run build",
-        "start:gen_flow-ui": "yarn workspace gen_flow-ui run start"
+        "precommit:genflow-ui": "cd genflow-ui && eslint --fix",
+        "build:genflow-ui": "yarn workspace genflow-ui run build",
+        "start:genflow-ui": "yarn workspace genflow-ui run start"
     },
     "repository": {
         "type": "git",

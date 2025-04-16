@@ -23,13 +23,13 @@ RUN --mount=type=cache,target=/root/.cache/pip/http \
 
 FROM build-image-base AS build-image
 
-COPY gen_flow/requirements/ /tmp/gen_flow/requirements/
+COPY genflow/requirements/ /tmp/genflow/requirements/
 
 ARG GF_CONFIGURATION="production"
 
 RUN --mount=type=cache,target=/root/.cache/pip/http-v2 \
     python3 -m pip wheel --no-deps \
-    -r /tmp/gen_flow/requirements/${GF_CONFIGURATION}.txt \
+    -r /tmp/genflow/requirements/${GF_CONFIGURATION}.txt \
     -w /tmp/wheelhouse
 
 FROM ${BASE_IMAGE}
@@ -51,7 +51,7 @@ ENV TERM=xterm \
 
 ARG USER="django"
 ARG GF_CONFIGURATION="production"
-ENV DJANGO_SETTINGS_MODULE="gen_flow.settings.${GF_CONFIGURATION}"
+ENV DJANGO_SETTINGS_MODULE="genflow.settings.${GF_CONFIGURATION}"
 
 # Install necessary apt packages
 RUN apt-get update && \
@@ -111,10 +111,10 @@ RUN if [ "${GF_DEBUG_ENABLED}" = "yes" ]; then \
     fi
 
 # Install and initialize GF, copy all necessary files
-COPY gen_flow/nginx.conf /etc/nginx/nginx.conf
+COPY genflow/nginx.conf /etc/nginx/nginx.conf
 COPY --chown=${USER} supervisord/ ${HOME}/supervisord
 COPY --chown=${USER} manage.py backend_entrypoint.sh wait-for-deps.sh ${HOME}/
-COPY --chown=${USER} gen_flow/ ${HOME}/gen_flow
+COPY --chown=${USER} genflow/ ${HOME}/genflow
 COPY --chown=${USER} config/ ${HOME}/config
 
 ARG COVERAGE_PROCESS_START

@@ -108,7 +108,7 @@ jobs:
           docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d genflow_server genflow_db
 
           docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.ci.yml run genflow_ci /bin/bash \
-            -c 'python manage.py test gen_flow/apps -v 2'
+            -c 'python manage.py test genflow/apps -v 2'
 
       - name: Creating a log file from genflow containers
         if: failure()
