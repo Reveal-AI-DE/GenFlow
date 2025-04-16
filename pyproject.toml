@@ -1,0 +1,16 @@
+[tool.isort]
+profile = "black"
+forced_separate = ["tests"]
+line_length = 100
+skip_gitignore = true # align tool behavior with Black
+extend_skip=[
+    # Sorting the imports in this folder causes test failures;
+    # TODO: fix them and remove this ignore.
+    "gen_flow/apps/ai/providers",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+extend-exclude = """
+"""
