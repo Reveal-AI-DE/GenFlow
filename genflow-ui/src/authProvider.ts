@@ -54,7 +54,6 @@ export const fetchJsonWithAuthToken = (url: string, options?: object): Promise<a
 );
 
 const authProvider: AuthProvider = {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     login: async ({ username, password }) => {
         const url = ResourceURL(process.env.REACT_APP_BACKEND_AUTH_URL);
         const request = new Request(url, {
@@ -76,19 +75,20 @@ const authProvider: AuthProvider = {
         const error = json.non_field_errors;
         throw new Error(error || response.statusText);
     },
-    logout: () => {
+    logout: async () => {
         removeItems();
-        return Promise.resolve();
     },
-    checkAuth: () => (localStorage.getItem('token') ? Promise.resolve() : Promise.reject()),
-    checkError: ({ status }) => {
+    checkAuth: async () => {
+        if (!localStorage.getItem('token')) {
+            throw new Error();
+        }
+    },
+    checkError: async ({ status }) => {
         if (status === 401 || status === 403) {
             removeItems();
-            return Promise.reject();
         }
-        return Promise.resolve();
     },
-    getIdentity: () => {
+    getIdentity: async () => {
         let userObjString = localStorage.getItem('RaStore.identity');
         userObjString = userObjString === null ? '' : userObjString;
 
@@ -100,11 +100,13 @@ const authProvider: AuthProvider = {
                 id: user,
                 fullName: (fullName !== ' ') ? fullName : user,
             };
-            return Promise.resolve(identity);
+            return identity;
         }
-        return Promise.resolve({ id: '' });
+
+        return {
+            id: '',
+        };
     },
-    getPermissions: () => Promise.resolve(),
 };
 
 export default authProvider;
