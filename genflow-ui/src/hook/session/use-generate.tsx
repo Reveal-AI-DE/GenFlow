@@ -9,7 +9,7 @@ import {
     ChatResponse,
     SessionMessage,
 } from '@/types';
-import { createOptions } from '@/authProvider';
+import { createOptions } from '@/auth/authProvider';
 
 type GenerateHook = (
     url: string,

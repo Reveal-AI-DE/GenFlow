@@ -229,6 +229,8 @@ const enUS: TranslationMessages = {
             start_test_content: 'to verify the prompt ...',
         },
         related_deleted: 'Related %{resource} was deleted',
+        register_success: 'User registered, please login to continue',
+        register_error: 'User registration failed, please try again',
     },
     action: {
         test: 'Test',
@@ -256,6 +258,15 @@ const enUS: TranslationMessages = {
         stop: 'Stop',
         scroll_top: 'Scroll to top',
         scroll_bottom: 'Scroll to bottom',
+        sign_up: 'Sign Up',
+    },
+    validation: {
+        not_available: 'Not available',
+        password: {
+            min: 'Password must contain at least %{number}% characters.',
+            numeric: 'Password cannot be entirely numeric.',
+            personal: 'Password cannot be too similar to your personal information.',
+        }
     }
 };
 

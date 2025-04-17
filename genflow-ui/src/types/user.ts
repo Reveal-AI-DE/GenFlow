@@ -10,4 +10,5 @@ export interface Identity extends RaRecord {
 
 export interface UserDataProvider extends DataProvider {
     self: () => Promise<any>;
+    check: () => Promise<boolean>;
 };

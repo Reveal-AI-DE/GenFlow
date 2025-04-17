@@ -10,7 +10,7 @@ import {
 
 import { MetaParams } from '@/types';
 import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '../authProvider';
+import { fetchJsonWithAuthToken } from '../auth/authProvider';
 
 const getPaginationQuery = (pagination: PaginationPayload): object => ({
     page: pagination.page,

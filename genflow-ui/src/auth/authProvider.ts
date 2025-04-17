@@ -4,6 +4,7 @@
 
 import { AuthProvider, fetchUtils, UserIdentity } from 'react-admin';
 
+import { RegistrationFormData } from '@/auth/form';
 import { ResourceURL } from '@/utils';
 
 const removeItems = (): void => {
@@ -21,13 +22,15 @@ interface FetchJsonOptions {
 export const createOptions = (url: string): FetchJsonOptions => {
     const token = localStorage.getItem('token');
 
-    if (!token) {
-        return {};
-    }
-
     const headers = new Headers({
         Accept: 'application/vnd.genflow+json; version=1.0',
     });
+
+    if (!token) {
+        return {
+            headers: headers as Headers,
+        };
+    }
 
     // parse url for team query parameters
     const urlParams = new URLSearchParams(url.split('?')[1]);
@@ -55,7 +58,7 @@ export const fetchJsonWithAuthToken = (url: string, options?: object): Promise<a
 
 const authProvider: AuthProvider = {
     login: async ({ username, password }) => {
-        const url = ResourceURL(process.env.REACT_APP_BACKEND_AUTH_URL);
+        const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/login`);
         const request = new Request(url, {
             method: 'POST',
             body: JSON.stringify({ username, password }),
@@ -84,8 +87,11 @@ const authProvider: AuthProvider = {
         }
     },
     checkError: async ({ status }) => {
-        if (status === 401 || status === 403) {
+        if (status === 401) {
             removeItems();
+        }
+        if (status === 403) {
+            throw new Error('You do not have permission to access this resource');
         }
     },
     getIdentity: async () => {
@@ -106,6 +112,17 @@ const authProvider: AuthProvider = {
         return {
             id: '',
         };
+    },
+    register: async (params: RegistrationFormData) => {
+        const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/register`);
+        const { json } = await fetchUtils.fetchJson(url, {
+            method: 'POST',
+            body: JSON.stringify(params),
+            headers: new Headers({
+                Accept: 'application/vnd.genflow+json; version=1.0',
+            }),
+        });
+        return json;
     },
 };
 

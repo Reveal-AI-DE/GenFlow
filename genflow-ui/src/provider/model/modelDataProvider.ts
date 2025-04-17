@@ -4,7 +4,7 @@
 
 import { ModelDataProvider } from '@/types';
 import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '@/authProvider';
+import { fetchJsonWithAuthToken } from '@/auth/authProvider';
 
 export default <ModelDataProvider> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

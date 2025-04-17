@@ -270,6 +270,8 @@ const deDE: TranslationMessages = {
             start_test_content: 'um die Prompt zu überprüfen ...',
         },
         related_deleted: 'Verwandte %{resource} wurde gelöscht',
+        register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren',
+        register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut',
     },
     action: {
         test: 'Test',
@@ -292,6 +294,15 @@ const deDE: TranslationMessages = {
         attach: 'Datei anhängen',
         send: 'Nachricht senden',
         stop: 'stoppen',
+        sign_up: 'Registrieren',
+    },
+    validation: {
+        not_available: 'Nicht verfügbar',
+        password: {
+            min: 'Das Passwort muss mindestens %{number} Zeichen enthalten.',
+            numeric: 'Das Passwort darf nicht vollständig numerisch sein.',
+            personal: 'Das Passwort darf nicht zu ähnlich zu Ihren persönlichen Informationen sein.',
+        }
     }
 };
 

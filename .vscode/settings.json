@@ -46,6 +46,7 @@
         "traefik",
         "Uploady",
         "viewset",
-        "viewsets"
+        "viewsets",
+        "zxcvbn"
     ],
 }

@@ -12,7 +12,7 @@ import { SessionContext, SessionContextInterface } from '@/context';
 import { Session } from '@/types';
 import { useChatHandler } from '@/hook';
 import { ResourceURL } from '@/utils';
-import { createOptions } from '@/authProvider';
+import { createOptions } from '@/auth/authProvider';
 import { TextareaAutosize } from '@/common';
 import SendButton from '@/chat/form/input/SendButton';
 import AttachButton from '@/chat/form/input/AttachButton';
