@@ -7,12 +7,6 @@ Welcome to the GenFlow documentation guide.
 
 GenFlow is a low-code platform for building, managing, and deploying Generative AI assistants and prompt workflows.
 
-## Getting Started
-
-- [Installation Guide](#)
-- [System Requirements](#)
-- [Quick Start Tutorial](#)
-
 ## Key Concepts
 
 - **Dashboard**: A view of favorite prompts and assistants.
@@ -21,6 +15,12 @@ GenFlow is a low-code platform for building, managing, and deploying Generative 
 - **Assistants**: Configurable GenAI agents for specific tasks.
 - **Sessions**: List of recent sessions to continue with.
 - **Teams**: Group-based permission and knowledge base structure.
+
+## Getting Started
+
+- [Installation Guide](#)
+- [System Requirements](#)
+- [Quick Start Tutorial](#)
 
 ## API Reference
 
