@@ -17,9 +17,9 @@ Check out the GenFlow demo to see the platform in action [Online Demo](https://g
 
 [![Watch the video](https://img.youtube.com/vi/tP5Ox9R0naA/maxresdefault.jpg)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
 
-## ⚡ Quick Links
+## ⚡ Quick Start
 
-Get started with GenFlow in just a few clicks:
+Get started with GenFlow in just a few clicks (you will need an [API key from OpenAI](https://platform.openai.com/api-keys):
 
 - 🔧 [Create an API Endpoint](#) – Set up and configure a backend API for your GenAI integration.
 - ✍️ [Create a Prompt](#) – Design and test custom prompts for specific writing or Q&A tasks.
