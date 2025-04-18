@@ -21,10 +21,10 @@ Check out the GenFlow demo to see the platform in action [Online Demo](https://g
 
 Get started with GenFlow in just a few clicks:
 
-- 🔧 [Create an API Endpoint](#) – Set up and configure a backend API for your GenAI integration.
-- ✍️ [Create a Prompt](#) – Design and test custom prompts for specific writing or Q&A tasks.
-- 🤖 [Create an Assistant](#) – Build a fully functional GenAI assistant powered by your prompt and knowledge base.
-- 📊 [View Usage Analytics](#) – Monitor assistant activity, prompt performance, and user engagement.
+- 🔧 [Create an API Endpoint](/dev/Endpoint.gif) – Set up and configure a backend API for your GenAI integration.
+- ✍️ [Create a Prompt](https://www.youtube.com/watch?v=tP5Ox9R0naA&t=10s&ab_channel=RevealAI) – Design and test custom prompts for specific writing or Q&A tasks.
+- 🤖 [Create an Assistant](https://www.youtube.com/watch?v=tP5Ox9R0naA&t=10s&ab_channel=RevealAI) – Build a fully functional GenAI assistant powered by your prompt and knowledge base.
+- 📊 [View Usage Analytics](https://www.youtube.com/watch?v=tP5Ox9R0naA&t=10s&ab_channel=RevealAI) – Monitor assistant activity, prompt performance, and user engagement by clicking on session properties.
   
 ## 🚀 Installation
 
