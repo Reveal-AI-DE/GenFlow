@@ -15,7 +15,7 @@ Whether you're streamlining documentation, automating reports, or enabling inter
 
 Check out the GenFlow demo to see the platform in action [Online Demo](https://genflow.revealai.de/) :
 
-[![Watch the video](https://img.youtube.com/vi/tP5Ox9R0naA/maxresdefault.jpg)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
+[![Watch the video](/dev/Endpoint.gif)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
 
 ## ⚡ Quick Start
 
