@@ -13,13 +13,8 @@ Whether you're streamlining documentation, automating reports, or enabling inter
 
 ## 🎥 GenFlow Demo
 
-Check out the GenFlow demo to see the platform in action:
-
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=tP5Ox9R0naA" target="_blank">
-    <img width="100%" alt="GenFlow Demo Video" src="https://img.youtube.com/vi/tP5Ox9R0naA/maxresdefault.jpg">
-  </a>
-</div>
+Check out the GenFlow demo to see the platform in action [Online Demo](https://genflow.revealai.de/) :
+[![Watch the video](https://img.youtube.com/vi/tP5Ox9R0naA/maxresdefault.jpg)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
 
 ## 🚀 Quick Start
 
