@@ -38,15 +38,15 @@ Whether you're streamlining documentation, automating reports, or enabling inter
 
 ## 📖 Documentation
 
-Comprehensive documentation is available at [DOCUMENTATION](docu/DOCUMENTATION.md)
+Comprehensive documentation is available at [DOCUMENTATION](dev/DOCUMENTATION.md)
 
 ## 🛣️ Roadmap
 
-Here are the planned enhancements and upcoming features for GenFlow [ROADMAP.md](docu/ROADMAP.md)
+Here are the planned enhancements and upcoming features for GenFlow [ROADMAP.md](dev/ROADMAP.md)
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](docu/CONTRIBUTING.md) for guidelines.
+We welcome contributions! Please see [CONTRIBUTING.md](dev/CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
