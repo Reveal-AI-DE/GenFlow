@@ -57,6 +57,16 @@ Comprehensive documentation is available at [DOCUMENTATION](dev/DOCUMENTATION.md
 ## 🛣️ Roadmap
 
 Here are the planned enhancements and upcoming features for GenFlow [ROADMAP.md](dev/ROADMAP.md)
+#### Currently in development:
+
+- [ ] **Amazon Bedrock Integration**  
+  Enable API access to LLMs available via Amazon Bedrock for scalable, secure, and fully managed model deployment.
+
+- [ ] **vLLM Integration**  
+  Provide support for connecting to LLMs deployed with [vLLM](https://github.com/vllm-project/vllm), enabling high-throughput, optimized inference.
+
+- [ ] **Multi-Agent Assistant Framework**  
+  Introduce a flexible architecture for creating and coordinating multiple collaborative AI agents within a single workflow.
 
 ## 🤝 Contributing
 
