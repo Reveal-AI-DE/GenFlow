@@ -13,13 +13,13 @@ Whether you're streamlining documentation, automating reports, or enabling inter
 
 ## 🎥 GenFlow Demo
 
-Check out the GenFlow demo to see the platform in action [Online Demo](https://genflow.revealai.de/) :
+Check out the GenFlow demo to see the platform in action [Online Demo](https://genflow.revealai.de/), (you will need an [API key from OpenAI](https://platform.openai.com/api-keys)
 
 [![Watch the video](/dev/Endpoint.gif)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
 
 ## ⚡ Quick Start
 
-Get started with GenFlow in just a few clicks (you will need an [API key from OpenAI](https://platform.openai.com/api-keys):
+Get started with GenFlow in just a few clicks:
 
 - 🔧 [Create an API Endpoint](#) – Set up and configure a backend API for your GenAI integration.
 - ✍️ [Create a Prompt](#) – Design and test custom prompts for specific writing or Q&A tasks.
