@@ -14,11 +14,21 @@ Whether you're streamlining documentation, automating reports, or enabling inter
 ## 🎥 GenFlow Demo
 
 Check out the GenFlow demo to see the platform in action [Online Demo](https://genflow.revealai.de/) :
+
 [![Watch the video](https://img.youtube.com/vi/tP5Ox9R0naA/maxresdefault.jpg)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
 
-## 🚀 Quick Start
+## ⚡ Quick Links
 
-1. **Installation**:
+Get started with GenFlow in just a few clicks:
+
+- 🔧 [Create an API Endpoint](#) – Set up and configure a backend API for your GenAI integration.
+- ✍️ [Create a Prompt](#) – Design and test custom prompts for specific writing or Q&A tasks.
+- 🤖 [Create an Assistant](#) – Build a fully functional GenAI assistant powered by your prompt and knowledge base.
+- 📊 [View Usage Analytics](#) – Monitor assistant activity, prompt performance, and user engagement.
+  
+## 🚀 Installation
+
+1. **Clone the Repositry**:
    ```bash
    git clone https://github.com/yourusername/genflow.git
    cd genflow
@@ -61,4 +71,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For support or inquiries:
 
 - **Email**: info@revealai.de
+- [![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow-blue?logo=linkedin)](https://www.linkedin.com/company/76154575/)
 - **Address**: Darm Street 37, 64287 Darmstadt, Germany
