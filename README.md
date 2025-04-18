@@ -11,6 +11,12 @@
 
 Whether you're streamlining documentation, automating reports, or enabling internal support bots, GenFlow helps you harness the power of GenAI — faster, smarter, and with minimal coding.
 
+## 🎥 GenFlow Demo
+
+Check out the GenFlow demo to see the platform in action:
+
+[![GenFlow Demo](https://img.youtube.com/vi/tP5Ox9R0naA/0.jpg)](https://www.youtube.com/watch?v=tP5Ox9R0naA)
+
 
 ## 🚀 Quick Start
 
