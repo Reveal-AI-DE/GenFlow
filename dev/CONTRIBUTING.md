@@ -33,6 +33,6 @@ Please follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming en
 
 ## Reporting Issues
 
-If you encounter a bug or have a feature request, please open an [issue](https://github.com/yourusername/genflow/issues).
+If you encounter a bug or have a feature request, please open an [issue](https://github.com/Reveal-AI-DE/GenFlow/issues).
 
 Thanks for contributing to GenFlow!
