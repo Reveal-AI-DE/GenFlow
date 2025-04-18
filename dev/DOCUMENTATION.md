@@ -15,9 +15,11 @@ GenFlow is a low-code platform for building, managing, and deploying Generative 
 
 ## Key Concepts
 
+- **Dashboard**: A view of favorite prompts and assistants.
+- **Chat**: A chat interface to available LLMs, prompts, and assistants.
 - **Prompts**: Templates used to generate AI responses.
 - **Assistants**: Configurable GenAI agents for specific tasks.
-- **Workflows**: Visual orchestration of tasks and logic.
+- **Sessions**: List of recent sessions to continue with.
 - **Teams**: Group-based permission and knowledge base structure.
 
 ## API Reference
@@ -32,6 +34,6 @@ Full API documentation can be found [here](#).
 
 ## Support
 
-For help, please contact [info@revealai.de](mailto:info@revealai.de) or visit our [community page](#).
+For help, please contact [info@revealai.de](mailto:info@revealai.de)
 
 Happy building with GenFlow!
