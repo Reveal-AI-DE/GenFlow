@@ -1,7 +1,8 @@
 
 # GenFlow
 
-**GenFlow** is an open-source, low-code  GenAI platform that empowers organizations to build and manage Generative AI assistants that automate routine writing tasks and enhance access to internal knowledge.
+**GenFlow** is an open-source, low-code  GenAI platform that empowers organizations to build and manage Generative AI assistants that automate routine writing tasks and enhance access to internal knowledge. [![LinkedIn](https://img.shields.io/badge/LinkedIn-Follow-blue?logo=linkedin)](https://www.linkedin.com/company/76154575/)
+
 
 ## 🌟 Designed for flexibility and collaboration, GenFlow enables teams to:
 - Create and deploy custom AI assistants tailored to their workflows.
