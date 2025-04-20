@@ -8,6 +8,20 @@ import englishMessages from 'ra-language-english';
 const enUS: TranslationMessages = {
     ...englishMessages,
     resources: {
+        users: {
+            name: 'User |||| Users',
+            fields: {
+                username: 'Username',
+                email: 'Email',
+                password1: 'Password',
+                password2: 'Confirm Password',
+                first_name: 'First Name',
+                last_name: 'Last Name',
+                status: 'Status',
+                created_date: 'Created At',
+                updated_date: 'Updated At',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -103,21 +117,6 @@ const enUS: TranslationMessages = {
         'prompt-groups': {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
-        },
-        collections: {
-            name: 'Collection |||| Collections',
-            fields: {
-                name: 'Name',
-                description: 'Description',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Model',
-                    provider_name: 'Provider',
-                    model_name: 'Embedding Model',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
         },
         assistants: {
             name: 'Assistant |||| Assistants',

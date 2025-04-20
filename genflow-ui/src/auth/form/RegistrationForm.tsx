@@ -110,30 +110,36 @@ const RegistrationForm: FC<RegistrationFormProps> = () => {
                 >
                     <TextInput
                         source='first_name'
+                        label='resources.users.fields.first_name'
                         variant='filled'
                     />
                     <TextInput
                         source='last_name'
+                        label='resources.users.fields.last_name'
                         variant='filled'
                     />
                 </Stack>
                 <TextInput
                     source='username'
+                    label='resources.users.fields.username'
                     variant='filled'
                     validate={[required(), checkUsernameAvailability]}
                 />
                 <TextInput
                     source='email'
+                    label='resources.users.fields.email'
                     variant='filled'
                     validate={[required(), email(), checkEmail]}
                 />
                 <PasswordInputWithStrengthBar
                     source='password1'
+                    label='resources.users.fields.password1'
                     variant='filled'
                     validate={[required(), validatePassword]}
                 />
                 <PasswordInput
                     source='password2'
+                    label='resources.users.fields.password2'
                     variant='filled'
                     validate={[required(), equalToPassword]}
                 />

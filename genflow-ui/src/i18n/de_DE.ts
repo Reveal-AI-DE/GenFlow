@@ -41,6 +41,20 @@ const updatedFormalGermanMessages = {
 const deDE: TranslationMessages = {
     ...updatedFormalGermanMessages,
     resources: {
+        users: {
+            name: 'Benutzer |||| Benutzer',
+            fields: {
+                username: 'Benutzername',
+                email: 'E-Mail',
+                password1: 'Passwort',
+                password2: 'Passwort bestätigen',
+                first_name: 'Vorname',
+                last_name: 'Nachname',
+                status: 'Status',
+                created_date: 'Erstellt am',
+                updated_date: 'Aktualisiert am',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -136,21 +150,6 @@ const deDE: TranslationMessages = {
         'prompt-groups': {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
-        },
-        collections: {
-            name: 'Kollection |||| Kollections',
-            fields: {
-                name: 'Name',
-                description: 'Beschreibung',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Modell',
-                    provider_name: 'Anbieter',
-                    model_name: 'Embedding Modell',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
         },
         assistants: {
             name: 'Assistent |||| Assistenten',
