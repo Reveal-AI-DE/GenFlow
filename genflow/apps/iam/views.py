@@ -5,11 +5,18 @@
 from allauth.account import app_settings as allauth_settings
 from allauth.account.utils import complete_signup
 from dj_rest_auth.app_settings import api_settings as dj_rest_auth_settings
-from dj_rest_auth.registration.views import RegisterView
+from dj_rest_auth.registration.views import RegisterView, SocialLoginView
 from dj_rest_auth.utils import jwt_encode
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 
 class RegisterViewEx(RegisterView):
+    """
+    Extends the functionality of the RegisterView to handle
+    user registration and response data customization.
+    """
+
     def get_response_data(self, user):
         serializer = self.get_serializer(user)
         return serializer.data
@@ -32,3 +39,17 @@ class RegisterViewEx(RegisterView):
             None,
         )
         return user
+
+
+class GoogleLogin(SocialLoginView):
+    """
+    Handles the OAuth2 login process for Google.
+    """
+
+    adapter_class = GoogleOAuth2Adapter
+    client_class = OAuth2Client
+
+    @property
+    def callback_url(self):
+        request = self.request
+        return f"{request.scheme}://{request.get_host()}/"

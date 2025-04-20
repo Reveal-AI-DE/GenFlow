@@ -13,7 +13,7 @@ from django.conf import settings
 from django.urls import path
 from django.urls.conf import include
 
-from genflow.apps.iam.views import RegisterViewEx
+from genflow.apps.iam.views import RegisterViewEx, GoogleLogin
 
 BASIC_LOGIN_PATH_NAME = "rest_login"
 BASIC_REGISTER_PATH_NAME = "rest_register"
@@ -35,5 +35,11 @@ if settings.IAM_TYPE == "BASIC":
         ),
         path("password/change", PasswordChangeView.as_view(), name="rest_password_change"),
     ]
+
+    # add social auth urls
+    if "google" in settings.SOCIALACCOUNT_PROVIDERS:
+        urlpatterns += [
+            path('google', GoogleLogin.as_view(), name='google_login'),
+        ]
 
 urlpatterns = [path("auth/", include(urlpatterns))]

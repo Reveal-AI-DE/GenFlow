@@ -12,10 +12,11 @@ import {
     Login as RaLogin, LoginProps,
     LoginForm, useTranslate,
 } from 'react-admin';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { WithTooltip } from '@/common';
 import { LoginWithEmailForm } from '@/auth/form';
-import { SignupButton } from '@/auth/button';
+import { GoogleLoginButton, SignupButton } from '@/auth/button';
 
 const Toolbar = styled(Box,{
     name: 'GFLogin',
@@ -76,10 +77,19 @@ const Login: FC<LoginProps> = (props) => {
         />
     ), [withEmail]);
 
+    const renderGoogleLoginButton = useCallback((): JSX.Element | null => (process.env.REACT_APP_GOOGLE_CLIENT_ID ? (
+        <GoogleOAuthProvider
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+        >
+            <GoogleLoginButton />
+        </GoogleOAuthProvider>
+    ):null), []);
+
     return (
         <RaLogin {...props}>
             <Toolbar>
                 {renderSwitchButton()}
+                {renderGoogleLoginButton()}
             </Toolbar>
             {renderLoginForm()}
             <Footer>

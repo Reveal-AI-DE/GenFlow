@@ -43,6 +43,7 @@
         "letsencrypt",
         "OAEP",
         "scriv",
+        "SOCIALACCOUNT",
         "traefik",
         "Uploady",
         "viewset",

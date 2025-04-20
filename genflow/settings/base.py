@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "corsheaders",
     "allauth.socialaccount",
+    'allauth.socialaccount.providers.google',
     "genflow.apps.team",
     "genflow.apps.iam",
     "genflow.apps.core",
@@ -217,6 +218,26 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+
+# Social account settings
+SOCIALACCOUNT_PROVIDERS = {}
+if "GF_GOOGLE_CLIENT_ID" in os.environ and \
+    "GF_GOOGLE_CLIENT_SECRET" in os.environ:
+    SOCIALACCOUNT_PROVIDERS["google"] = {
+        "APP": {
+            "client_id": os.environ.get("GF_GOOGLE_CLIENT_ID", None),
+            'secret': os.environ.get("GF_GOOGLE_CLIENT_SECRET", None),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        },
+    }
+
 
 # JavaScript and CSS compression
 # https://django-compressor.readthedocs.io

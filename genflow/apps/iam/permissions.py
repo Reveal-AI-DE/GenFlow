@@ -27,7 +27,8 @@ def get_team(request: HttpRequestWithIamContext, obj):
         Team or None
 
     Raises:
-        AttributeError: If the object does not have a 'team_id' attribute and is not listed in settings.OBJECTS_NOT_RELATED_WITH_TEAM.
+        AttributeError: If the object does not have a 'team_id' attribute
+        and is not listed in settings.OBJECTS_NOT_RELATED_WITH_TEAM.
     """
 
     if isinstance(obj, Team):
