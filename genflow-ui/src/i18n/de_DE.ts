@@ -296,6 +296,9 @@ const deDE: TranslationMessages = {
         send: 'Nachricht senden',
         stop: 'stoppen',
         sign_up: 'Registrieren',
+        login_email: 'E-Mail verwenden',
+        login_username: 'Benutzername verwenden',
+        google_login: 'Mit Google anmelden',
     },
     validation: {
         not_available: 'Nicht verfügbar',

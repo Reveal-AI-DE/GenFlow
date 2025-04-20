@@ -3,20 +3,18 @@
 // SPDX-License-Identifier: MIT
 
 import React, { FC, useState, useCallback } from 'react';
-import IconButton from '@mui/material/IconButton';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import {
-    Login as RaLogin, LoginProps,
-    LoginForm, useTranslate,
+    Login as RaLogin, LoginProps, LoginForm
 } from 'react-admin';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-import { WithTooltip } from '@/common';
 import { LoginWithEmailForm } from '@/auth/form';
-import { GoogleLoginButton, SignupButton } from '@/auth/button';
+import {
+    GoogleLoginButton, SignupButton , LoginMethodSwitchButton,
+} from '@/auth/button';
+import { LoginBackground } from '@/assets';
 
 const Toolbar = styled(Box,{
     name: 'GFLogin',
@@ -38,44 +36,19 @@ const Footer = styled(Box,{
 }));
 
 const Login: FC<LoginProps> = (props) => {
-    const translate = useTranslate();
-    const [withEmail, setWithEmail] = useState<boolean>(false);
+    const [loginWithEmail, setLoginWithEmail] = useState<boolean>(false);
 
-    const renderLoginForm = useCallback((): JSX.Element => (withEmail ? (
-        <LoginWithEmailForm />
-    ) : (
-        <LoginForm />
-    )), [withEmail]);
-
-    const renderSwitchButton = useCallback((): JSX.Element => (
-        <WithTooltip
-            title={withEmail ? translate('action.login_username'):translate('action.login_email')}
-            trigger={(
-                <span>
-                    <IconButton
-                        edge='start'
-                        aria-label={withEmail ? translate('action.login_username'):translate('action.login_email')}
-                        onClick={() => setWithEmail(!withEmail)}
-                        size='small'
-                        color='primary'
-                    >
-                        {
-                            withEmail ? (
-                                <AccountCircleIcon
-                                    fontSize='medium'
-                                />
-                            ) : (
-                                <AlternateEmailIcon
-                                    fontSize='medium'
-                                />
-                            )
-                        }
-                    </IconButton>
-                </span>
-            )}
-            arrow
+    const renderLoginMethodSwitchButton = (): JSX.Element => (loginWithEmail ? (
+        <LoginMethodSwitchButton
+            onClick={() => setLoginWithEmail(false)}
+            loginMethod='username'
         />
-    ), [withEmail]);
+    ) : (
+        <LoginMethodSwitchButton
+            onClick={() => setLoginWithEmail(true)}
+            loginMethod='email'
+        />
+    ));
 
     const renderGoogleLoginButton = useCallback((): JSX.Element | null => (process.env.REACT_APP_GOOGLE_CLIENT_ID ? (
         <GoogleOAuthProvider
@@ -85,12 +58,27 @@ const Login: FC<LoginProps> = (props) => {
         </GoogleOAuthProvider>
     ):null), []);
 
-    return (
-        <RaLogin {...props}>
+    const renderLoginForm = useCallback((): JSX.Element => (
+        <>
             <Toolbar>
-                {renderSwitchButton()}
+                {renderLoginMethodSwitchButton()}
                 {renderGoogleLoginButton()}
             </Toolbar>
+            {
+                loginWithEmail ? (
+                    <LoginWithEmailForm />
+                ) : (
+                    <LoginForm />
+                )
+            }
+        </>
+    ), [loginWithEmail]);
+
+    return (
+        <RaLogin
+            {...props}
+            backgroundImage={LoginBackground}
+        >
             {renderLoginForm()}
             <Footer>
                 <SignupButton />

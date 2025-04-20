@@ -260,8 +260,8 @@ const enUS: TranslationMessages = {
         scroll_top: 'Scroll to top',
         scroll_bottom: 'Scroll to bottom',
         sign_up: 'Sign Up',
-        login_email: 'Login with Email',
-        login_username: 'Login with Username',
+        login_email: 'Use Email',
+        login_username: 'Use Username',
         google_login: 'Login with Google',
     },
     validation: {
