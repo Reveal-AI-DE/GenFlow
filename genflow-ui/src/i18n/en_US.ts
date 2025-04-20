@@ -229,8 +229,9 @@ const enUS: TranslationMessages = {
             start_test_content: 'to verify the prompt ...',
         },
         related_deleted: 'Related %{resource} was deleted',
-        register_success: 'User registered, please login to continue',
-        register_error: 'User registration failed, please try again',
+        register_success: 'User registered, please login to continue.',
+        register_error: 'User registration failed, please try again.',
+        no_teams: 'No teams available, please contact the administrator.',
     },
     action: {
         test: 'Test',
@@ -259,6 +260,9 @@ const enUS: TranslationMessages = {
         scroll_top: 'Scroll to top',
         scroll_bottom: 'Scroll to bottom',
         sign_up: 'Sign Up',
+        login_email: 'Login with Email',
+        login_username: 'Login with Username',
+        google_login: 'Login with Google',
     },
     validation: {
         not_available: 'Not available',

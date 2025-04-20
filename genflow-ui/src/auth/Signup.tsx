@@ -7,11 +7,13 @@ import React, {
     useRef, useEffect,
 } from 'react';
 import { styled, SxProps } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Avatar from '@mui/material/Avatar';
 import LockIcon from '@mui/icons-material/Lock';
 
 import { RegistrationForm as DefaultRegistrationForm } from '@/auth/form';
+import { LoginButton } from '@/auth/button';
 
 const PREFIX = 'GFSignup';
 const SignupClasses = {
@@ -46,6 +48,16 @@ const Root = styled('div', {
     [`& .${SignupClasses.icon}`]: {
         backgroundColor: theme.palette.secondary.main,
     },
+}));
+
+const Footer = styled(Box,{
+    name: 'GFLogin',
+    slot: 'toolbar',
+})(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: theme.spacing(1, 2),
 }));
 
 const defaultRegistrationForm = <DefaultRegistrationForm />;
@@ -98,6 +110,9 @@ const Signup: FC<SignupProps> = ({
                     <Avatar className={SignupClasses.icon}>{avatarIcon}</Avatar>
                 </div>
                 {children}
+                <Footer>
+                    <LoginButton />
+                </Footer>
             </Card>
         </Root>
     );

@@ -269,9 +269,10 @@ const deDE: TranslationMessages = {
             start_test_title: 'Start der Testsitzung',
             start_test_content: 'um die Prompt zu überprüfen ...',
         },
-        related_deleted: 'Verwandte %{resource} wurde gelöscht',
-        register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren',
-        register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut',
+        related_deleted: 'Verwandte %{resource} wurde gelöscht.',
+        register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren.',
+        register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut.',
+        no_teams: 'Keine Teams verfügbar, bitte wenden Sie sich an den Administrator.',
     },
     action: {
         test: 'Test',

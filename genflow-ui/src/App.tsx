@@ -10,7 +10,7 @@ import {
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 import { dataProvider } from '@/dataProvider';
-import { authProvider } from '@/auth';
+import { authProvider, Login } from '@/auth';
 import englishMessages from '@/i18n/en_US';
 
 import { Layout } from '@/layout';
@@ -62,6 +62,8 @@ const App = (): JSX.Element => {
             defaultTheme='light'
             dataProvider={dataProvider}
             authProvider={authProvider}
+            loginPage={Login}
+            requireAuth
             disableTelemetry
         >
             <Resource
