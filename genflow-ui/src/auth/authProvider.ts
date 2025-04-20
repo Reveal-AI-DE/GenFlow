@@ -19,6 +19,19 @@ interface FetchJsonOptions {
     headers?: Headers;
 }
 
+const addTeamHeader = (url: string, headers: Headers): void => {
+    // parse url for team query parameters
+    const urlParams = new URLSearchParams(url.split('?')[1]);
+    const teamId = urlParams.get('team');
+    if (!teamId && !url.includes('/teams') && !url.includes('/users/self')) {
+        // add X-Team header
+        const currentTeamId = localStorage.getItem('team');
+        if (currentTeamId) {
+            headers.set('X-Team', currentTeamId);
+        }
+    }
+};
+
 export const createOptions = (url: string): FetchJsonOptions => {
     const token = localStorage.getItem('token');
 
@@ -32,16 +45,7 @@ export const createOptions = (url: string): FetchJsonOptions => {
         };
     }
 
-    // parse url for team query parameters
-    const urlParams = new URLSearchParams(url.split('?')[1]);
-    const teamId = urlParams.get('team');
-    if (!teamId && !url.includes('/teams')) {
-        // add X-Team header
-        const currentTeamId = localStorage.getItem('team');
-        if (currentTeamId) {
-            headers.set('X-Team', currentTeamId);
-        }
-    }
+    addTeamHeader(url, headers);
 
     return {
         user: {
@@ -55,6 +59,16 @@ export const createOptions = (url: string): FetchJsonOptions => {
 export const fetchJsonWithAuthToken = (url: string, options?: object): Promise<any> => (
     fetchUtils.fetchJson(url, Object.assign(createOptions(url), options))
 );
+
+export const getLoggedInUser = async (): Promise<UserIdentity> => {
+    const url = ResourceURL('/users/self');
+    const { json } = await fetchJsonWithAuthToken(url);
+
+    return {
+        ...json,
+        fullName: `${json.first_name} ${json.last_name}`,
+    };
+};
 
 const authProvider: AuthProvider = {
     login: async ({ username, password }) => {
@@ -87,31 +101,19 @@ const authProvider: AuthProvider = {
         }
     },
     checkError: async ({ status }) => {
-        if (status === 401) {
-            removeItems();
-        }
-        if (status === 403) {
-            throw new Error('You do not have permission to access this resource');
+        if (status === 401 || status === 403) {
+            throw new Error();
         }
     },
     getIdentity: async () => {
-        let userObjString = localStorage.getItem('RaStore.identity');
+        let userObjString = localStorage.getItem('RaStoreGenFlow.identity');
         userObjString = userObjString === null ? '' : userObjString;
-
         if (userObjString) {
-            const { first_name: firstName, last_name: lastName, user } = JSON.parse(userObjString);
-            const fullName = `${firstName} ${lastName}`;
-
-            const identity: UserIdentity = {
-                id: user,
-                fullName: (fullName !== ' ') ? fullName : user,
-            };
-            return identity;
+            return JSON.parse(userObjString);
         }
-
-        return {
-            id: '',
-        };
+        const user = await getLoggedInUser();
+        localStorage.setItem('RaStoreGenFlow.identity', JSON.stringify(user));
+        return user;
     },
     register: async (params: RegistrationFormData) => {
         const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/register`);

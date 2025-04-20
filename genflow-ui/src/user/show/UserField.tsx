@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
-import { useTranslate } from 'react-admin';
+import { useTranslate, useGetIdentity } from 'react-admin';
 
-import { GlobalContext, GlobalContextInterface } from '@/context';
 import { Identity } from '@/types';
 
 const Root = styled(Box, {
@@ -44,8 +43,8 @@ interface UserFieldProps {
 }
 
 const UserField: FC<UserFieldProps> = ({ user }) => {
+    const { data: currentUser } = useGetIdentity();
     const translate = useTranslate()
-    const { currentUser } = useContext<GlobalContextInterface>(GlobalContext);
 
     if (!user) {
         return null;
