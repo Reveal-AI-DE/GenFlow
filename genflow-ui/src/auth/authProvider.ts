@@ -5,7 +5,7 @@
 import { AuthProvider, fetchUtils, UserIdentity } from 'react-admin';
 
 import { RegistrationFormData } from '@/auth/form';
-import { ResourceURL } from '@/utils';
+import { ResourceURL, getCsrfToken } from '@/utils';
 
 const removeItems = (): void => {
     localStorage.removeItem('token');
@@ -38,6 +38,12 @@ export const createOptions = (url: string): FetchJsonOptions => {
     const headers = new Headers({
         Accept: 'application/vnd.genflow+json; version=1.0',
     });
+
+    // Add the CSRF token to the headers
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+        headers.set('X-CSRFToken', csrfToken);
+    }
 
     if (!token) {
         return {
@@ -73,24 +79,20 @@ export const getLoggedInUser = async (): Promise<UserIdentity> => {
 const authProvider: AuthProvider = {
     login: async ({ username, password }) => {
         const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/login`);
-        const request = new Request(url, {
+        const {
+            status,
+            statusText,
+            json
+        } = await fetchJsonWithAuthToken(url, {
             method: 'POST',
             body: JSON.stringify({ username, password }),
-            headers: new Headers({ 'Content-Type': 'application/json' }),
         });
-        const response = await fetch(request);
-        if (response.ok) {
-            const { key } = await response.json();
+        if (status === 200) {
+            const { key } = json;
             localStorage.setItem('token', key);
             return;
         }
-        if (response.headers.get('content-type') !== 'application/json') {
-            throw new Error(response.statusText);
-        }
-
-        const json = await response.json();
-        const error = json.non_field_errors;
-        throw new Error(error || response.statusText);
+        throw new Error(statusText);
     },
     logout: async () => {
         removeItems();
@@ -117,12 +119,9 @@ const authProvider: AuthProvider = {
     },
     register: async (params: RegistrationFormData) => {
         const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/register`);
-        const { json } = await fetchUtils.fetchJson(url, {
+        const { json } = await fetchJsonWithAuthToken(url, {
             method: 'POST',
             body: JSON.stringify(params),
-            headers: new Headers({
-                Accept: 'application/vnd.genflow+json; version=1.0',
-            }),
         });
         return json;
     },
