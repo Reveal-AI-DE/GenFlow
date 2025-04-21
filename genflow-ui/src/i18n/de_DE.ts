@@ -272,6 +272,12 @@ const deDE: TranslationMessages = {
         register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren.',
         register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut.',
         no_teams: 'Keine Teams verfügbar, bitte wenden Sie sich an den Administrator.',
+        confirmed: 'Bestätigt',
+        email_confirmed: 'Ihre E-Mail wurde bestätigt. Sie können sich jetzt anmelden.',
+        not_confirmed: 'Falsche Bestätigung',
+        email_not_confirmed: 'Der Bestätigungslink ist falsch oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Bestätigungs-E-Mail an.',
+        verification_sent: 'Bestätigungs-E-Mail gesendet',
+        verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
     },
     action: {
         test: 'Test',

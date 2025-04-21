@@ -231,6 +231,12 @@ const enUS: TranslationMessages = {
         register_success: 'User registered, please login to continue.',
         register_error: 'User registration failed, please try again.',
         no_teams: 'No teams available, please contact the administrator.',
+        confirmed: 'Confirmed',
+        email_confirmed: 'Your email has been confirmed. You can now log in.',
+        not_confirmed: 'Incorrect Confirmation',
+        email_not_confirmed: 'The confirmation link is incorrect or has expired. Please check your email for the correct link or request a new confirmation email.',
+        verification_sent: 'Verification Email Sent',
+        verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
     },
     action: {
         test: 'Test',

@@ -216,8 +216,18 @@ AUTHENTICATION_BACKENDS = [
 
 # https://github.com/pennersr/django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+
+# set UI url to redirect to after e-mail confirmation
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/#/auth/email-confirmed"
+INCORRECT_EMAIL_CONFIRMATION_URL = "/#/auth/email-not-confirmed"
+ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = "/#/auth/verification-sent"
+
+# change default allauth account adapter
+ACCOUNT_ADAPTER = "genflow.apps.iam.adapters.DefaultAccountAdapterEx"
 
 # Social account settings
 SOCIALACCOUNT_PROVIDERS = {}

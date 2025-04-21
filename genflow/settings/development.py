@@ -28,6 +28,11 @@ CSRF_TRUSTED_ORIGINS = [UI_URL]
 
 CORS_ORIGIN_WHITELIST = [UI_URL]
 
+# set UI url to redirect to after e-mail confirmation
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "{}/#/auth/email-confirmed".format(UI_URL)
+INCORRECT_EMAIL_CONFIRMATION_URL = "{}/#/auth/email-not-confirmed".format(UI_URL)
+ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = "{}/#/auth/verification-sent".format(UI_URL)
+
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
@@ -37,3 +42,5 @@ DATABASES = {
         "NAME": osp.join(BASE_DIR, "db.sqlite3"),
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

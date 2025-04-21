@@ -25,7 +25,7 @@ const Toolbar = styled(Box,{
     margin: theme.spacing(1, 2),
 }));
 
-const Footer = styled(Box,{
+export const Footer = styled(Box,{
     name: 'GFLogin',
     slot: 'toolbar',
 })(({ theme }) => ({

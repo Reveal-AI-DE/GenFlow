@@ -2,7 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+from django.conf import settings
+from django.http import Http404, HttpResponseRedirect
 from allauth.account import app_settings as allauth_settings
+from allauth.account.views import ConfirmEmailView
 from allauth.account.utils import complete_signup
 from dj_rest_auth.app_settings import api_settings as dj_rest_auth_settings
 from dj_rest_auth.registration.views import RegisterView, SocialLoginView
@@ -38,7 +41,20 @@ class RegisterViewEx(RegisterView):
             allauth_settings.EMAIL_VERIFICATION,
             None,
         )
+
         return user
+
+
+class ConfirmEmailViewEx(ConfirmEmailView):
+    template_name = "account/email/email_confirmation_signup_message.html"
+
+    def get(self, *args, **kwargs):
+        try:
+            if not allauth_settings.CONFIRM_EMAIL_ON_GET:
+                return super().get(*args, **kwargs)
+            return self.post(*args, **kwargs)
+        except Http404:
+            return HttpResponseRedirect(settings.INCORRECT_EMAIL_CONFIRMATION_URL)
 
 
 class GoogleLogin(SocialLoginView):

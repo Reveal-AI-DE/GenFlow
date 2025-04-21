@@ -6,6 +6,7 @@ import React, { FC, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useFormContext } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import {
     Button, useTranslate, useNotify,
 } from 'react-admin';
@@ -33,13 +34,18 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
     const translate = useTranslate();
     const { handleSubmit, reset } = useFormContext();
     const notify = useNotify();
+    const navigate = useNavigate();
 
     const onSubmit = async (data: any): Promise<void> => {
         setLoading(true);
         try {
-            await authProvider.register(data);
-            notify('message.register_success', { type: 'success' });
+            const resp = await authProvider.register(data);
             reset();
+            if (resp.email_verification_required) {
+                navigate('/auth/verification-sent');
+            } else {
+                notify('message.register_success', { type: 'success' });
+            }
         } catch (error) {
             console.error(error);
             notify('message.register_error', { type: 'warning' });

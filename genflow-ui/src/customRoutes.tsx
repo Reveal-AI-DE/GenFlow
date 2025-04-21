@@ -7,6 +7,7 @@ import { Route } from 'react-router';
 import { Authenticated } from 'react-admin';
 
 import { Signup } from '@/auth';
+import { Confirmed, IncorrectConfirmation, VerificationSent } from '@/auth/email';
 import { NewChat } from '@/chat';
 
 const layoutCustomRoutes = [
@@ -27,6 +28,27 @@ const noLayoutCustomRoutes = [
         path='/signup'
         element={(
             <Signup />
+        )}
+    />,
+    <Route
+        key='email-confirmed'
+        path='/auth/email-confirmed'
+        element={(
+            <Confirmed />
+        )}
+    />,
+    <Route
+        key='email-not-confirmed'
+        path='/auth/email-not-confirmed'
+        element={(
+            <IncorrectConfirmation />
+        )}
+    />,
+    <Route
+        key='verification-sent'
+        path='/auth/verification-sent'
+        element={(
+            <VerificationSent />
         )}
     />,
 ];
