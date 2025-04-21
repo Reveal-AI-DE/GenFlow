@@ -69,7 +69,7 @@ class ChatGenerateConsumer(BaseConsumer):
         """
 
         response = ChatResponse(type=ChatResponseType.CHUNK, data=chunk)
-        asyncio.run(self.send_json(response.model_dump_json()))
+        asyncio.run(self.send_json(response.model_dump(mode="json")))
 
     async def receive_json(self, json_data, **kwargs):
         """

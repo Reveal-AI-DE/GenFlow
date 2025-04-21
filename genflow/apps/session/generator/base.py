@@ -191,7 +191,7 @@ class BaseGenerator:
                 model = result.model
 
             if not messages:
-                messages = result.prompt_messages
+                messages = result.messages
 
             if result.delta.usage:
                 usage = result.delta.usage

@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from 'react';
 import {
     GenerateRequest,
     ChatResponse,
+    ChatResponseType,
     SessionMessage,
 } from '@/types';
 import { createOptions } from '@/auth/authProvider';
@@ -53,11 +54,11 @@ const useGenerate = (): GenerateHook => {
         // Handle incoming chunks
         webSocket.onmessage = (event) => {
             const response = JSON.parse(event.data as string) as ChatResponse;
-            if (response.type === 'error') {
+            if (response.type === ChatResponseType.ERROR) {
                 reject(new Error(response.data as string));
                 webSocket.close();
             }
-            if (response.type === 'chunk') {
+            if (response.type === ChatResponseType.CHUNK) {
                 fullText += response.data as string;
                 setSessionMessages((prev: SessionMessage[]) => prev.map((sessionMessage) => {
                     if (sessionMessage.id === lastSessionMessage.id) {
@@ -70,7 +71,7 @@ const useGenerate = (): GenerateHook => {
                     return sessionMessage
                 }));
             }
-            if (response.type === 'message') {
+            if (response.type === ChatResponseType.MESSAGE) {
                 setSessionMessages((prev: SessionMessage[]) => prev.map((sessionMessage) => {
                     if (sessionMessage.id === lastSessionMessage.id) {
                         const updatedChatMessage: SessionMessage = response.data as SessionMessage;

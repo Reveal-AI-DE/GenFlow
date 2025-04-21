@@ -250,7 +250,7 @@ class GenerateRequestSerializer(serializers.Serializer):
     query = serializers.CharField()
     files = serializers.ListField(child=serializers.JSONField(), required=False)
     parameters = serializers.JSONField(required=False)
-    stream = serializers.BooleanField(default=False)
+    stream = serializers.BooleanField(default=True, required=False)
 
     def validate(self, data):
         parameters = data.get("parameters", None)

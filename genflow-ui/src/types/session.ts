@@ -50,6 +50,7 @@ export interface GenerateRequest {
     query: string;
     files?: FileEntity[];
     parameters?: Parameters;
+    stream?: boolean;
 };
 
 export enum SessionFloatActionKey {

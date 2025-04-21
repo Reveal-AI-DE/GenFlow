@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import {
-    RecordContextProvider, ShowBase, CreateResult,
+    ShowBase, CreateResult,
     useDataProvider, useRecordContext
 } from 'react-admin';
 import { matchPath, useLocation } from 'react-router';
@@ -80,7 +80,10 @@ const TestSession: FC<TestSessionProps> = () => {
     }
 
     return (
-        <RecordContextProvider value={testSession as Session}>
+        <ShowBase
+            resource='sessions'
+            id={testSession.id}
+        >
             <SessionState
                 useResponsiveLayout={false}
                 actions={[
@@ -90,7 +93,7 @@ const TestSession: FC<TestSessionProps> = () => {
             >
                 <ChatBot />
             </SessionState>
-        </RecordContextProvider>
+        </ShowBase>
     )
 };
 

@@ -59,6 +59,6 @@ class ResultChunkDelta(BaseModel):
 
 class ResultChunk(BaseModel):
     model: str
-    input_messages: list[Message]
+    messages: list[Message]
     system_fingerprint: Optional[str] = None
     delta: ResultChunkDelta

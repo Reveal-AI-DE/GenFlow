@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useContext } from 'react';
 
-import { SessionContext } from '@/context';
+import { SessionContext, SessionContextInterface } from '@/context';
 import { Message } from '@/message';
 
 type SessionMessagesProps = object;
 
 const SessionMessages: FC<SessionMessagesProps> = () => {
-    const { sessionMessages } = React.useContext(SessionContext);
+    const { sessionMessages } = useContext<SessionContextInterface>(SessionContext);
 
     return sessionMessages
         .sort((a, b) => a.sequence - b.sequence)
