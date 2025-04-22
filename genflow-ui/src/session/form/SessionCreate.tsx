@@ -11,7 +11,7 @@ import styled from '@mui/material/styles/styled';
 import { useWatch } from 'react-hook-form'
 import {
     Form, SelectInput, SaveButton, CreateBase,
-    required, AutocompleteInput,
+    required, AutocompleteInput, Title, useTranslate,
 } from 'react-admin';
 
 import {
@@ -20,6 +20,8 @@ import {
 import { ModelSelectInput } from '@/provider/model';
 import { PromptSelectInput } from '@/prompt';
 import { getChoicesFromEnum } from '@/utils';
+import { ChatLayout } from '@/layout';
+import NewSessionPlaceholder from '@/session/form/NewSessionPlaceholder';
 
 const SelectRelated: FC = () => {
     const { session_type: sessionType } = useWatch<Session>();
@@ -63,9 +65,16 @@ const SelectRelated: FC = () => {
     return null;
 };
 
-const Root = styled(Box, {
+const Content = styled(Box, {
+    name: 'GFNewChat',
+    slot: 'content',
+})(() => ({
+    height: '100%',
+}));
+
+const FormContainer = styled(Box, {
     name: 'GFSessionCreate',
-    slot: 'root',
+    slot: 'form',
 })(({ theme }) => ({
     height: '20%',
     margin: theme.spacing(4),
@@ -83,6 +92,8 @@ const ButtonContainer = styled(Grid, {
 type SessionCreateProps = object
 
 const SessionCreate: FC<SessionCreateProps> = () => {
+    const translate = useTranslate();
+
     const transform = ({
         name,
         related_model,
@@ -96,62 +107,68 @@ const SessionCreate: FC<SessionCreateProps> = () => {
     });
 
     return (
-        <Root>
-            <CreateBase
-                redirect='show'
-                resource='sessions'
-                transform={transform}
-            >
-                <Form>
-                    <Grid
-                        container
-                        rowSpacing={{
-                            xs: 0
-                        }}
-                        columnSpacing={4}
-                    >
+        <ChatLayout>
+            <Title title={translate('label.new')} />
+            <FormContainer>
+                <CreateBase
+                    redirect='show'
+                    resource='sessions'
+                    transform={transform}
+                >
+                    <Form>
                         <Grid
-                            size={{
-                                xs: 12,
-                                sm: 12,
-                                md: 2
+                            container
+                            rowSpacing={{
+                                xs: 0
                             }}
+                            columnSpacing={4}
                         >
-                            <SelectInput
-                                source='session_type'
-                                label={false}
-                                choices={getChoicesFromEnum(SessionType)}
-                                defaultValue={SessionType.LLM}
-                                validate={required()}
-                                variant='outlined'
-                                margin='none'
-                            />
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 12,
+                                    md: 2
+                                }}
+                            >
+                                <SelectInput
+                                    source='session_type'
+                                    label={false}
+                                    choices={getChoicesFromEnum(SessionType)}
+                                    defaultValue={SessionType.LLM}
+                                    validate={required()}
+                                    variant='outlined'
+                                    margin='none'
+                                />
+                            </Grid>
+                            <Grid
+                                size={{
+                                    xs: 12,
+                                    sm: 12,
+                                    md: 5
+                                }}
+                            >
+                                <SelectRelated />
+                            </Grid>
+                            <ButtonContainer
+                                size={{
+                                    xs: 12,
+                                    sm: 12,
+                                    md: 4
+                                }}
+                            >
+                                <SaveButton
+                                    label='label.new'
+                                    icon={<AddIcon />}
+                                />
+                            </ButtonContainer>
                         </Grid>
-                        <Grid
-                            size={{
-                                xs: 12,
-                                sm: 12,
-                                md: 5
-                            }}
-                        >
-                            <SelectRelated />
-                        </Grid>
-                        <ButtonContainer
-                            size={{
-                                xs: 12,
-                                sm: 12,
-                                md: 4
-                            }}
-                        >
-                            <SaveButton
-                                label='label.new'
-                                icon={<AddIcon />}
-                            />
-                        </ButtonContainer>
-                    </Grid>
-                </Form>
-            </CreateBase>
-        </Root>
+                    </Form>
+                </CreateBase>
+            </FormContainer>
+            <Content>
+                <NewSessionPlaceholder />
+            </Content>
+        </ChatLayout>
     );
 };
 

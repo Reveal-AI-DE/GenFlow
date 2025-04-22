@@ -6,7 +6,6 @@ import { ResourceProps } from 'react-admin';
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 
 import { SessionCreate } from '@/session/form';
-import { NewChat } from '@/chat';
 import { SessionList } from '@/session/list';
 import { SessionCard, SessionShow, SessionUsageCard } from '@/session/show';
 
@@ -14,7 +13,7 @@ const SessionResourceProps: ResourceProps = {
     name: 'sessions',
     list: SessionList,
     show: SessionShow,
-    create: NewChat,
+    create: SessionCreate,
     icon: WorkspacesIcon,
 };
 

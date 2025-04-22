@@ -7,8 +7,7 @@ import { ResourceURL } from '@/utils';
 import { fetchJsonWithAuthToken } from '@/auth/authProvider';
 
 export default <SystemDataProvider> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getAbout: async (resource: string, params: any) => {
+    getAbout: async (resource: string) => {
         const url = ResourceURL(`/${resource}/about`);
         const { json } = await fetchJsonWithAuthToken(url);
         return {

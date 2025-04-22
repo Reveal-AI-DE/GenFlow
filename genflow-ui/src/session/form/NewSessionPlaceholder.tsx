@@ -10,9 +10,9 @@ import { useTranslate } from 'react-admin';
 
 import { PagePlaceholder } from '@/common';
 
-type NewChatPlaceholderProps = object;
+type NewSessionPlaceholderProps = object;
 
-const NewChatPlaceholder: FC<NewChatPlaceholderProps> = () => {
+const NewSessionPlaceholder: FC<NewSessionPlaceholderProps> = () => {
     const translate = useTranslate();
 
     return (
@@ -34,4 +34,4 @@ const NewChatPlaceholder: FC<NewChatPlaceholderProps> = () => {
     );
 };
 
-export default NewChatPlaceholder;
+export default NewSessionPlaceholder;

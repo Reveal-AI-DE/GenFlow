@@ -7,12 +7,13 @@ import React, {
 } from 'react';
 import {
     UserIdentity, useGetIdentity, useRefresh, Loading,
-    useLogout, useAuthenticated, Identifier, useNotify,
+    useLogout, useAuthenticated, Identifier, useNotify, HttpError,
 } from 'react-admin';
 
+import { authProvider } from '@/auth';
 import { dataProvider } from '@/dataProvider';
 import {
-    AboutSystem, Membership, Team,
+    AboutSystem, Membership, Team, GetAboutResult,
 } from '@/types';
 import { GlobalContext } from '@/context';
 
@@ -49,6 +50,16 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         refresh();
     };
 
+    const handleError = async (error: HttpError): Promise<void> => {
+        if (error.status) {
+            try {
+                await authProvider.checkError(error);
+            } catch {
+                logout();
+            }
+        }
+    };
+
     const loadSavedTeam = async (teamId: Identifier, user: UserIdentity): Promise<boolean> => (
         dataProvider.getOne('teams', {id: teamId })
             .then(async ({ data: team }) => {
@@ -56,28 +67,34 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
                 setTeamIdFromLocalStorage(team);
                 await switchTeam(team, user);
                 return true;
-            }
-            ).catch(() => (false))
+            }).catch(async (error) => {
+                handleError(error)
+                return false;
+            })
     );
 
-    const loadDefaultTeam = async (user: UserIdentity): Promise<boolean> => {
-        const { data: teams } = await dataProvider.getList('teams', { pagination: { page: 1, perPage: -1 } });
+    const loadDefaultTeam = async (user: UserIdentity): Promise<boolean> => (
+        dataProvider.getList('teams', { pagination: { page: 1, perPage: -1 } })
+            .then(async ({ data: teams }) => {
+                // Check if the user has any teams
+                if (!teams || teams.length === 0) {
+                    notify('message.no_teams', { type: 'error'});
+                    logout();
+                    return false;
+                }
 
-        // Check if the user has any teams
-        if (!teams || teams.length === 0) {
-            notify('message.no_teams', { type: 'error'});
-            logout();
-            return false;
-        }
-
-        // Currently, we are just taking the first team
-        // TODO: add default team selector
-        const team = teams[0];
-        setCurrentTeam(team);
-        setTeamIdFromLocalStorage(team);
-        await switchTeam(team, user);
-        return true;
-    }
+                // Currently, we are just taking the first team
+                // TODO: add default team selector
+                const team = teams[0];
+                setCurrentTeam(team);
+                setTeamIdFromLocalStorage(team);
+                await switchTeam(team, user);
+                return true;
+            }).catch(async (error) => {
+                handleError(error)
+                return false;
+            })
+    );
 
     const setupUserTeam = async (user: UserIdentity): Promise<boolean> => {
         const storedTeamId = getTeamIdFromLocalStorage();
@@ -90,15 +107,19 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
         // if it fails, load the default team
         if (!teamLoaded) {
-            teamLoaded = await loadDefaultTeam(user);
+            return loadDefaultTeam(user);
         }
         return teamLoaded;
     };
 
-    const fetchStartingData = async (): Promise<void> => {
-        const { data: about } = await dataProvider.getAbout('system', {});
-        setAboutSystem(about);
-    };
+    const fetchStartingData = async (): Promise<void> => (
+        dataProvider.getAbout('system', {})
+            .then(({ data }: GetAboutResult) => {
+                setAboutSystem(data);
+            }).catch(async (error: HttpError) => {
+                handleError(error);
+            })
+    );
 
     useEffect(() => {
         (async () => {
@@ -110,8 +131,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
 
             if (await setupUserTeam(currentUser)) {
                 await fetchStartingData();
-                setLoading(false);
             }
+            setLoading(false);
         })();
     }, [currentUser]);
 
