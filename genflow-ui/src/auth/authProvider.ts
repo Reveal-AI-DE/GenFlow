@@ -77,15 +77,16 @@ export const getLoggedInUser = async (): Promise<UserIdentity> => {
 };
 
 const authProvider: AuthProvider = {
-    login: async ({ username, password }) => {
+    login: async ({ email, username, password }) => {
         const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/login`);
+        const data = username ? { username } : { email };
         const {
             status,
             statusText,
             json
         } = await fetchJsonWithAuthToken(url, {
             method: 'POST',
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ ...data, password }),
         });
         if (status === 200) {
             const { key } = json;
