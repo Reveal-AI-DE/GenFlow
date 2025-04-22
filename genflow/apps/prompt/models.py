@@ -9,7 +9,7 @@ from django.db import models
 from django.utils.text import get_valid_filename
 
 from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
-from genflow.apps.core.models import CommonEntity, AIAssociatedEntity
+from genflow.apps.core.models import AIAssociatedEntity, CommonEntity
 
 
 def get_prompt_media_path(instance: "Prompt", filename: str) -> str:
@@ -54,15 +54,25 @@ class CommonPrompt(models.Model):
     Meta:
         abstract (bool): Indicates that this is an abstract model and will not be used to create any database table.
     """
+
     pre_prompt = models.TextField()
     suggested_questions = models.JSONField(null=True)
-    prompt_type = models.CharField(max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE)
+    prompt_type = models.CharField(
+        max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE
+    )
 
     class Meta:
         abstract = True
 
 
-class Prompt(CommonEntity, CommonPrompt, AIAssociatedEntity, TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
+class Prompt(
+    CommonEntity,
+    CommonPrompt,
+    AIAssociatedEntity,
+    TimeAuditModel,
+    UserOwnedModel,
+    TeamAssociatedModel,
+):
     """
     Represents a Prompt entity with various attributes and relationships.
 

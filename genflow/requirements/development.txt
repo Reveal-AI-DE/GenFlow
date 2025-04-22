@@ -10,7 +10,7 @@ astroid==3.3.9
     # via pylint
 autopep8==2.3.2
     # via django-silk
-dill==0.3.9
+dill==0.4.0
     # via pylint
 django-extensions==3.2.3
     # via -r genflow/requirements/development.in
@@ -22,12 +22,6 @@ isort==5.13.2
     # via pylint
 mccabe==0.7.0
     # via pylint
-packaging==24.2
-    # via pytoolconfig
-platformdirs==4.3.7
-    # via
-    #   pylint
-    #   pytoolconfig
 pycodestyle==2.13.0
     # via autopep8
 pylint==3.3.2

@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     "genflow.apps.iam",
     "genflow.apps.core",
     "genflow.apps.prompt",
+    "genflow.apps.assistant",
     "genflow.apps.session",
 ]
 
@@ -302,6 +303,9 @@ os.makedirs(STATIC_ROOT, exist_ok=True)
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_ROOT, exist_ok=True)
 
+ASSISTANTS_ROOT = os.path.join(DATA_ROOT, "assistants")
+os.makedirs(ASSISTANTS_ROOT, exist_ok=True)
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
@@ -316,6 +320,9 @@ MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
 
 PROMPTS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "prompts")
 os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
+
+ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
+os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
 
 SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
 os.makedirs(SESSIONS_ROOT, exist_ok=True)

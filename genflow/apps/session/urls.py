@@ -4,10 +4,7 @@
 
 from rest_framework import routers
 
-from genflow.apps.session.views import (
-    SessionMessageViewSet,
-    SessionViewSet,
-)
+from genflow.apps.session.views import SessionMessageViewSet, SessionViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("sessions", SessionViewSet)

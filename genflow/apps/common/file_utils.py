@@ -8,6 +8,8 @@ from os import path as osp
 from defusedxml import ElementTree as ET
 from PIL import Image
 
+from genflow.apps.common.entities import FileEntity
+
 
 def is_image(file_path):
     """
@@ -71,3 +73,27 @@ def create_media_symbolic_links(source_folder: str, destination_folder: str):
             symbolic_link_path = osp.join(destination_folder, osp.basename(file))
             if not osp.exists(symbolic_link_path):
                 os.symlink(file, symbolic_link_path)
+
+
+def get_files(folder: str):
+    """
+    Retrieves a list of files from the specified folder.
+
+    This function checks if the given folder exists and is a directory. If the folder
+    is valid, it lists all files within the folder and returns them as a list of
+    `FileEntity` objects, each containing the file's ID (name) and its full path.
+
+    Args:
+        folder (str): The path to the folder from which to retrieve files.
+
+    Returns:
+        list: A list of `FileEntity` objects representing the files in the folder.
+              Returns an empty list if the folder does not exist, is not a directory,
+              or contains no files.
+    """
+
+    if not osp.exists(folder) or not osp.isdir(folder):
+        return []
+    files = [file for file in os.listdir(folder) if osp.isfile(osp.join(folder, file))]
+
+    return [FileEntity(id=file, path=osp.join(folder, file)) for file in files]
