@@ -45,10 +45,12 @@ export const createGenerateRequest = (
     query: string,
     files: FileEntity[],
     chatSetting: ChatSetting,
+    stream: boolean = true,
 ): GenerateRequest | null => ({
     query,
     files,
     parameters: (chatSetting as ChatModelSetting).parameters,
+    stream,
 });
 
 export const createGenerateURL = (

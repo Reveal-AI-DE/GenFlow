@@ -84,7 +84,7 @@ RUN if [ "$CLAM_AV" = "yes" ]; then \
         apt-get update && \
         apt-get --no-install-recommends install -yq \
             clamav \
-            libclamunrar9 && \
+            libclamunrar11 && \
         sed -i "s/ReceiveTimeout 30/ReceiveTimeout 300/g" /etc/clamav/freshclam.conf && \
         freshclam && \
         chown -R ${USER}:${USER} /var/lib/clamav && \

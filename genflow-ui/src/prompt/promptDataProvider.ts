@@ -10,7 +10,7 @@ import {
 import { Prompt } from '@/types';
 import { ResourceURL } from '@/utils';
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
-import { fetchJsonWithAuthToken } from '@/authProvider';
+import { fetchJsonWithAuthToken } from '@/auth/authProvider';
 
 export default <DataProvider> {
     create: async (resource: string, params: CreateParams) => {

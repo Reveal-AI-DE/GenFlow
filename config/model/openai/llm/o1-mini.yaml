@@ -9,7 +9,7 @@ properties:
   mode: chat
   context_size: 128000
 parameter_configs:
-  - name: max_tokens
+  - name: max_completion_tokens
     use_template: max_tokens
     default: 65536
     min: 1

@@ -40,49 +40,43 @@ const useChatHandler = (): ChatHandlerHook => {
         content: string,
         files: FileEntity[] = [],
     ): void => {
-        try {
-            setUserInput('');
-            setIsGenerating(true);
+        setUserInput('');
+        setIsGenerating(true);
 
-            const tmpMessage = createTemporaryMessage(content, sessionMessages, setSessionMessages, false);
-            const generateRequest = createGenerateRequest(
-                content,
-                files,
-                chatSetting,
-            );
+        const tmpMessage = createTemporaryMessage(content, sessionMessages, setSessionMessages, false);
+        const generateRequest = createGenerateRequest(
+            content,
+            files,
+            chatSetting,
+        );
 
-            // streaming
-            if (generateURL && generateRequest !== null) {
-                generate(
-                    generateURL,
-                    generateRequest,
-                    tmpMessage,
-                    setSessionMessages
-                ).then(() => {
-                    setIsGenerating(false);
-                    refresh();
-                }).catch((error) => {
-                    console.log(error);
-                    notify(
-                        error,
-                        {
-                            type: 'error',
-                        }
-                    );
-                    setUserInput(content);
-                    setIsGenerating(false);
-                    // remove the temporary message
-                    setSessionMessages((prev) => {
-                        const newMessages = [...prev];
-                        newMessages.pop();
-                        return newMessages;
-                    });
+        // streaming
+        if (generateURL && generateRequest !== null) {
+            generate(
+                generateURL,
+                generateRequest,
+                tmpMessage,
+                setSessionMessages
+            ).then(() => {
+                setIsGenerating(false);
+                refresh();
+            }).catch((error) => {
+                console.log(error);
+                notify(
+                    error.message,
+                    {
+                        type: 'error',
+                    }
+                );
+                setUserInput(content);
+                setIsGenerating(false);
+                // remove the temporary message
+                setSessionMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages.pop();
+                    return newMessages;
                 });
-            }
-        } catch (error) {
-            console.log(error);
-            setUserInput(content);
-            setIsGenerating(false);
+            });
         }
     };
 

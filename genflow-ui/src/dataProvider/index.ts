@@ -59,6 +59,7 @@ const dataProviderWrapper: DataProvider = {
     // Add any additional methods here
     getAbout: createMethod('getAbout'),
     self: createMethod('self'),
+    check: createMethod('check'),
     getParameterConfig: createMethod('getParameterConfig'),
 };
 

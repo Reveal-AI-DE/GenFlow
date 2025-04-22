@@ -7,7 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import CheckIcon from '@mui/icons-material/Check';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { useTranslate, useGetList } from 'react-admin';
+import { useTranslate, useGetList, useGetIdentity } from 'react-admin';
 
 import { Team } from '@/types';
 import { GlobalContext } from '@/context';
@@ -29,13 +29,15 @@ export const StyledAvatar = styled(Avatar, {
 }));
 
 const TeamMenuItem: FC = () => {
+    const { data: currentUser } = useGetIdentity();
+
     const translate = useTranslate();
     const {
-        currentUser, currentTeam, switchTeam
+        currentTeam, switchTeam
     } = useContext(GlobalContext);
 
     const onClick = (team: Team): void => {
-        if (currentUser) switchTeam(currentUser, team);
+        if (currentUser) switchTeam(team, currentUser);
     };
 
     const { data: userTeams } = useGetList('teams', { pagination: { page: 1, perPage: -1 } });

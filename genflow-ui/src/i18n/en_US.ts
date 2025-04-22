@@ -8,6 +8,20 @@ import englishMessages from 'ra-language-english';
 const enUS: TranslationMessages = {
     ...englishMessages,
     resources: {
+        users: {
+            name: 'User |||| Users',
+            fields: {
+                username: 'Username',
+                email: 'Email',
+                password1: 'Password',
+                password2: 'Confirm Password',
+                first_name: 'First Name',
+                last_name: 'Last Name',
+                status: 'Status',
+                created_date: 'Created At',
+                updated_date: 'Updated At',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -103,21 +117,6 @@ const enUS: TranslationMessages = {
         'prompt-groups': {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
-        },
-        collections: {
-            name: 'Collection |||| Collections',
-            fields: {
-                name: 'Name',
-                description: 'Description',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Model',
-                    provider_name: 'Provider',
-                    model_name: 'Embedding Model',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
         },
         assistants: {
             name: 'Assistant |||| Assistants',
@@ -229,6 +228,15 @@ const enUS: TranslationMessages = {
             start_test_content: 'to verify the prompt ...',
         },
         related_deleted: 'Related %{resource} was deleted',
+        register_success: 'User registered, please login to continue.',
+        register_error: 'User registration failed, please try again.',
+        no_teams: 'No teams available, please contact the administrator.',
+        confirmed: 'Confirmed',
+        email_confirmed: 'Your email has been confirmed. You can now log in.',
+        not_confirmed: 'Incorrect Confirmation',
+        email_not_confirmed: 'The confirmation link is incorrect or has expired. Please check your email for the correct link or request a new confirmation email.',
+        verification_sent: 'Verification Email Sent',
+        verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
     },
     action: {
         test: 'Test',
@@ -256,6 +264,18 @@ const enUS: TranslationMessages = {
         stop: 'Stop',
         scroll_top: 'Scroll to top',
         scroll_bottom: 'Scroll to bottom',
+        sign_up: 'Sign Up',
+        login_email: 'Use Email',
+        login_username: 'Use Username',
+        google_login: 'Login with Google',
+    },
+    validation: {
+        not_available: 'Not available',
+        password: {
+            min: 'Password must contain at least %{number}% characters.',
+            numeric: 'Password cannot be entirely numeric.',
+            personal: 'Password cannot be too similar to your personal information.',
+        }
     }
 };
 

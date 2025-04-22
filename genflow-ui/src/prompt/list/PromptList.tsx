@@ -25,27 +25,28 @@ const PromptListActions = [
 const PromptFilters = [
     <SearchInput
         source='q'
-        variant='standard'
+        variant='outlined'
     />,
     <GroupSelectInput
         source='group__id'
         reference='prompt-groups'
         showCreateOption={false}
         validate={undefined}
+        variant='outlined'
     />,
     <SelectInput
         source='type'
         choices={getChoicesFromEnum(PromptType)}
-        variant='standard'
+        variant='outlined'
     />,
     <SelectInput
         source='status'
         choices={getChoicesFromEnum(PromptStatus)}
-        variant='standard'
+        variant='outlined'
     />,
     <BooleanInput
         source='is_pinned'
-        variant='standard'
+        variant='outlined'
     />
 ];
 

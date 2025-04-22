@@ -279,7 +279,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         if model.startswith("o1"):
             # system messages content should be converted to user messages
 
-            count = len(filter(lambda x: isinstance(x, SystemMessage), messages))
+            count = len(list(filter(lambda x: isinstance(x, SystemMessage), messages)))
             if count == 0:
                 return messages
 

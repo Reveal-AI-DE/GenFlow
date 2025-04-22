@@ -41,6 +41,20 @@ const updatedFormalGermanMessages = {
 const deDE: TranslationMessages = {
     ...updatedFormalGermanMessages,
     resources: {
+        users: {
+            name: 'Benutzer |||| Benutzer',
+            fields: {
+                username: 'Benutzername',
+                email: 'E-Mail',
+                password1: 'Passwort',
+                password2: 'Passwort bestätigen',
+                first_name: 'Vorname',
+                last_name: 'Nachname',
+                status: 'Status',
+                created_date: 'Erstellt am',
+                updated_date: 'Aktualisiert am',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -136,21 +150,6 @@ const deDE: TranslationMessages = {
         'prompt-groups': {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
-        },
-        collections: {
-            name: 'Kollection |||| Kollections',
-            fields: {
-                name: 'Name',
-                description: 'Beschreibung',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Modell',
-                    provider_name: 'Anbieter',
-                    model_name: 'Embedding Modell',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
         },
         assistants: {
             name: 'Assistent |||| Assistenten',
@@ -269,7 +268,16 @@ const deDE: TranslationMessages = {
             start_test_title: 'Start der Testsitzung',
             start_test_content: 'um die Prompt zu überprüfen ...',
         },
-        related_deleted: 'Verwandte %{resource} wurde gelöscht',
+        related_deleted: 'Verwandte %{resource} wurde gelöscht.',
+        register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren.',
+        register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut.',
+        no_teams: 'Keine Teams verfügbar, bitte wenden Sie sich an den Administrator.',
+        confirmed: 'Bestätigt',
+        email_confirmed: 'Ihre E-Mail wurde bestätigt. Sie können sich jetzt anmelden.',
+        not_confirmed: 'Falsche Bestätigung',
+        email_not_confirmed: 'Der Bestätigungslink ist falsch oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Bestätigungs-E-Mail an.',
+        verification_sent: 'Bestätigungs-E-Mail gesendet',
+        verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
     },
     action: {
         test: 'Test',
@@ -292,6 +300,18 @@ const deDE: TranslationMessages = {
         attach: 'Datei anhängen',
         send: 'Nachricht senden',
         stop: 'stoppen',
+        sign_up: 'Registrieren',
+        login_email: 'E-Mail verwenden',
+        login_username: 'Benutzername verwenden',
+        google_login: 'Mit Google anmelden',
+    },
+    validation: {
+        not_available: 'Nicht verfügbar',
+        password: {
+            min: 'Das Passwort muss mindestens %{number} Zeichen enthalten.',
+            numeric: 'Das Passwort darf nicht vollständig numerisch sein.',
+            personal: 'Das Passwort darf nicht zu ähnlich zu Ihren persönlichen Informationen sein.',
+        }
     }
 };
 

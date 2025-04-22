@@ -21,6 +21,7 @@
         "@mui/icons-material": "^7.0.1",
         "@mui/material": "^7.0.1",
         "@mui/x-charts": "7.28.0",
+        "@react-oauth/google": "^0.12.1",
         "@rpldy/uploady": "^1.9.1",
         "@tanstack/react-query": "^5.71.10",
         "@uiw/react-json-view": "^2.0.0-alpha.30",
@@ -43,7 +44,8 @@
         "react-syntax-highlighter": "^15.6.1",
         "remark-breaks": "^4.0.0",
         "remark-gfm": "^4.0.1",
-        "remark-math": "^6.0.0"
+        "remark-math": "^6.0.0",
+        "zxcvbn": "^4.4.2"
     },
     "resolutions": {
         "@mui/icons-material": "7.0.1",
@@ -58,6 +60,7 @@
         "@types/react-dom": "^18.3.0",
         "@types/react-router-dom": "^5.3.3",
         "@types/react-syntax-highlighter": "^15.5.13",
+        "@types/zxcvbn": "^4.4.0",
         "tailwindcss": "^4.1.3"
     },
     "browserslist": [

@@ -2,12 +2,14 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { RaRecord, DataProvider } from 'react-admin';
+import { DataProvider, UserIdentity } from 'react-admin';
 
-export interface Identity extends RaRecord {
+export interface Identity extends UserIdentity {
     first_name: string;
+    last_name: string;
 };
 
 export interface UserDataProvider extends DataProvider {
     self: () => Promise<any>;
+    check: () => Promise<boolean>;
 };

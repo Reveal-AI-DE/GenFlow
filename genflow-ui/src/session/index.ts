@@ -13,6 +13,7 @@ const SessionResourceProps: ResourceProps = {
     name: 'sessions',
     list: SessionList,
     show: SessionShow,
+    create: SessionCreate,
     icon: WorkspacesIcon,
 };
 

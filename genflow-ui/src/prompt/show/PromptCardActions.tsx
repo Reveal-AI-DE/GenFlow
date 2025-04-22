@@ -5,7 +5,6 @@
 import React, { FC, useContext } from 'react';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
@@ -16,6 +15,7 @@ import {
 
 import { Prompt, PromptStatus, TeamRole } from '@/types';
 import { GlobalContext, GlobalContextInterface } from '@/context';
+import { WithTooltip } from '@/common';
 
 type PromptInfoCardActionsProps = object;
 
@@ -29,8 +29,8 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
     const redirect = useRedirect();
     const translate = useTranslate();
     const createPath = useCreatePath();
-    const { currentMembership } = useContext<GlobalContextInterface>(GlobalContext);
 
+    const { currentMembership } = useContext<GlobalContextInterface>(GlobalContext);
     const isOwnerOrAdmin = currentMembership?.role === TeamRole.OWNER || currentMembership?.role === TeamRole.ADMIN;
 
     const OnUseClick = (): void => {
@@ -66,16 +66,21 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
                     color={isOwnerOrAdmin ? 'primary' : 'disabled'}
                 />
             </Link>
-            <Tooltip title={translate('action.use')}>
-                <IconButton
-                    size='small'
-                    onClick={OnUseClick}
-                    color='primary'
-                    disabled={prompt.status !== PromptStatus.PUBLISHED}
-                >
-                    <TerminalIcon />
-                </IconButton>
-            </Tooltip>
+            <WithTooltip
+                title={translate('action.use')}
+                trigger={(
+                    <span>
+                        <IconButton
+                            size='small'
+                            onClick={OnUseClick}
+                            color='primary'
+                            disabled={prompt.status !== PromptStatus.PUBLISHED}
+                        >
+                            <TerminalIcon />
+                        </IconButton>
+                    </span>
+                )}
+            />
             <DeleteWithConfirmButton
                 label=''
                 mutationMode='pessimistic'

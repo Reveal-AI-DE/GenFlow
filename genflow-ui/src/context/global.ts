@@ -3,23 +3,22 @@
 // SPDX-License-Identifier: MIT
 
 import { createContext } from 'react';
+import { UserIdentity } from 'react-admin';
 
 import {
-    AboutSystem, Identity, Team, Membership,
+    AboutSystem, Team, Membership,
 } from '@/types';
 
 export interface GlobalContextInterface {
     aboutSystem: AboutSystem | undefined;
     currentMembership: Membership | undefined;
     currentTeam: Team | undefined;
-    currentUser: Identity | undefined;
-    switchTeam: (user: Identity, team: Team) => void;
+    switchTeam: (team: Team, user: UserIdentity) => void;
 };
 
 export const GlobalContext = createContext<GlobalContextInterface>({
     aboutSystem: undefined,
     currentMembership: undefined,
     currentTeam: undefined,
-    currentUser: undefined,
     switchTeam: () => {},
 });

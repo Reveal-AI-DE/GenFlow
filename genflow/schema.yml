@@ -165,6 +165,9 @@ paths:
   /api/auth/register:
     post:
       operationId: auth_register_create
+      description: |-
+        Extends the functionality of the RegisterView to handle
+        user registration and response data customization.
       tags:
       - auth
       requestBody:
@@ -1842,6 +1845,31 @@ paths:
       responses:
         '204':
           description: The team has been deleted
+  /api/users/check:
+    post:
+      operationId: users_check_create
+      description: Check if a user exists by username
+      summary: Check user
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCheckRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCheckRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: User exists
+        '204':
+          description: User not found
   /api/users/self:
     get:
       operationId: users_self_retrieve
@@ -2922,6 +2950,16 @@ components:
       required:
       - groups
       - username
+    UserCheckRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
   securitySchemes:
     basicAuth:
       type: http

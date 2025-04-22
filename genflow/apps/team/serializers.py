@@ -314,3 +314,8 @@ class MembershipWriteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         serializer = MembershipReadSerializer(instance, context=self.context)
         return serializer.data
+
+
+class UserCheckSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)

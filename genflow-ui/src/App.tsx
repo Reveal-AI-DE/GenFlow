@@ -3,15 +3,14 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react';
-import { Route } from 'react-router';
 import {
-    Admin, useStore, localStorageStore, StoreContextProvider,
-    Resource, CustomRoutes, Authenticated,
+    Admin, useStore, localStorageStore,
+    StoreContextProvider, Resource, CustomRoutes,
 } from 'react-admin';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 import { dataProvider } from '@/dataProvider';
-import authProvider from '@/authProvider';
+import { authProvider, Login } from '@/auth';
 import englishMessages from '@/i18n/en_US';
 
 import { Layout } from '@/layout';
@@ -27,8 +26,8 @@ import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
 import { SessionResourceProps } from '@/session';
 
-// Components
-import { NewChat } from '@/chat';
+// Custom routes
+import { layoutCustomRoutes, noLayoutCustomRoutes } from '@/customRoutes';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -58,11 +57,13 @@ const App = (): JSX.Element => {
             store={store}
             i18nProvider={i18nProvider}
             layout={Layout}
-            lightTheme={lightTheme}
+            theme={lightTheme}
             darkTheme={darkTheme}
             defaultTheme='light'
             dataProvider={dataProvider}
             authProvider={authProvider}
+            loginPage={Login}
+            requireAuth
             disableTelemetry
         >
             <Resource
@@ -93,14 +94,10 @@ const App = (): JSX.Element => {
                 {...SessionResourceProps}
             />
             <CustomRoutes>
-                <Route
-                    path='/new'
-                    element={(
-                        <Authenticated>
-                            <NewChat />
-                        </Authenticated>
-                    )}
-                />
+                {layoutCustomRoutes}
+            </CustomRoutes>
+            <CustomRoutes noLayout>
+                {noLayoutCustomRoutes}
             </CustomRoutes>
         </Admin>
     );
