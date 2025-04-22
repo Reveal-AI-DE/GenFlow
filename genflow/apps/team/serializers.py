@@ -318,4 +318,4 @@ class MembershipWriteSerializer(serializers.ModelSerializer):
 
 class UserCheckSerializer(serializers.Serializer):
     username = serializers.CharField(required=False)
-    email= serializers.EmailField(required=False)
+    email = serializers.EmailField(required=False)

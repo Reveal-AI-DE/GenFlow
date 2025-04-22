@@ -2,16 +2,16 @@
 #
 # SPDX-License-Identifier: MIT
 
-from django.conf import settings
-from django.http import Http404, HttpResponseRedirect
 from allauth.account import app_settings as allauth_settings
-from allauth.account.views import ConfirmEmailView
 from allauth.account.utils import complete_signup
+from allauth.account.views import ConfirmEmailView
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.app_settings import api_settings as dj_rest_auth_settings
 from dj_rest_auth.registration.views import RegisterView, SocialLoginView
 from dj_rest_auth.utils import jwt_encode
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from django.conf import settings
+from django.http import Http404, HttpResponseRedirect
 
 
 class RegisterViewEx(RegisterView):

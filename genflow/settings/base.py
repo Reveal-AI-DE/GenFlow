@@ -94,7 +94,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "corsheaders",
     "allauth.socialaccount",
-    'allauth.socialaccount.providers.google',
+    "allauth.socialaccount.providers.google",
     "genflow.apps.team",
     "genflow.apps.iam",
     "genflow.apps.core",
@@ -231,20 +231,19 @@ ACCOUNT_ADAPTER = "genflow.apps.iam.adapters.DefaultAccountAdapterEx"
 
 # Social account settings
 SOCIALACCOUNT_PROVIDERS = {}
-if "GF_GOOGLE_CLIENT_ID" in os.environ and \
-    "GF_GOOGLE_CLIENT_SECRET" in os.environ:
+if "GF_GOOGLE_CLIENT_ID" in os.environ and "GF_GOOGLE_CLIENT_SECRET" in os.environ:
     SOCIALACCOUNT_PROVIDERS["google"] = {
         "APP": {
             "client_id": os.environ.get("GF_GOOGLE_CLIENT_ID", None),
-            'secret': os.environ.get("GF_GOOGLE_CLIENT_SECRET", None),
-            'key': ''
+            "secret": os.environ.get("GF_GOOGLE_CLIENT_SECRET", None),
+            "key": "",
         },
-        'SCOPE': [
-            'profile',
-            'email',
+        "SCOPE": [
+            "profile",
+            "email",
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'offline',
+        "AUTH_PARAMS": {
+            "access_type": "offline",
         },
     }
 

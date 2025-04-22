@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
-from django.conf import settings
 from allauth.account.adapter import DefaultAccountAdapter
+from django.conf import settings
 from django.http import HttpResponseRedirect
 
 
@@ -13,8 +13,8 @@ class DefaultAccountAdapterEx(DefaultAccountAdapter):
 
     def render_mail(self, template_prefix, email, context, headers=None):
         protocol = "https" if self.request.is_secure() else "http"
-        site = context['current_site']
-        context['current_site_url'] = f"{protocol}://{site.domain}"
+        site = context["current_site"]
+        context["current_site_url"] = f"{protocol}://{site.domain}"
         return super().render_mail(
             template_prefix,
             email,

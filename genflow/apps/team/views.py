@@ -4,8 +4,8 @@
 
 from typing import cast
 
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.crypto import get_random_string
 from drf_spectacular.utils import (
     OpenApiResponse,
@@ -77,7 +77,6 @@ class UserViewSet(viewsets.GenericViewSet):
             return [AllowAny()]
         return super().get_permissions()
 
-
     @action(detail=False, methods=["GET"])
     def self(self, request):
         """
@@ -101,7 +100,7 @@ class UserViewSet(viewsets.GenericViewSet):
         email = serializer.validated_data.get("email")
 
         if username and get_user_model().objects.filter(username=username).exists():
-            return Response(status=status. HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
 
         if email and get_user_model().objects.filter(email=email).exists():
             return Response(status=status.HTTP_200_OK)

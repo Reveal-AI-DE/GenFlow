@@ -14,7 +14,7 @@ from django.conf import settings
 from django.urls import path, re_path
 from django.urls.conf import include
 
-from genflow.apps.iam.views import RegisterViewEx, ConfirmEmailViewEx, GoogleLogin
+from genflow.apps.iam.views import ConfirmEmailViewEx, GoogleLogin, RegisterViewEx
 
 BASIC_LOGIN_PATH_NAME = "rest_login"
 BASIC_REGISTER_PATH_NAME = "rest_register"
@@ -50,7 +50,7 @@ if settings.IAM_TYPE == "BASIC":
     # add social auth urls
     if "google" in settings.SOCIALACCOUNT_PROVIDERS:
         urlpatterns += [
-            path('google', GoogleLogin.as_view(), name='google_login'),
+            path("google", GoogleLogin.as_view(), name="google_login"),
         ]
 
 urlpatterns = [path("auth/", include(urlpatterns))]
