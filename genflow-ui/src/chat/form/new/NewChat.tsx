@@ -18,14 +18,6 @@ const Content = styled(Box, {
     height: '100%',
 }));
 
-const FormContainer = styled(Box, {
-    name: 'GFNewChat',
-    slot: 'content',
-})(({ theme }) => ({
-    height: '20%',
-    margin: theme.spacing(4),
-}));
-
 type NewChatProps = object;
 
 const NewChat: FC<NewChatProps> = () => {
@@ -35,9 +27,7 @@ const NewChat: FC<NewChatProps> = () => {
         <ChatLayout>
             <Title title={translate('label.new')} />
             <Content>
-                <FormContainer>
-                    <SessionCreate />
-                </FormContainer>
+                <SessionCreate />
                 <NewChatPlaceholder />
             </Content>
         </ChatLayout>

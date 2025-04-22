@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import React, { FC } from 'react';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
 import AddIcon from '@mui/icons-material/Add';
 import Skeleton from '@mui/material/Skeleton';
@@ -62,6 +63,14 @@ const SelectRelated: FC = () => {
     return null;
 };
 
+const Root = styled(Box, {
+    name: 'GFSessionCreate',
+    slot: 'root',
+})(({ theme }) => ({
+    height: '20%',
+    margin: theme.spacing(4),
+}));
+
 const ButtonContainer = styled(Grid, {
     name: 'GFSessionCreate',
     slot: 'button',
@@ -87,60 +96,62 @@ const SessionCreate: FC<SessionCreateProps> = () => {
     });
 
     return (
-        <CreateBase
-            redirect='show'
-            resource='sessions'
-            transform={transform}
-        >
-            <Form>
-                <Grid
-                    container
-                    rowSpacing={{
-                        xs: 0
-                    }}
-                    columnSpacing={4}
-                >
+        <Root>
+            <CreateBase
+                redirect='show'
+                resource='sessions'
+                transform={transform}
+            >
+                <Form>
                     <Grid
-                        size={{
-                            xs: 12,
-                            sm: 12,
-                            md: 2
+                        container
+                        rowSpacing={{
+                            xs: 0
                         }}
+                        columnSpacing={4}
                     >
-                        <SelectInput
-                            source='session_type'
-                            label={false}
-                            choices={getChoicesFromEnum(SessionType)}
-                            defaultValue={SessionType.LLM}
-                            validate={required()}
-                            variant='outlined'
-                            margin='none'
-                        />
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 12,
+                                md: 2
+                            }}
+                        >
+                            <SelectInput
+                                source='session_type'
+                                label={false}
+                                choices={getChoicesFromEnum(SessionType)}
+                                defaultValue={SessionType.LLM}
+                                validate={required()}
+                                variant='outlined'
+                                margin='none'
+                            />
+                        </Grid>
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 12,
+                                md: 5
+                            }}
+                        >
+                            <SelectRelated />
+                        </Grid>
+                        <ButtonContainer
+                            size={{
+                                xs: 12,
+                                sm: 12,
+                                md: 4
+                            }}
+                        >
+                            <SaveButton
+                                label='label.new'
+                                icon={<AddIcon />}
+                            />
+                        </ButtonContainer>
                     </Grid>
-                    <Grid
-                        size={{
-                            xs: 12,
-                            sm: 12,
-                            md: 5
-                        }}
-                    >
-                        <SelectRelated />
-                    </Grid>
-                    <ButtonContainer
-                        size={{
-                            xs: 12,
-                            sm: 12,
-                            md: 4
-                        }}
-                    >
-                        <SaveButton
-                            label='label.new'
-                            icon={<AddIcon />}
-                        />
-                    </ButtonContainer>
-                </Grid>
-            </Form>
-        </CreateBase>
+                </Form>
+            </CreateBase>
+        </Root>
     );
 };
 
