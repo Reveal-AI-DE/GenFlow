@@ -23,11 +23,11 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
         return null;
     }
 
-    const renderType = (type: PromptType): JSX.Element => (
+    const renderType = (prompt_type: PromptType): JSX.Element => (
         <Tooltip
-            title={type.toUpperCase()}
+            title={prompt_type.toUpperCase()}
         >
-            { type === PromptType.SIMPLE ? (
+            { prompt_type === PromptType.SIMPLE ? (
                 <TextSnippetIcon color='success' />
             ) : (
                 <SettingsInputSvideoIcon color='success' />
@@ -35,9 +35,9 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
         </Tooltip>
     );
 
-    const renderStatus = (status: PromptStatus): JSX.Element => (
-        <Tooltip title={status.toUpperCase()}>
-            { status === PromptStatus.DRAFTED ? (
+    const renderStatus = (prompt_status: PromptStatus): JSX.Element => (
+        <Tooltip title={prompt_status.toUpperCase()}>
+            { prompt_status === PromptStatus.DRAFTED ? (
                 <DraftsIcon color='warning' />
             ) : (
                 <PublishedWithChangesIcon color='success' />
@@ -60,10 +60,10 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
                 />
             </ReferenceField>
             {
-                renderType(prompt.type)
+                renderType(prompt.prompt_type)
             }
             {
-                renderStatus(prompt.status)
+                renderStatus(prompt.prompt_status)
             }
         </Stack>
     );

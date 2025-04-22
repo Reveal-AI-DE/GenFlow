@@ -35,12 +35,12 @@ const PromptFilters = [
         variant='outlined'
     />,
     <SelectInput
-        source='type'
+        source='prompt_type'
         choices={getChoicesFromEnum(PromptType)}
         variant='outlined'
     />,
     <SelectInput
-        source='status'
+        source='prompt_status'
         choices={getChoicesFromEnum(PromptStatus)}
         variant='outlined'
     />,
@@ -83,8 +83,8 @@ const PromptList: FC<PromptListProps> = () => {
                     >
                         <GroupField />
                     </ReferenceField>
-                    <TextField source='type' />
-                    <TextField source='status' />
+                    <TextField source='prompt_type' />
+                    <TextField source='prompt_status' />
                 </Datagrid>
             </ListGridSwitcher>
         </ListBase>

@@ -39,7 +39,7 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     Attributes:
         name (str): The name of the session. This field is required and has a maximum length
             of 255 characters.
-        type (str): The type of the session, chosen from predefined `SessionType` choices.
+        session_type (str): The type of the session, chosen from predefined `SessionType` choices.
             Defaults to `SessionType.LLM`.
         mode (str): The mode of the session, chosen from predefined `SessionMode` choices.
             Defaults to `SessionMode.CHAT`.

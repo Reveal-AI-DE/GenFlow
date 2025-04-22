@@ -34,7 +34,7 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
     const isOwnerOrAdmin = currentMembership?.role === TeamRole.OWNER || currentMembership?.role === TeamRole.ADMIN;
 
     const OnUseClick = (): void => {
-        if (prompt.status !== PromptStatus.PUBLISHED) {
+        if (prompt.prompt_status !== PromptStatus.PUBLISHED) {
             return;
         }
         const data = {
@@ -74,7 +74,7 @@ const PromptCardActions: FC<PromptInfoCardActionsProps> = () => {
                             size='small'
                             onClick={OnUseClick}
                             color='primary'
-                            disabled={prompt.status !== PromptStatus.PUBLISHED}
+                            disabled={prompt.prompt_status !== PromptStatus.PUBLISHED}
                         >
                             <TerminalIcon />
                         </IconButton>

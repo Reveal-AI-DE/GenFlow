@@ -95,8 +95,8 @@ class PromptViewSet(viewsets.ModelViewSet):
 
     queryset = Prompt.objects.all().order_by("name")
     search_fields = ["name", "description"]
-    filterset_fields = ["group__id", "type", "status", "is_pinned"]
-    ordering_fields = ["name", "type", "status", "group__name"]
+    filterset_fields = ["group__id", "prompt_type", "prompt_status", "is_pinned"]
+    ordering_fields = ["name", "prompt_type", "prompt_status", "group__name"]
     iam_team_field = "team"
 
     def get_serializer_class(self):

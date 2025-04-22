@@ -33,15 +33,15 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
 
     const transformToPublish = (data: any): Prompt => ({
         ...data,
-        status: data.status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
+        prompt_status: data.prompt_status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
     });
 
     const renderPublishButton = (currentPrompt: Prompt | undefined): JSX.Element | null => (currentPrompt ? (
         <SaveButton
             type='button'
-            label={currentPrompt.status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
+            label={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
             variant='outlined'
-            icon={currentPrompt.status === PromptStatus.PUBLISHED ? (
+            icon={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? (
                 <UnpublishedIcon />
             ) : (
                 <PublishIcon />

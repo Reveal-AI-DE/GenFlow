@@ -52,7 +52,7 @@ class ChatGenerator(BaseGenerator):
         if db_session.session_type == SessionType.PROMPT.value:
             prompt: Prompt = db_session.related_prompt
             prompt_entity = PromptTemplateEntity(
-                prompt_type=prompt.type,
+                prompt_type=prompt.prompt_type,
                 simple_prompt_template=prompt.pre_prompt,
             )
 

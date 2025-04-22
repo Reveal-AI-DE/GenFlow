@@ -56,7 +56,7 @@ const SelectRelated: FC = () => {
                 label={false}
                 disabled={!sessionType}
                 validate={required()}
-                filter={{ status: PromptStatus.PUBLISHED }}
+                filter={{ prompt_status: PromptStatus.PUBLISHED }}
                 sort={{ field: 'group__name', order: 'ASC' }}
             />
         );
@@ -103,6 +103,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
     }: Session): Session => ({
         name: 'New Chat',
         related_model: data.session_type === SessionType.LLM ? related_model : undefined,
+        related_prompt: data.session_type === SessionType.PROMPT ? related_prompt : undefined,
         ...data,
     });
 

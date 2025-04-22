@@ -97,8 +97,8 @@ const enUS: TranslationMessages = {
             fields: {
                 name: 'Name',
                 description: 'Description',
-                type: 'Type',
-                status: 'Status',
+                prompt_type: 'Type',
+                prompt_status: 'Status',
                 pre_prompt: 'Prompt',
                 q: 'Search name and description',
                 group: {

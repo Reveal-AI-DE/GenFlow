@@ -4,10 +4,9 @@
 
 import { RaRecord, Identifier } from 'react-admin';
 
-import { Group } from '@/types/common';
-import { ModelConfigWithEntity } from '@/types/model';
+import { EntityGroup, CommonEntity, AIAssociatedEntity } from '@/types/common';
 
-export type PromptGroup = Group;
+export type PromptGroup = EntityGroup;
 
 export enum PromptType {
     SIMPLE = 'simple',
@@ -19,20 +18,19 @@ export enum PromptStatus {
     PUBLISHED = 'published',
 };
 
-export interface Prompt extends RaRecord {
-    name: string;
-    description: string;
+export interface Question {
+    question: string;
+};
+
+export interface CommonPrompt {
     pre_prompt: string;
-    suggested_questions: {
-        question: string;
-    }[];
-    type: PromptType;
-    status: PromptStatus;
-    avatar: string;
-    related_model: ModelConfigWithEntity;
-    group_id: Identifier;
+    suggested_questions: Question[];
+    prompt_type: PromptType;
+};
+
+export interface Prompt extends RaRecord, CommonEntity, AIAssociatedEntity, CommonPrompt {
+    prompt_status: PromptStatus;
     related_test_session: Identifier | undefined;
-    is_pinned: boolean;
 };
 
 export type ChatPromptSetting = object;

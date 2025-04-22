@@ -130,8 +130,8 @@ const deDE: TranslationMessages = {
             fields: {
                 name: 'Name',
                 description: 'Beschreibung',
-                type: 'Type',
-                status: 'Status',
+                prompt_type: 'Type',
+                prompt_status: 'Status',
                 pre_prompt: 'Prompt',
                 q: 'Suche nach Name und Beschreibung',
                 group: {

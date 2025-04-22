@@ -27,7 +27,7 @@ const PromptSelectInput: FC<PromptSelectInputProps> = ({
     const renderStartAdornment = useCallback((record: any) => (
         <RecordContextProvider key={record.id} value={record}>
             <PromptField
-                slots={[PromptFieldSlot.NAME]}
+                slots={[PromptFieldSlot.AVATAR]}
             />
         </RecordContextProvider>
     ), []);
