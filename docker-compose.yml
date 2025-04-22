@@ -30,6 +30,9 @@ services:
       GF_POSTGRES_HOST: genflow_db
       no_proxy: ${no_proxy:-}
       NUMPROCS: 2
+      GF_EMAIL_HOST_PASSWORD: ${GF_EMAIL_HOST_PASSWORD:-}
+      GF_GOOGLE_CLIENT_ID: ${GF_GOOGLE_CLIENT_ID:-}
+      GF_GOOGLE_CLIENT_SECRET: ${GF_GOOGLE_CLIENT_SECRET:-}
     command: init run server
     labels:
       traefik.enable: 'true'
