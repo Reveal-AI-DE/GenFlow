@@ -49,11 +49,12 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         refresh();
     };
 
-    const loadSavedTeam = async (teamId: Identifier): Promise<boolean> => (
+    const loadSavedTeam = async (teamId: Identifier, user: UserIdentity): Promise<boolean> => (
         dataProvider.getOne('teams', {id: teamId })
-            .then(({ data: team }) => {
+            .then(async ({ data: team }) => {
                 setCurrentTeam(team);
                 setTeamIdFromLocalStorage(team);
+                await switchTeam(team, user);
                 return true;
             }
             ).catch(() => (false))
@@ -84,7 +85,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         // try loading the saved team
         let teamLoaded = false;
         if (storedTeamId) {
-            teamLoaded = await loadSavedTeam(storedTeamId);
+            teamLoaded = await loadSavedTeam(storedTeamId, user);
         }
 
         // if it fails, load the default team

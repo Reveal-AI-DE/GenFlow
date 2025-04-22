@@ -57,18 +57,20 @@ const PinButton: FC<PinButtonProps> = ({
         <WithTooltip
             title={record.is_pinned ? translate('action.unpin') : translate('action.pin')}
             trigger={(
-                <IconButton
-                    onClick={Pin}
-                    disabled={disabled}
-                >
-                    {
-                        record.is_pinned ? (
-                            <StyledGradeIcon />
-                        ) : (
-                            <StarOutlineIcon />
-                        )
-                    }
-                </IconButton>
+                <span>
+                    <IconButton
+                        onClick={Pin}
+                        disabled={disabled}
+                    >
+                        {
+                            record.is_pinned ? (
+                                <StyledGradeIcon />
+                            ) : (
+                                <StarOutlineIcon />
+                            )
+                        }
+                    </IconButton>
+                </span>
             )}
         />
     );

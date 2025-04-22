@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import {
     useTranslate, useCreatePath, Button,
@@ -29,11 +29,14 @@ const SessionShowButton: FC<ButtonProps> = ({
             startIcon={<RemoveRedEyeIcon />}
             label={label ? translate(label) : ''}
             title={translate('label.view')}
-            onClick={() => redirect(createPath({
-                resource: 'sessions',
-                id: record.id,
-                type: 'show'
-            }))}
+            onClick={(event: MouseEvent<HTMLButtonElement>) => {
+                event.stopPropagation();
+                redirect(createPath({
+                    resource: 'sessions',
+                    id: record.id,
+                    type: 'show'
+                }));
+            }}
             {...rest}
         />
     );
