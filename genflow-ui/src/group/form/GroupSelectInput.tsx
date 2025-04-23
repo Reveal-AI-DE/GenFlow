@@ -39,7 +39,7 @@ interface GroupSelectInputProps extends ReferenceInputProps {
 }
 
 const GroupSelectInput: FC<GroupSelectInputProps> = ({
-    source='group_id',
+    source='group.id',
     reference,
     showCreateOption=true,
     ...props

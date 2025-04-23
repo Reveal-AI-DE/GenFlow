@@ -4,7 +4,10 @@
 
 import { RaRecord, Identifier } from 'react-admin';
 
-import { EntityGroup, CommonEntity, AIAssociatedEntity } from '@/types/common';
+import {
+    EntityGroup, CommonEntity, AIAssociatedEntity,
+    CommonEntityData, AIAssociatedEntityData,
+} from '@/types/common';
 
 export type PromptGroup = EntityGroup;
 
@@ -32,5 +35,9 @@ export interface Prompt extends RaRecord, CommonEntity, AIAssociatedEntity, Comm
     prompt_status: PromptStatus;
     related_test_session: Identifier | undefined;
 };
+
+export interface PromptData extends CommonEntityData, AIAssociatedEntityData, CommonPrompt {
+    prompt_status: PromptStatus;
+}
 
 export type ChatPromptSetting = object;

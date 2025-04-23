@@ -38,9 +38,9 @@ interface GroupFieldProps {
 const GroupField: FC<GroupFieldProps> = ({
     slots = [GroupFieldSlot.COLOR, GroupFieldSlot.LABEL],
 }) => {
-    const record = useRecordContext<EntityGroup>();
+    const groupEntity = useRecordContext<EntityGroup>();
 
-    if (!record) {
+    if (!groupEntity) {
         return null;
     }
 
@@ -48,16 +48,16 @@ const GroupField: FC<GroupFieldProps> = ({
         switch (slot) {
             case GroupFieldSlot.COLOR:
                 return (
-                    <Tooltip title={record.name}>
+                    <Tooltip title={groupEntity.name}>
                         <StyledBox
-                            ownerState={{ color: record.color }}
+                            ownerState={{ color: groupEntity.color }}
                         />
                     </Tooltip>
                 );
             case GroupFieldSlot.LABEL:
                 return (
                     <Typography>
-                        {record.name}
+                        {groupEntity.name}
                     </Typography>
                 );
             default:

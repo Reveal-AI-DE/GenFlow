@@ -12,9 +12,18 @@ from genflow.apps.core.serializers import (
     EntityGroupReadSerializer,
     ProviderModelConfigReadSerializer,
     ProviderModelConfigWriteSerializer,
+    common_entity_read_fields,
+    common_entity_write_fields,
 )
-from genflow.apps.prompt.models import Prompt
+from genflow.apps.prompt.models import CommonPrompt, Prompt
 
+# Precompute the read and write fields for CommonPrompt
+common_prompt_read_fields = [
+    field.name for field in CommonPrompt._meta.get_fields()
+]
+common_prompt_write_fields = [
+    field.name for field in CommonPrompt._meta.get_fields()
+]
 
 class PromptReadSerializer(serializers.ModelSerializer):
     """
@@ -40,19 +49,12 @@ class PromptReadSerializer(serializers.ModelSerializer):
         """
 
         model = Prompt
-        fields = [
+        # Dynamically includes fields from `CommonEntity` and `CommonPrompt` using precomputed lists.
+        fields = common_entity_read_fields + common_prompt_read_fields + [
             "id",
-            "name",
-            "description",
-            "pre_prompt",
-            "is_pinned",
-            "suggested_questions",
-            "prompt_type",
             "prompt_status",
             "related_model",
             "group",
-            "group_id",
-            "avatar",
             "related_test_session",
         ]
 
@@ -64,7 +66,8 @@ class PromptWriteSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigWriteSerializer()
     group_id = serializers.PrimaryKeyRelatedField(
-        queryset=EntityGroup.objects.none(), source="group"  # Default to none
+        queryset=EntityGroup.objects.none(), # Default to none
+        source="group"
     )
 
     def __init__(self, *args, **kwargs):
@@ -80,13 +83,7 @@ class PromptWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prompt
-        fields = [
-            "name",
-            "description",
-            "pre_prompt",
-            "suggested_questions",
-            "is_pinned",
-            "prompt_type",
+        fields = common_entity_write_fields + common_prompt_write_fields + [
             "prompt_status",
             "related_model",
             "group_id",

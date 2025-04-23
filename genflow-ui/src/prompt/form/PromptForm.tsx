@@ -28,7 +28,7 @@ const PromptSetupForm: FC<PromptSetupFormProps> = () => (
             }}
         />
         <GroupSelectInput
-            source='group_id'
+            source='group.id'
             reference='prompt-groups'
         />
         <TextInput

@@ -4,7 +4,7 @@
 
 import { RaRecord, Identifier } from 'react-admin';
 
-import { ModelConfigWithEntity } from '@/types/model';
+import { ModelConfig, ModelConfigWithEntity } from '@/types/model';
 
 export interface MetaParams {
     queryParams?: {
@@ -88,13 +88,21 @@ export interface EntityGroup extends RaRecord {
 export interface CommonEntity {
     name: string;
     description: string;
-    group_id: Identifier;
+    group: EntityGroup;
     avatar: string;
     is_pinned: boolean;
 };
 
+export interface CommonEntityData extends Omit<CommonEntity, 'group'> {
+    group_id: Identifier;
+};
+
 export interface AIAssociatedEntity {
     related_model: ModelConfigWithEntity;
+};
+
+export interface AIAssociatedEntityData {
+    related_model: ModelConfig;
 };
 
 export interface FileEntity {

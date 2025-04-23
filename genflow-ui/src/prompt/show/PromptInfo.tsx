@@ -4,8 +4,8 @@
 
 import React, { FC } from 'react';
 import {
-    useRecordContext, SimpleShowLayout,
-    TextField, ReferenceField, RecordContextProvider,
+    useRecordContext, SimpleShowLayout, FunctionField,
+    TextField, RecordContextProvider,
 } from 'react-admin';
 
 import { Prompt } from '@/types';
@@ -16,9 +16,9 @@ import { GroupField } from '@/group';
 type PromptInfoProps = object;
 
 const PromptInfo: FC<PromptInfoProps> = () => {
-    const record = useRecordContext<Prompt>();
+    const prompt = useRecordContext<Prompt>();
 
-    if (!record) {
+    if (!prompt) {
         return null;
     }
 
@@ -28,17 +28,19 @@ const PromptInfo: FC<PromptInfoProps> = () => {
                 spacing={1}
                 sx={{ pl: 0 }}
             >
-                <ReferenceField
-                    source='group_id'
-                    reference='prompt-groups'
-                >
-                    <GroupField />
-                </ReferenceField>
+                <FunctionField
+                    source='group.id'
+                    render={(record) => (
+                        <RecordContextProvider value={record.group}>
+                            <GroupField />
+                        </RecordContextProvider>
+                    )}
+                />
                 <TextField source='name' />
                 <TruncatedTextField source='description' />
                 <TruncatedTextField source='pre_prompt' />
             </SimpleShowLayout>
-            <RecordContextProvider value={record.related_model}>
+            <RecordContextProvider value={prompt.related_model}>
                 <ModelConfigCard />
             </RecordContextProvider>
         </>

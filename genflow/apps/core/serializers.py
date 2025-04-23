@@ -16,9 +16,20 @@ from genflow.apps.common.file_utils import create_media_symbolic_links
 from genflow.apps.common.security.encryptor import decrypt_token, encrypt_token
 from genflow.apps.core.config.entities import AIProviderConfiguration, ModelWithProviderEntity
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
-from genflow.apps.core.models import EntityGroup, Provider, ProviderModelConfig
+from genflow.apps.core.models import EntityGroup, CommonEntity, Provider, ProviderModelConfig
 from genflow.apps.team.middleware import HttpRequestWithIamContext
 from genflow.apps.team.models import Team
+
+
+# Precompute the read and write fields for CommonEntity
+common_entity_read_fields = [
+    field.name for field in CommonEntity._meta.get_fields()
+]
+common_entity_write_fields = [
+    field.name for field in CommonEntity._meta.get_fields() if field.name not in [
+        "avatar", "group"
+    ]
+]
 
 
 class EntityGroupReadSerializer(serializers.ModelSerializer):
