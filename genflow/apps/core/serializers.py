@@ -7,6 +7,7 @@ from os import path as osp
 from typing import Any, cast
 
 from django.conf import settings
+from django.db import transaction
 from rest_framework import serializers
 
 from genflow.apps.ai import ai_provider_factory
@@ -413,3 +414,53 @@ class ProviderModelConfigWriteSerializer(serializers.ModelSerializer):
         )
         data["config"] = config
         return data
+
+
+class BaseWriteSerializer(serializers.ModelSerializer):
+    """
+    Base serializer for writing data with shared logic for `ProviderModelConfig` and `EntityGroup`.
+    """
+
+    related_model = ProviderModelConfigWriteSerializer()
+    group_id = serializers.PrimaryKeyRelatedField(
+        queryset=EntityGroup.objects.none(), source="group"  # Default to none
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request and hasattr(request, "iam_context"):
+            team = request.iam_context.team
+            if team:
+                # Filter queryset based on the iam_context
+                self.fields["group_id"].queryset = EntityGroup.objects.filter(
+                    entity_type=self.Meta.model.__name__.lower(), team=team
+                )
+
+    @transaction.atomic
+    def create(self, validated_data: dict):
+        """
+        Creates and returns new group and related model.
+        """
+        related_model = validated_data.pop("related_model")
+        group = validated_data.pop("group")
+        # Creates a new ProviderModelConfig instance using the 'related_model' data.
+        related_model = ProviderModelConfig.objects.create(**related_model)
+        return group, related_model
+
+    @transaction.atomic
+    def update(self, instance, validated_data: dict):
+        """
+        Updates the instance with the provided validated data.
+
+        If the `related_model` key is present in the validated data, it updates
+        the related model using the `ProviderModelConfigWriteSerializer`.
+        """
+
+        related_model = validated_data.pop("related_model", None)
+        if related_model:
+            related_model_serializer = ProviderModelConfigWriteSerializer(
+                instance=instance.related_model, context=self.context
+            )
+            related_model_serializer.update(instance.related_model, related_model)
+        return super().update(instance, validated_data)
