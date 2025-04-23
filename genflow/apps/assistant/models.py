@@ -10,6 +10,7 @@ from django.utils.functional import SimpleLazyObject
 from django.utils.text import get_valid_filename
 from llama_index.core import SimpleDirectoryReader
 
+from genflow.apps.common.entities import FileEntity
 from genflow.apps.common.file_utils import get_files
 from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
 from genflow.apps.core.models import AIAssociatedEntity, CommonEntity
@@ -79,7 +80,7 @@ class Assistant(
     avatar = models.ImageField(upload_to=get_assistant_media_path, null=True, blank=True)
 
     @property
-    def dirname(self):
+    def dirname(self) -> str:
         """
         Returns the directory path for storing files related to the assistant when the
         context source is `AssistantContextSource.FILES`.
@@ -89,7 +90,7 @@ class Assistant(
         return osp.relpath(full_path, settings.BASE_DIR)
 
     @property
-    def files(self):
+    def files(self) -> list[FileEntity]:
         """
         Lazily loads and returns the files associated with the
             assistant's directory.

@@ -75,7 +75,7 @@ def create_media_symbolic_links(source_folder: str, destination_folder: str):
                 os.symlink(file, symbolic_link_path)
 
 
-def get_files(folder: str):
+def get_files(folder: str) -> list[FileEntity]:
     """
     Retrieves a list of files from the specified folder.
 

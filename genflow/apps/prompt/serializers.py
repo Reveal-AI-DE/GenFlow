@@ -7,12 +7,10 @@ import os
 from django.db import transaction
 from rest_framework import serializers
 
-from genflow.apps.core.models import ProviderModelConfig
 from genflow.apps.core.serializers import (
     EntityGroupReadSerializer,
     ProviderModelConfigReadSerializer,
-    ProviderModelConfigWriteSerializer,
-    BaseWriteSerializer,
+    EntityBaseWriteSerializer,
     common_entity_read_fields,
     common_entity_write_fields,
 )
@@ -60,7 +58,7 @@ class PromptReadSerializer(serializers.ModelSerializer):
         ]
 
 
-class PromptWriteSerializer(BaseWriteSerializer):
+class PromptWriteSerializer(EntityBaseWriteSerializer):
     """
     Serializer for writing Prompt data, to be used by post/patch actions.
     """

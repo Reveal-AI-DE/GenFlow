@@ -416,7 +416,7 @@ class ProviderModelConfigWriteSerializer(serializers.ModelSerializer):
         return data
 
 
-class BaseWriteSerializer(serializers.ModelSerializer):
+class EntityBaseWriteSerializer(serializers.ModelSerializer):
     """
     Base serializer for writing data with shared logic for `ProviderModelConfig` and `EntityGroup`.
     """
