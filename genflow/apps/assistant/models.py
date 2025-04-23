@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+import shutil
 from os import path as osp
 
 from django.conf import settings
@@ -118,6 +119,16 @@ class Assistant(
         """
 
         return osp.join(settings.ASSISTANT_MEDIA_ROOT, str(self.id))
+
+    def remove_media_dir(self) -> None:
+        """
+        Removes the media directory associated with the assistant instance.
+        It first calls the parent class's `remove_media_dir` method
+        and then deletes the directory if it exists.
+        """
+        super().remove_media_dir()
+        if osp.exists(self.dirname):
+            shutil.rmtree(self.dirname)
 
     def __str__(self) -> str:
         """

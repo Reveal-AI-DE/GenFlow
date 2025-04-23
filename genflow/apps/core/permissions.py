@@ -160,3 +160,155 @@ class AIModelPermission(GenFLowBasePermission):
         """
 
         return queryset
+
+
+class EntityGroupPermission:
+    """
+    Handles the permissions for entity group-related actions.
+    It must be inherited by the entity group permission classes.
+    """
+
+    class Scopes(StrEnum):
+        """
+        Defines the possible scopes of actions.
+        """
+
+        LIST = "list"
+        CREATE = "create"
+        RETRIEVE = "retrieve"
+        UPDATE = "update"
+        DELETE = "delete"
+
+    @staticmethod
+    def get_scopes(request, view, obj):
+        """
+        Returns the scope of the action being performed based on the view's action.
+        """
+
+        Scopes = __class__.Scopes
+        return [
+            {
+                "list": Scopes.LIST,
+                "create": Scopes.CREATE,
+                "retrieve": Scopes.RETRIEVE,
+                "destroy": Scopes.DELETE,
+                "partial_update": Scopes.UPDATE,
+            }.get(view.action, None)
+        ]
+
+    @classmethod
+    def check_access(cls, subclass: GenFLowBasePermission) -> bool:
+        """
+        Checks if the user has access based on their group name and team role.
+        """
+        # if no team -> no access
+        if subclass.team_id is None:
+            return False
+
+        # admin users have full control
+        if subclass.group_name == settings.IAM_ADMIN_ROLE:
+            return True
+
+        is_team_owner = subclass.team_role and subclass.team_role == TeamRole.OWNER.value
+
+        # team member cam list groups
+        # team member can create a group
+        # team member can retrieve a group
+        if (
+            subclass.scope == cls.Scopes.LIST
+            or subclass.scope == cls.Scopes.CREATE
+            or subclass.scope == cls.Scopes.RETRIEVE
+        ):
+            return subclass.team_role is not None
+
+        # team owner or group owner can update the group
+        # team owner or group owner can delete the group
+        if subclass.scope == cls.Scopes.UPDATE or subclass.scope == cls.Scopes.DELETE:
+            return is_team_owner or subclass.obj.owner_id == subclass.user_id
+
+        return False
+
+    @classmethod
+    def filter(cls, subclass: GenFLowBasePermission, queryset):
+        """'
+        Filters the queryset based on the permissions
+        """
+
+        return queryset
+
+
+class EntityBasePermission:
+    """
+    Handles the permissions for entity-related actions.
+    It must be inherited by the entity permission classes.
+    """
+
+    class Scopes(StrEnum):
+        """
+        Defines the possible scopes of actions.
+        """
+
+        LIST = "list"
+        CREATE = "create"
+        RETRIEVE = "retrieve"
+        UPDATE = "update"
+        DELETE = "delete"
+        UPLOAD_AVATAR = "upload_avatar"
+
+    @staticmethod
+    def get_scopes(request, view, obj):
+        """
+        Returns the scope of the action being performed based on the view's action.
+        """
+
+        Scopes = __class__.Scopes
+        return [
+            {
+                "list": Scopes.LIST,
+                "create": Scopes.CREATE,
+                "retrieve": Scopes.RETRIEVE,
+                "destroy": Scopes.DELETE,
+                "partial_update": Scopes.UPDATE,
+                "upload_avatar": Scopes.UPLOAD_AVATAR,
+            }.get(view.action, None)
+        ]
+
+    @classmethod
+    def check_access(cls, subclass: GenFLowBasePermission) -> bool:
+        """
+        Checks if the user has access based on their group name and team role.
+        """
+        # if no team -> no access
+        if subclass.team_id is None:
+            return False
+
+        # admin users have full control
+        if subclass.group_name == settings.IAM_ADMIN_ROLE:
+            return True
+
+        is_team_owner = subclass.team_role and subclass.team_role == TeamRole.OWNER.value
+
+        # team member cam list entities
+        # team member can create an entity
+        # team member can retrieve an entity
+        if (
+            subclass.scope == cls.Scopes.LIST
+            or subclass.scope == cls.Scopes.CREATE
+            or subclass.scope == cls.Scopes.RETRIEVE
+        ):
+            return subclass.team_role is not None
+
+        # team owner or entity owner can update the entity
+        # team owner or entity owner can delete the entity
+        if subclass.scope == cls.Scopes.UPDATE or subclass.scope == cls.Scopes.DELETE:
+            return is_team_owner or subclass.obj.owner_id == subclass.user_id
+
+        return False
+
+    @classmethod
+    def filter(cls, subclass: GenFLowBasePermission, queryset):
+        """'
+        Filters the queryset based on the permissions
+        """
+
+        return queryset

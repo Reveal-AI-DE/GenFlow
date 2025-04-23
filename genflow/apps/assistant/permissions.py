@@ -6,9 +6,9 @@ from genflow.apps.iam.permissions import GenFLowBasePermission
 from genflow.apps.core.permissions import EntityGroupPermission, EntityBasePermission
 
 
-class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
+class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
     """
-    Handles the permissions for prompt group-related actions.
+    Handles the permissions for assistant group-related actions.
     """
 
     @classmethod
@@ -18,7 +18,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         """
 
         permissions = []
-        if view.basename == "prompt-group":
+        if view.basename == "assistant-group":
             for scope in cls.get_scopes(request, view, obj):
                 self = cls.create_base_perm(request, view, scope, iam_context, obj)
                 permissions.append(self)
@@ -31,9 +31,10 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
     def filter(self, queryset):
        return EntityGroupPermission.filter(self, queryset)
 
-class PromptPermission(GenFLowBasePermission, EntityBasePermission):
+
+class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
     """
-    Handles the permissions for prompt-related actions.
+    Handles the permissions for assistant-related actions.
     """
 
     @classmethod
@@ -43,7 +44,7 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
         """
 
         permissions = []
-        if view.basename == "prompt":
+        if view.basename == "assistant":
             for scope in cls.get_scopes(request, view, obj):
                 self = cls.create_base_perm(request, view, scope, iam_context, obj)
                 permissions.append(self)

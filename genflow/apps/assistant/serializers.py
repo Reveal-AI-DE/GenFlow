@@ -37,7 +37,7 @@ class AssistantReadSerializer(serializers.ModelSerializer):
             "id",
             "opening_statement",
             'context_source',
-            'collection_config'
+            'collection_config',
             "assistant_status",
             "related_model",
             "group",
