@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+import shutil
+from os import path as osp
+from abc import abstractmethod
 from json import JSONDecodeError
 from json import loads as json_loads
 from typing import Any, Optional
@@ -72,6 +75,18 @@ class CommonEntity(models.Model):
 
     class Meta:
         abstract = True
+
+    @abstractmethod
+    def media_dir(self) -> str:
+        """
+        Returns the media directory path for the entity.
+        """
+
+        pass
+
+    def remove_media_dir(self) -> None:
+        if osp.exists(self.media_dir()):
+            shutil.rmtree(self.media_dir())
 
 
 class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
