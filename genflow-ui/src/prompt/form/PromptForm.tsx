@@ -3,13 +3,10 @@
 // SPDX-License-Identifier: MIT
 
 import React, { FC } from 'react';
-import {
-    required, TextInput,
-    ArrayInput, SimpleFormIterator,
-} from 'react-admin';
+import { required, TextInput } from 'react-admin';
 
 import { ModelType } from '@/types';
-import { ExpandableTextInput, ImageInput } from '@/common';
+import { ExpandableTextInput, ImageInput, QuestionsInput } from '@/common';
 import { ModelSelectInput } from '@/provider/model';
 import { GroupSelectInput } from '@/group';
 
@@ -48,19 +45,7 @@ const PromptSetupForm: FC<PromptSetupFormProps> = () => (
             variant='outlined'
             validate={required()}
         />
-        <ArrayInput
-            source='suggested_questions'
-        >
-            <SimpleFormIterator
-                inline
-            >
-                <TextInput
-                    source='question'
-                    variant='outlined'
-                    validate={required()}
-                />
-            </SimpleFormIterator>
-        </ArrayInput>
+        <QuestionsInput source='suggested_questions' />
         <ModelSelectInput
             variant='outlined'
             validate={required()}

@@ -10,8 +10,8 @@ import {
     RecordContextProvider,
 } from 'react-admin';
 
-import { AutocompleteInput } from '@/common';
-import { PromptField, PromptFieldSlot } from '@/prompt/show';
+import { AutocompleteInput, EntityFieldSlot } from '@/common';
+import { PromptField } from '@/prompt/show';
 
 interface PromptSelectInputProps extends Omit<ReferenceInputProps, 'reference'> {
     onChange?: AutocompleteInputProps['onChange'];
@@ -27,7 +27,7 @@ const PromptSelectInput: FC<PromptSelectInputProps> = ({
     const renderStartAdornment = useCallback((record: any) => (
         <RecordContextProvider key={record.id} value={record}>
             <PromptField
-                slots={[PromptFieldSlot.AVATAR]}
+                slots={[EntityFieldSlot.AVATAR]}
             />
         </RecordContextProvider>
     ), []);
