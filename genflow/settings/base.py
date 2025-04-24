@@ -373,7 +373,7 @@ SPECTACULAR_SETTINGS = {
     # Required for correct file upload type (bytes)
     "COMPONENT_SPLIT_REQUEST": True,
     "ENUM_NAME_OVERRIDES": {
-        # 'Status': 'genflow.apps.engine.models.StatusChoice',
+        "StatusEnum": "genflow.apps.assistant.models.AssistantStatus",
     },
     # Coercion of {pk} to {id} is controlled by SCHEMA_COERCE_PATH_PK. Additionally,
     # some libraries (e.g. drf-nested-routers) use '_pk' suffixed path variables.

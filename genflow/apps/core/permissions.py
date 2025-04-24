@@ -179,37 +179,25 @@ class EntityGroupPermission:
         UPDATE = "update"
         DELETE = "delete"
 
-    @staticmethod
-    def get_scopes(request, view, obj):
+    @classmethod
+    def get_scopes_dict(cls):
         """
-        Returns the scope of the action being performed based on the view's action.
+        Returns a dictionary of scopes for easy access.
         """
 
-        Scopes = __class__.Scopes
-        return [
-            {
-                "list": Scopes.LIST,
-                "create": Scopes.CREATE,
-                "retrieve": Scopes.RETRIEVE,
-                "destroy": Scopes.DELETE,
-                "partial_update": Scopes.UPDATE,
-            }.get(view.action, None)
-        ]
+        return {
+            "list": cls.Scopes.LIST,
+            "create": cls.Scopes.CREATE,
+            "retrieve": cls.Scopes.RETRIEVE,
+            "destroy": cls.Scopes.DELETE,
+            "partial_update": cls.Scopes.UPDATE,
+        }
 
     @classmethod
-    def check_access(cls, subclass: GenFLowBasePermission) -> bool:
+    def check_base_scopes(cls, subclass: GenFLowBasePermission, is_team_owner: bool) -> bool:
         """
-        Checks if the user has access based on their group name and team role.
+        Checks base scopes for entity-related actions.
         """
-        # if no team -> no access
-        if subclass.team_id is None:
-            return False
-
-        # admin users have full control
-        if subclass.group_name == settings.IAM_ADMIN_ROLE:
-            return True
-
-        is_team_owner = subclass.team_role and subclass.team_role == TeamRole.OWNER.value
 
         # team member cam list groups
         # team member can create a group
@@ -255,38 +243,26 @@ class EntityBasePermission:
         DELETE = "delete"
         UPLOAD_AVATAR = "upload_avatar"
 
-    @staticmethod
-    def get_scopes(request, view, obj):
+    @classmethod
+    def get_scopes_dict(cls):
         """
-        Returns the scope of the action being performed based on the view's action.
+        Returns a dictionary of scopes for easy access.
         """
 
-        Scopes = __class__.Scopes
-        return [
-            {
-                "list": Scopes.LIST,
-                "create": Scopes.CREATE,
-                "retrieve": Scopes.RETRIEVE,
-                "destroy": Scopes.DELETE,
-                "partial_update": Scopes.UPDATE,
-                "upload_avatar": Scopes.UPLOAD_AVATAR,
-            }.get(view.action, None)
-        ]
+        return {
+            "list": cls.Scopes.LIST,
+            "create": cls.Scopes.CREATE,
+            "retrieve": cls.Scopes.RETRIEVE,
+            "destroy": cls.Scopes.DELETE,
+            "partial_update": cls.Scopes.UPDATE,
+            "upload_avatar": cls.Scopes.UPLOAD_AVATAR,
+        }
 
     @classmethod
-    def check_access(cls, subclass: GenFLowBasePermission) -> bool:
+    def check_base_scopes(cls, subclass: GenFLowBasePermission, is_team_owner: bool) -> bool:
         """
-        Checks if the user has access based on their group name and team role.
+        Checks base scopes for entity-related actions.
         """
-        # if no team -> no access
-        if subclass.team_id is None:
-            return False
-
-        # admin users have full control
-        if subclass.group_name == settings.IAM_ADMIN_ROLE:
-            return True
-
-        is_team_owner = subclass.team_role and subclass.team_role == TeamRole.OWNER.value
 
         # team member cam list entities
         # team member can create an entity
@@ -299,8 +275,13 @@ class EntityBasePermission:
             return subclass.team_role is not None
 
         # team owner or entity owner can update the entity
+        # team owner or entity owner can upload avatar
         # team owner or entity owner can delete the entity
-        if subclass.scope == cls.Scopes.UPDATE or subclass.scope == cls.Scopes.DELETE:
+        if (
+            subclass.scope == cls.Scopes.UPDATE
+            or subclass.scope == cls.Scopes.UPLOAD_AVATAR
+            or subclass.scope == cls.Scopes.DELETE
+        ):
             return is_team_owner or subclass.obj.owner_id == subclass.user_id
 
         return False

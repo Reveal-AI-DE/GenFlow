@@ -2,11 +2,15 @@
 #
 # SPDX-License-Identifier: MIT
 
+import os
+from os import path as osp
 from http.client import HTTPResponse
 
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from genflow.apps.common.entities import FileEntity
 from genflow.apps.core.tests.utils import enable_provider
 from genflow.apps.prompt.tests.utils import PROVIDER_DATA
 from genflow.apps.assistant.tests.utils import (
@@ -36,6 +40,18 @@ class AssistantTestCase(APITestCase):
         data = ASSISTANT_DATA.copy()
         del data["related_model"]
         cls.assistant = create_dummy_assistant(team=team, owner=user, data=data)
+
+    @classmethod
+    def create_files(cls, files_count):
+        os.makedirs(cls.assistant.dirname, exist_ok=True)
+        cls.files = []
+        for i in range(files_count):
+            file = FileEntity(id=f"test_file_{i}.txt", path=cls.assistant.dirname)
+            file.path = osp.join(cls.assistant.dirname, file.id)
+            # create file
+            with open(file.path, "w") as f:
+                f.write("fake content")
+            cls.files.append(file)
 
 
 class AssistantCreateTestCase(AssistantTestCase):
@@ -215,7 +231,7 @@ class AssistantDeleteTestCase(AssistantTestCase):
         response = self.delete_assistant(another_user, assistant_id=self.assistant.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_retrieve_assistant_user_owner(self):
+    def test_delete_assistant_user_owner(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         membership = self.regular_users[0]["teams"][0]["membership"]
@@ -349,3 +365,226 @@ class AssistantListTestCase(AssistantTestCase):
         response = self.list_assistant(another_user, team_id=another_team.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 0)
+
+
+class AssistantUploadAvatarTestCase(AssistantTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_assistants()
+        cls.avatar_path = osp.join(settings.BASE_DIR, "test_avatar.png")
+        # create avatar
+        with open(cls.avatar_path, "wb") as f:
+            f.write(b"fake image content")
+
+    def upload_avatar(self, user, assistant_id, team_id=None) -> HTTPResponse:
+        url = f"/api/assistants/{assistant_id}/upload_avatar?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/upload_avatar"
+        with ForceLogin(user, self.client):
+            with open(self.avatar_path, "rb") as avatar:
+                response = self.client.post(url, {"avatar": avatar}, format="multipart")
+        return response
+
+    def test_upload_avatar_admin_no_team(self):
+        response = self.upload_avatar(self.admin_user, self.assistant.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_upload_avatar_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.upload_avatar(self.admin_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_upload_avatar_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_avatar(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_upload_avatar_user_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.upload_avatar(user, self.assistant.id, team_id=team.id)
+        # assistant owner
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_upload_avatar_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.upload_avatar(another_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AssistantListFilesTestCase(AssistantTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_assistants()
+        # create file
+        cls.create_files(2)
+
+    def check_data(self, response):
+        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["results"][0]["id"], self.files[0].id)
+        self.assertEqual(response.data["results"][0]["path"], self.files[0].path)
+
+    def list_files(self, user, assistant_id, team_id=None) -> HTTPResponse:
+        url = f"/api/assistants/{assistant_id}/files?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/files"
+        with ForceLogin(user, self.client):
+            response = self.client.get(url)
+        return response
+
+    def test_list_files_admin_no_team(self):
+        response = self.list_files(self.admin_user, self.assistant.id)
+        # assistant team
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.list_files(self.admin_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.list_files(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.list_files(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.list_files(another_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AssistantUploadFileTestCase(AssistantTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_assistants()
+        cls.file = FileEntity(id=f"test_file.txt", path=cls.assistant.dirname)
+        cls.file.path = osp.join(cls.assistant.dirname, cls.file.id)
+        # create file
+        cls.path = osp.join(settings.BASE_DIR, cls.file.id)
+        with open(cls.path, "w") as f:
+            f.write("fake content")
+
+    def check_data(self, response):
+        self.assertEqual(response.data["id"], self.file.id)
+        self.assertEqual(response.data["path"], self.file.path)
+
+    def upload_file(self, user, assistant_id, team_id=None) -> HTTPResponse:
+        url = f"/api/assistants/{assistant_id}/upload_file?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/upload_file"
+        with ForceLogin(user, self.client):
+            with open(self.path, "rb") as file:
+                response = self.client.post(url, {"file": file}, format="multipart")
+        return response
+
+    def test_upload_file_admin_no_team(self):
+        response = self.upload_file(self.admin_user, self.assistant.id)
+        # assistant team
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.upload_file(self.admin_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.upload_file(user, self.assistant.id, team_id=team.id)
+        # assistant owner
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.upload_file(another_user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class AssistantDeleteFileTestCase(AssistantTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_assistants()
+
+    def setUp(self):
+        super().setUp()
+        self.create_files(2)
+
+    def delete_file(self, user, assistant_id, filename, team_id=None) -> HTTPResponse:
+        url = f"/api/assistants/{assistant_id}/files/{filename}?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/files/{filename}"
+        with ForceLogin(user, self.client):
+            response = self.client.delete(url)
+        return response
+
+    def test_delete_file_admin_no_team(self):
+        response = self.delete_file(self.admin_user, self.assistant.id, self.files[0].id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.delete_file(self.admin_user, self.assistant.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.delete_file(user, self.assistant.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_user_invalid_filename(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.delete_file(user, self.assistant.id, f"{self.files[0].id}-invalid", team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(osp.exists(self.files[0].path))
+
+    def test_delete_file_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.delete_file(another_user, self.assistant.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(osp.exists(self.files[0].path))
+
+    def test_delete_file_user_owner(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.delete_file(user, self.assistant.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))

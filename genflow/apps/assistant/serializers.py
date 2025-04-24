@@ -5,12 +5,14 @@
 import os
 
 from django.db import transaction
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from genflow.apps.core.serializers import (
     EntityGroupReadSerializer,
     ProviderModelConfigReadSerializer,
     EntityBaseWriteSerializer,
+    FileEntitySerializer,
     common_entity_read_fields,
     common_entity_write_fields,
 )
@@ -25,6 +27,19 @@ class AssistantReadSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigReadSerializer()
     group = EntityGroupReadSerializer()
+    files = serializers.SerializerMethodField()
+
+    @extend_schema_field(FileEntitySerializer(many=True))
+    def get_files(self, instance: Assistant):
+        """
+        Returns a list of files associated with the Assistant instance.
+        """
+
+        if not instance.files:
+            return []
+
+        return [file.model_dump() for file in instance.files]
+
 
     class Meta:
         """
@@ -43,15 +58,6 @@ class AssistantReadSerializer(serializers.ModelSerializer):
             "group",
             "files",
         ]
-
-    def to_representation(self, instance: Assistant) -> dict:
-        """
-        Adds a list of files associated with the Assistant instance to the serialized data.
-        """
-
-        data = super().to_representation(instance)
-        data['files'] = [file.model_dump() for file in instance.files]
-        return data
 
 
 class AssistantWriteSerializer(EntityBaseWriteSerializer):

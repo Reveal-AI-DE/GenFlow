@@ -10,9 +10,10 @@ from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
 
+from genflow.apps.common.storage import fs
 from genflow.apps.ai import ai_provider_factory
 from genflow.apps.ai.base.entities.provider import CommonAIProviderEntity
-from genflow.apps.common.entities import ConfigurationEntity, TranslationEntity
+from genflow.apps.common.entities import ConfigurationEntity, TranslationEntity, FileEntity
 from genflow.apps.common.file_utils import create_media_symbolic_links
 from genflow.apps.common.security.encryptor import decrypt_token, encrypt_token
 from genflow.apps.core.config.entities import AIProviderConfiguration, ModelWithProviderEntity
@@ -464,3 +465,53 @@ class EntityBaseWriteSerializer(serializers.ModelSerializer):
             )
             related_model_serializer.update(instance.related_model, related_model)
         return super().update(instance, validated_data)
+
+
+class FileEntitySerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    path = serializers.CharField(read_only=True)
+
+    def to_internal_value(self, data):
+        return data
+
+    def validate(self, data: dict) -> dict:
+        uploaded_file = data.get("uploaded_file")
+        dirname = data.get("dirname")
+
+        if not uploaded_file:
+            raise serializers.ValidationError({"uploaded_file": "This field is required."})
+
+        if not dirname:
+            raise serializers.ValidationError({"dirname": "This field is required."})
+
+        name = fs.get_valid_name(uploaded_file.name)
+        save_path = osp.join(dirname, name)
+
+        return {
+            "name": name,
+            "path": save_path,
+            "file": uploaded_file,
+        }
+
+    def create(self, validated_data):
+        """
+        Handles the creation of a FileEntity instance.
+        Saves the uploaded file to the specified path using FileSystemStorage.
+        """
+
+        name = validated_data["name"]
+        path = validated_data["path"]
+        uploaded_file = validated_data["file"]
+
+        fs.save(path, uploaded_file)
+        return FileEntity(id=name, path=path)
+
+    def to_representation(self, instance: FileEntity) -> dict[str, Any]:
+        """
+        Serializes FileEntity into json
+        """
+
+        return {
+            "id": instance.id,
+            "path": instance.path,
+        }
