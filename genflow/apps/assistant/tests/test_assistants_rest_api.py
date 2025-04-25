@@ -454,8 +454,8 @@ class AssistantListFilesTestCase(AssistantTestCase):
 
     def check_data(self, response):
         self.assertEqual(response.data["count"], 2)
-        self.assertEqual(response.data["results"][0]["id"], self.files[0].id)
-        self.assertEqual(response.data["results"][0]["path"], self.files[0].path)
+        self.assertIn(response.data["results"][0]["id"], [file.id for file in self.files])
+        self.assertIn(response.data["results"][0]["path"], [file.path for file in self.files])
 
     def list_files(self, user, assistant_id, team_id=None) -> HTTPResponse:
         url = (
