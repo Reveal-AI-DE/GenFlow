@@ -6,6 +6,7 @@ from django.conf import settings
 
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
 from genflow.apps.team.models import TeamRole
+from genflow.apps.session.models import Session, SessionMessage
 
 
 class SessionPermission(GenFLowBasePermission):
@@ -61,6 +62,20 @@ class SessionPermission(GenFLowBasePermission):
 
         return permissions
 
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their prompt limit.
+        """
+
+        if "SESSION" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["SESSION"]
+        return GenFLowBasePermission.check_limit(
+            queryset=Session.objects.all(),
+            team_id=self.team_id,
+            limit=limit
+        )
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -73,6 +88,10 @@ class SessionPermission(GenFLowBasePermission):
         # admin users have full control
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
+
+        # check limit
+        if self.scope == self.Scopes.CREATE and self.check_limit():
+            return False
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
 
@@ -149,6 +168,20 @@ class SessionMessagePermission(GenFLowBasePermission):
                 permissions.append(self)
 
         return permissions
+
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their prompt limit.
+        """
+
+        if "message" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["message"]
+        return GenFLowBasePermission.check_limit(
+            queryset=Session.objects.all(),
+            team_id=self.team_id,
+            limit=limit
+        )
 
     def check_access(self) -> bool:
         """

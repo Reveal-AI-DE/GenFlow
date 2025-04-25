@@ -4,6 +4,7 @@
 
 import asyncio
 
+from django.conf import settings
 from channels.db import database_sync_to_async
 
 from genflow.apps.ai.llm.entities import Result
@@ -51,6 +52,10 @@ class ChatGenerateConsumer(BaseConsumer):
             if db_session.team != team:
                 raise exception.ForbiddenError("You do not have permission to access this session")
 
+            # check limit
+            if self.check_limit(team.id):
+                raise exception.ForbiddenError("User has reached the message limit")
+
             # initialize provider queryset
             queryset = Provider.objects.filter(team=team)
 
@@ -59,6 +64,17 @@ class ChatGenerateConsumer(BaseConsumer):
             raise exception.NotFoundError("Session not found")
         except Exception as e:
             raise e
+
+    def check_limit(self, team_id) -> bool:
+        """
+        Checks if the user has reached their message limit.
+        """
+
+        if "MESSAGE" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["MESSAGE"]
+        count = SessionMessage.objects.filter(team_id=team_id).count()
+        return count >= limit
 
     def send_chunk(self, chunk: str = None):
         """

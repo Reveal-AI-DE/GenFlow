@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any, Dict, Optional, Sequence, TypeVar
 
 from django.conf import settings
-from django.db.models import Model
+from django.db.models import Model, QuerySet
 from rest_framework.permissions import BasePermission
 
 from genflow.apps.team.middleware import HttpRequestWithIamContext
@@ -149,6 +149,15 @@ class GenFLowBasePermission(metaclass=ABCMeta):
         if not iam_context and request:
             iam_context = get_iam_context(request, None)
         return cls(**iam_context, scope="list")
+
+    @classmethod
+    def check_limit(cls, queryset: QuerySet, team_id: int, limit: int) -> bool:
+        """
+        Checks if the user has reached their limit.
+        """
+
+        count = queryset.filter(team_id=team_id).count()
+        return count >= limit
 
     @abstractmethod
     def check_access(self) -> bool:

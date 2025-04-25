@@ -7,6 +7,8 @@ from django.conf import settings
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission
 from genflow.apps.team.models import TeamRole
+from genflow.apps.core.models import EntityGroup
+from genflow.apps.prompt.models import Prompt
 
 
 class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
@@ -37,6 +39,22 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
                 permissions.append(self)
 
         return permissions
+
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their prompt group limit.
+        """
+
+        if "PROMPT-GROUP" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["PROMPT-GROUP"]
+        return GenFLowBasePermission.check_limit(
+            queryset=EntityGroup.objects.filter(
+                entity_type=Prompt.__name__.lower()
+            ),
+            team_id=self.team_id,
+            limit=limit
+        )
 
     def check_access(self) -> bool:
         """
@@ -89,6 +107,20 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
                 permissions.append(self)
 
         return permissions
+
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their prompt limit.
+        """
+
+        if "PROMPT" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["PROMPT"]
+        return GenFLowBasePermission.check_limit(
+            queryset=Prompt.objects.all(),
+            team_id=self.team_id,
+            limit=limit
+        )
 
     def check_access(self) -> bool:
         """

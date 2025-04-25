@@ -7,6 +7,8 @@ from django.conf import settings
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
 from genflow.apps.team.models import TeamRole
+from genflow.apps.core.models import EntityGroup
+from genflow.apps.assistant.models import Assistant
 
 
 class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
@@ -37,6 +39,22 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
                 permissions.append(self)
 
         return permissions
+
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their assistant group limit.
+        """
+
+        if "ASSISTANT-GROUP" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["ASSISTANT-GROUP"]
+        return GenFLowBasePermission.check_limit(
+            queryset=EntityGroup.objects.filter(
+                entity_type=Assistant.__name__.lower()
+            ),
+            team_id=self.team_id,
+            limit=limit
+        )
 
     def check_access(self) -> bool:
         """
@@ -107,6 +125,20 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
                 permissions.append(self)
 
         return permissions
+
+    def check_limit(self) -> bool:
+        """
+        Checks if the user has reached their prompt limit.
+        """
+
+        if "ASSISTANT" not in settings.GF_LIMITS:
+            return False
+        limit = settings.GF_LIMITS["ASSISTANT"]
+        return GenFLowBasePermission.check_limit(
+            queryset=Assistant.objects.all(),
+            team_id=self.team_id,
+            limit=limit
+        )
 
     def check_access(self) -> bool:
         """

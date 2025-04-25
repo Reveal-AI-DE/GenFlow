@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 
+from django.conf import settings
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework.permissions import SAFE_METHODS
 
+from genflow.apps.common.file_utils import get_files
 from genflow.apps.assistant import permissions as perms
 from genflow.apps.assistant.models import Assistant
 from genflow.apps.assistant.serializers import AssistantReadSerializer, AssistantWriteSerializer
@@ -143,3 +145,13 @@ class AssistantsViewSet(EntityBaseViewSet, FileManagementMixin):
             perm = perms.AssistantPermission.create_scope_list(self.request)
             queryset = perm.filter(queryset)
         return queryset
+
+    def check_file_count_limit(self, dirname):
+        """
+        Checks if the number of files exceeds the limit.
+        """
+
+        files = get_files(dirname)
+        if len(files) >= settings.GF_LIMITS["MAX_FILES_PER_ASSISTANT"]:
+            return True
+        return False

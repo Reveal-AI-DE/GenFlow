@@ -117,6 +117,12 @@ class FileManagementMixin:
     Provides endpoints for listing, uploading, and deleting files.
     """
 
+    def check_file_count_limit(self, dirname):
+        """
+        Checks if the number of files exceeds the limit.
+        """
+        return False
+
     @action(detail=True, methods=["get"], url_path="files")
     def list_files(self, request, pk=None):
         """
@@ -140,6 +146,12 @@ class FileManagementMixin:
         instance = self.get_object()
         if not hasattr(instance, "dirname"):
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if self.check_file_count_limit(instance.dirname):
+            return Response(
+                {"detail": "File count limit exceeded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         uploaded_file = request.FILES.get("file", None)
         serializer = FileEntitySerializer(

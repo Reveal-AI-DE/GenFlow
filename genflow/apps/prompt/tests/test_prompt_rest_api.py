@@ -4,6 +4,7 @@
 
 from http.client import HTTPResponse
 
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -126,6 +127,34 @@ class PromptCreateTestCase(PromptTestCase):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         group = self.regular_users[0]["teams"][0]["group"]
+
+        data = PROMPT_DATA.copy()
+        data["group_id"] = group.id
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+
+        response = self.create_prompt(user, data, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    @override_settings(GF_LIMITS={"PROMPT": 0})
+    def test_create_prompt_user_user_check_limit(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.create_prompt(user, PROMPT_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(GF_LIMITS={"PROMPT": 1})
+    def test_create_prompt_user_user_another_team_check_limit(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+
+        # create prompt to reach limit
+        data = PROMPT_DATA.copy()
+        del data["related_model"]
+        create_dummy_prompt(team=team, owner=user, data=data)
+
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        group = self.regular_users[1]["teams"][0]["group"]
 
         data = PROMPT_DATA.copy()
         data["group_id"] = group.id

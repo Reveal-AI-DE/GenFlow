@@ -4,6 +4,7 @@
 
 from http.client import HTTPResponse
 
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -68,6 +69,25 @@ class AssistantGroupCreateTestCase(AssistantGroupTestCase):
         response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
+
+    @override_settings(GF_LIMITS={"ASSISTANT-GROUP": 0})
+    def test_create_assistant_group_user_user_check_limit(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_settings(GF_LIMITS={"ASSISTANT-GROUP": 1})
+    def test_create_assistant_group_user_another_team_check_limit(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        # create assistant group to reach limit
+        data = ASSISTANT_GROUP_DATA.copy()
+        create_dummy_assistant_group(team=team, owner=user, data=data)
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class AssistantGroupRetrieveTestCase(AssistantGroupTestCase):

@@ -382,3 +382,26 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api",
     "SCHEMA_PATH_PREFIX_TRIM": False,
 }
+
+GF_LIMITS = {
+    "PROMPT-GROUP": 10,
+    "PROMPT": 5,
+    "ASSISTANT-GROUP": 10,
+    "ASSISTANT": 5,
+    "MAX_FILES_PER_ASSISTANT": 2, # 2 files
+    "SESSION": 10,
+    "MAX_FILES_PER_SESSION": 1, # 1 file
+    "MESSAGE": 100,
+    "MAX_FILE_SIZE": 2,  # 2MB
+    "FILE_SUPPORTED_TYPES": [
+        "application/pdf",
+        "text/html",
+        "text/plain",
+    ],
+    "MAX_AVATAR_SIZE": 1,  # 1MB
+    "AVATAR_SUPPORTED_TYPES": [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+    ],
+}

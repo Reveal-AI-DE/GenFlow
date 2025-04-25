@@ -94,3 +94,20 @@ class ChatGenerateConsumerCheckPermissionTestCase(TransactionTestCase):
         connected, subprotocols = await communicator.connect()
         self.assertFalse(connected)
         self.assertEqual(subprotocols, status.WS_404_NOT_FOUND)
+
+    @override_settings(GF_LIMITS={"MESSAGE": 0})
+    async def test_connect_session_check_limit(self):
+        user = self.regular_users[0]["user"]
+        team = self.regular_users[0]["teams"][0]["team"]
+        data = SESSION_DATA.copy()
+        data["session_type"] = SessionType.PROMPT.value
+        del data["related_model"]
+        session = await sync_to_async(create_dummy_session)(team=team, owner=user, data=data)
+
+        subprotocols = ["json", self.tokens[0].key, str(team.id)]
+        communicator = WebsocketCommunicator(
+            application, f"ws/sessions/{session.id}/generate", subprotocols=subprotocols
+        )
+        connected, subprotocols = await communicator.connect()
+        self.assertFalse(connected)
+        self.assertEqual(subprotocols, status.WS_403_FORBIDDEN)

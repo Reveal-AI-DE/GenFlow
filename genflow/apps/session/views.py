@@ -6,6 +6,7 @@ import shutil
 from os import path as osp
 from typing import cast
 
+from django.conf import settings
 from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
@@ -17,6 +18,7 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
+from genflow.apps.common.file_utils import get_files
 from genflow.apps.core.mixin import FileManagementMixin
 from genflow.apps.core.serializers import FileEntitySerializer
 from genflow.apps.prompt.models import Prompt
@@ -172,6 +174,16 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
         if osp.exists(instance.dirname):
             shutil.rmtree(instance.dirname)
         return super().perform_destroy(instance)
+
+    def check_file_count_limit(self, dirname):
+        """
+        Checks if the number of files exceeds the limit.
+        """
+
+        files = get_files(dirname)
+        if len(files) >= settings.GF_LIMITS["MAX_FILES_PER_SESSION"]:
+            return True
+        return False
 
 
 @extend_schema(tags=["messages"])
