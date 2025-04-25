@@ -11,7 +11,8 @@ import {
 } from 'react-admin';
 
 import { Prompt, PromptStatus } from '@/types';
-import { EntityCardActions, WithTooltip } from '@/common';
+import { WithTooltip } from '@/common';
+import { EntityCardActions } from '@/entity';
 
 type PromptCardActionsProps = object;
 

@@ -9,10 +9,10 @@ import {
 } from 'react-admin';
 
 import { PromptType, PromptStatus } from '@/types';
+import { ListGridSwitcher } from '@/common';
 import {
-    ListGridSwitcher, EntityDatagrid,
-    EntityListActions, EntityLisFilters,
-} from '@/common';
+    EntityDatagrid, EntityListActions, EntityLisFilters
+} from '@/entity';
 import { GroupField } from '@/group';
 import { getChoicesFromEnum } from '@/utils';
 import { PromptCard } from '@/prompt/show';

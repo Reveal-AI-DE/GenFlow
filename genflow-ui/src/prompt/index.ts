@@ -5,7 +5,6 @@
 import { ResourceProps } from 'react-admin';
 import TerminalIcon from '@mui/icons-material/Terminal';
 
-import promptDataProvider from '@/prompt/promptDataProvider';
 import { PromptList } from '@/prompt/list';
 import { PromptInterface, PromptSelectInput } from '@/prompt/form';
 import { PromptInfo, PromptStartingMessage } from '@/prompt/show';
@@ -25,7 +24,6 @@ const PromptResourceProps: ResourceProps = {
 export {
     PromptGroupResourceProps,
     PromptResourceProps,
-    promptDataProvider,
     PromptInfo,
     PromptStartingMessage,
     PromptSelectInput,

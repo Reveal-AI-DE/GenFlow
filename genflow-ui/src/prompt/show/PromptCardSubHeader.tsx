@@ -12,7 +12,7 @@ import {
     Prompt, PromptStatus,
 } from '@/types';
 import { GroupField, GroupFieldSlot } from '@/group';
-import { EntityCardSubHeader } from '@/common';
+import { EntityCardSubHeader } from '@/entity';
 
 type PromptCardSubHeaderProps = object;
 

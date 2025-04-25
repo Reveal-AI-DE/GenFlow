@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { RaRecord, Identifier } from 'react-admin';
+import { Identifier } from 'react-admin';
 
 import {
     EntityGroup, CommonEntity, AIAssociatedEntity,
@@ -31,7 +31,7 @@ export interface CommonPrompt {
     prompt_type: PromptType;
 };
 
-export interface Prompt extends RaRecord, CommonEntity, AIAssociatedEntity, CommonPrompt {
+export interface Prompt extends CommonEntity, AIAssociatedEntity, CommonPrompt {
     prompt_status: PromptStatus;
     related_test_session: Identifier | undefined;
 };

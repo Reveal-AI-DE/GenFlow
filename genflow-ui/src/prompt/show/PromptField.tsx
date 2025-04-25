@@ -6,7 +6,7 @@ import React, { FC } from 'react';
 import { useRecordContext } from 'react-admin';
 
 import { Prompt } from '@/types';
-import { EntityField, EntityFieldProps, EntityFieldSlot } from '@/common';
+import { EntityField, EntityFieldProps, EntityFieldSlot } from '@/entity';
 
 type PromptFieldProps = EntityFieldProps;
 

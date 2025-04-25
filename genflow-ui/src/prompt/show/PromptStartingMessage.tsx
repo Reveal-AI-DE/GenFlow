@@ -8,7 +8,7 @@ import {
 } from 'react-admin';
 
 import { Session } from '@/types';
-import { EntityStartingMessage } from '@/common';
+import { EntityStartingMessage } from '@/entity';
 
 type PromptStartingMessageProps = object;
 

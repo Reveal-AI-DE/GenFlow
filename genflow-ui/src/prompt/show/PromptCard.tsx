@@ -4,7 +4,7 @@
 
 import React, { FC } from 'react';
 
-import { EntityCard } from '@/common';
+import { EntityCard } from '@/entity';
 import PromptCardActions from '@/prompt/show/PromptCardActions';
 import PromptCardSubHeader from '@/prompt/show/PromptCardSubHeader';
 

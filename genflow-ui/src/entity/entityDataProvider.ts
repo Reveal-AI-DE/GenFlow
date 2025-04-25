@@ -7,14 +7,14 @@ import {
     CreateResult, UpdateResult,
 } from 'react-admin';
 
-import { Prompt } from '@/types';
+import { CommonEntity } from '@/types';
 import { ResourceURL } from '@/utils';
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
 import { fetchJsonWithAuthToken } from '@/auth/authProvider';
 
 export default <DataProvider> {
     create: async (resource: string, params: CreateParams) => {
-        const data: CreateResult<Prompt> = await defaultDataProvider.create(resource, params);
+        const data: CreateResult<CommonEntity> = await defaultDataProvider.create(resource, params);
 
         if (params.data.avatar && typeof (params.data.avatar) === 'object') {
             const formData = new FormData();
@@ -29,7 +29,7 @@ export default <DataProvider> {
         return data
     },
     update: async (resource: string, params: UpdateParams) => {
-        const data: UpdateResult<Prompt> = await defaultDataProvider.update(resource, params);
+        const data: UpdateResult<CommonEntity> = await defaultDataProvider.update(resource, params);
 
         const formData = new FormData();
         if (params.data.avatar && typeof (params.data.avatar) === 'object') {

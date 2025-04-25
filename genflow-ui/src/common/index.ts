@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 export * from '@/common/button';
-export * from '@/common/entity';
 export * from '@/common/form';
 export * from '@/common/field';
 export * from '@/common/input';

@@ -10,7 +10,8 @@ import {
     RecordContextProvider,
 } from 'react-admin';
 
-import { AutocompleteInput, EntityFieldSlot } from '@/common';
+import { AutocompleteInput } from '@/common';
+import { EntityFieldSlot } from '@/entity';
 import { PromptField } from '@/prompt/show';
 
 interface PromptSelectInputProps extends Omit<ReferenceInputProps, 'reference'> {

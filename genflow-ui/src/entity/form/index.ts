@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import QuestionsInput from '@/common/entity/form/QuestionsInput';
+import QuestionsInput from '@/entity/form/QuestionsInput';
 
 export {
     QuestionsInput,

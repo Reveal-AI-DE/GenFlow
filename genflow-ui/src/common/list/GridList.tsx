@@ -20,7 +20,11 @@ const LoadingGridList: FC<LoadingGridListProps> = () => {
     const cols = useColsForWidth() * 8;
 
     return (
-        <Grid container columns={cols} spacing={2}>
+        <Grid
+            container
+            columns={cols}
+            spacing={2}
+        >
             {times(perPage, (key) => (
                 <Grid key={key} size={8}>
                     <Skeleton

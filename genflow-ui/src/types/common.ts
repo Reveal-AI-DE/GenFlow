@@ -85,7 +85,7 @@ export interface EntityGroup extends RaRecord {
     color: string;
 };
 
-export interface CommonEntity {
+export interface CommonEntity extends RaRecord {
     name: string;
     description: string;
     group: EntityGroup;
@@ -105,7 +105,7 @@ export interface AIAssociatedEntityData {
     related_model: ModelConfig;
 };
 
-export interface FileEntity {
-    id: string;
-    path: string;
+export enum FormMode {
+    CREATE = 'create',
+    EDIT = 'edit',
 };

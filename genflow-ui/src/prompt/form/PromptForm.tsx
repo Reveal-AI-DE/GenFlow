@@ -6,7 +6,8 @@ import React, { FC } from 'react';
 import { required, TextInput } from 'react-admin';
 
 import { ModelType } from '@/types';
-import { ExpandableTextInput, ImageInput, QuestionsInput } from '@/common';
+import { ExpandableTextInput, ImageInput } from '@/common';
+import { QuestionsInput } from '@/entity';
 import { ModelSelectInput } from '@/provider/model';
 import { GroupSelectInput } from '@/group';
 

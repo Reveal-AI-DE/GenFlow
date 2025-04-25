@@ -8,7 +8,8 @@ import {
 } from 'react-admin';
 
 import { Prompt } from '@/types';
-import { TruncatedTextField, EntityInfo } from '@/common';
+import { TruncatedTextField } from '@/common';
+import { EntityInfo } from '@/entity';
 import { ModelConfigCard } from '@/provider/model';
 
 type PromptInfoProps = object;
