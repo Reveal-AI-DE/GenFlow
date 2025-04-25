@@ -17,6 +17,8 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
+from genflow.apps.core.mixin import FileManagementMixin
+from genflow.apps.core.serializers import FileEntitySerializer
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.session import permissions as perms
 from genflow.apps.session.models import Session, SessionMessage
@@ -76,8 +78,42 @@ from genflow.apps.team.middleware import HttpRequestWithIamContext
             204: OpenApiResponse(description="The session has been deleted"),
         },
     ),
+    list_files=extend_schema(
+        summary='List files',
+        description='List all files associated with the entity',
+        responses={
+            200: FileEntitySerializer(many=True),
+        }
+    ),
+    upload_file=extend_schema(
+        summary='Upload a file',
+        description='Upload a new file and associate it with the entity',
+        request={
+        'multipart/form-data': {
+            'type': 'object',
+            'properties': {
+                'file': {
+                    'type': 'string',
+                    'format': 'binary',
+                    'description': 'The file to upload',
+                },
+            },
+            'required': ['file'],
+        }
+    },
+        responses={
+            201: FileEntitySerializer()
+        }
+    ),
+    delete_file=extend_schema(
+        summary='delete file',
+        description='Delete a specific file associated with the entity',
+        responses={
+            204: OpenApiResponse(description='File was removed')
+        }
+    ),
 )
-class SessionViewSet(viewsets.ModelViewSet):
+class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
     """
     Provides CRUD operations and additional functionality
     for managing Session objects.

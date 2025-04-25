@@ -23,6 +23,9 @@ class SessionPermission(GenFLowBasePermission):
         RETRIEVE = "retrieve"
         UPDATE = "update"
         DELETE = "delete"
+        LIST_FILES = "list_files"
+        UPLOAD_FILE = "upload_file"
+        DELETE_FILE = "delete_file"
 
     @staticmethod
     def get_scopes(request, view, obj):
@@ -38,6 +41,9 @@ class SessionPermission(GenFLowBasePermission):
                 "retrieve": Scopes.RETRIEVE,
                 "destroy": Scopes.DELETE,
                 "partial_update": Scopes.UPDATE,
+                "list_files": Scopes.LIST_FILES,
+                "upload_file": Scopes.UPLOAD_FILE,
+                "delete_file": Scopes.DELETE_FILE,
             }.get(view.action, None)
         ]
 
@@ -71,18 +77,28 @@ class SessionPermission(GenFLowBasePermission):
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
 
         # team member can list sessions
-        # team member can create a sessions
-        # team member can retrieve a sessions
+        # team member can create a session
+        # team member can retrieve a session
+        # team member can upload a file
+
         if (
             self.scope == self.Scopes.LIST
             or self.scope == self.Scopes.CREATE
             or self.scope == self.Scopes.RETRIEVE
+            or self.scope == self.Scopes.UPLOAD_FILE
         ):
             return self.team_role is not None
 
         # team owner or sessions owner can update the sessions
         # team owner or sessions owner can delete the sessions
-        if self.scope == self.Scopes.UPDATE or self.scope == self.Scopes.DELETE:
+         # team owner or sessions owner can list files
+        # team owner or sessions owner can delete a file
+        if (
+            self.scope == self.Scopes.UPDATE
+            or self.scope == self.Scopes.DELETE
+            or self.scope == self.Scopes.LIST_FILES
+            or self.scope == self.Scopes.DELETE_FILE
+        ):
             return is_team_owner or self.obj.owner_id == self.user_id
 
         return False

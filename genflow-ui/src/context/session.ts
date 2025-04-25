@@ -29,6 +29,8 @@ export interface SessionContextInterface {
 
     isResponsiveLayout: boolean,
     floatActions: SessionFloatActionKey[],
+    promptSelection: boolean,
+    setPromptSelection: Dispatch<SetStateAction<boolean>>,
 };
 
 export const SessionContext = createContext<SessionContextInterface>({
@@ -51,4 +53,6 @@ export const SessionContext = createContext<SessionContextInterface>({
 
     isResponsiveLayout: true,
     floatActions: [],
+    promptSelection: false,
+    setPromptSelection: () => {},
 });

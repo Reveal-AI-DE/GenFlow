@@ -157,6 +157,7 @@ const deDE: TranslationMessages = {
                 name: 'Name',
                 description: 'Beschreibung',
                 pre_prompt: 'Prompt',
+                use_prompt_template: 'Prompt Template',
                 opening_statement: 'Start-Nachricht',
                 suggested_questions: 'Vorgeschlagene Fragen',
                 status: 'Status',
@@ -203,12 +204,6 @@ const deDE: TranslationMessages = {
             actions: 'Chat-Aktionen',
             info: 'Session Info',
             usage: 'Sitzung Verwendung',
-            input: {
-                send: 'Nachricht senden',
-                stop: 'stoppen',
-                use_prompt: 'Prompt verwenden',
-                placeholder: 'Alles fragen!'
-            },
             settings: {
                 btn_label: 'Chat-Einstellungen',
                 advanced: 'Erweiterte',
@@ -296,6 +291,7 @@ const deDE: TranslationMessages = {
         login_email: 'E-Mail verwenden',
         login_username: 'Benutzername verwenden',
         google_login: 'Mit Google anmelden',
+        use_prompt: 'Prompt verwenden',
     },
     validation: {
         not_available: 'Nicht verfügbar',

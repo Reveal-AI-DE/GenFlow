@@ -15,10 +15,12 @@ import {
 } from 'react-admin';
 
 import {
-    SessionType, Session, ModelType, PromptStatus,
+    SessionType, Session, ModelType,
+    PromptStatus, AssistantStatus,
 } from '@/types';
 import { ModelSelectInput } from '@/provider/model';
 import { PromptSelectInput } from '@/prompt';
+import { AssistantSelectInput } from '@/assistant';
 import { getChoicesFromEnum } from '@/utils';
 import { ChatLayout } from '@/layout';
 import NewSessionPlaceholder from '@/session/form/NewSessionPlaceholder';
@@ -49,7 +51,7 @@ const SelectRelated: FC = () => {
         );
     }
 
-    if (sessionType === 'prompt') {
+    if (sessionType === SessionType.PROMPT) {
         return (
             <PromptSelectInput
                 source='related_prompt'
@@ -57,6 +59,19 @@ const SelectRelated: FC = () => {
                 disabled={!sessionType}
                 validate={required()}
                 filter={{ prompt_status: PromptStatus.PUBLISHED }}
+                sort={{ field: 'group__name', order: 'ASC' }}
+            />
+        );
+    }
+
+    if (sessionType === SessionType.ASSISTANT) {
+        return (
+            <AssistantSelectInput
+                source='related_assistant'
+                label={false}
+                disabled={!sessionType}
+                validate={required()}
+                filter={{ assistant_status: AssistantStatus.PUBLISHED }}
                 sort={{ field: 'group__name', order: 'ASC' }}
             />
         );
@@ -104,6 +119,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
         name: 'New Chat',
         related_model: data.session_type === SessionType.LLM ? related_model : undefined,
         related_prompt: data.session_type === SessionType.PROMPT ? related_prompt : undefined,
+        related_assistant: data.session_type === SessionType.ASSISTANT ? related_assistant : undefined,
         ...data,
     });
 

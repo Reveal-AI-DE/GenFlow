@@ -7,7 +7,6 @@ from typing import cast
 
 from drf_spectacular.utils import (
     OpenApiResponse, extend_schema, extend_schema_view,
-    OpenApiParameter, OpenApiTypes
 )
 from rest_framework import viewsets, status
 from rest_framework.permissions import SAFE_METHODS
@@ -124,7 +123,7 @@ class FileManagementMixin:
 
         instance = self.get_object()
         if not hasattr(instance, "dirname"):
-           return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         files = get_files(instance.dirname)
         serializer = FileEntitySerializer(files, many=True)
@@ -138,7 +137,7 @@ class FileManagementMixin:
 
         instance = self.get_object()
         if not hasattr(instance, "dirname"):
-           return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         uploaded_file = request.FILES.get("file", None)
         serializer = FileEntitySerializer(data={
@@ -159,7 +158,7 @@ class FileManagementMixin:
 
         instance = self.get_object()
         if not hasattr(instance, "dirname"):
-           return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not filename:
             return Response({"detail": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST)

@@ -19,6 +19,7 @@ import { ChatScrollButtons, ChatActions} from '@/chat/bot/button';
 import SessionMessages from '@/chat/bot/SessionMessages';
 import ChatBotPlaceholder from '@/chat/bot/ChatBotPlaceholder';
 import { PromptStartingMessage } from '@/prompt';
+import { AssistantStartingMessage } from '@/assistant';
 
 const Root = styled(Box, {
     name: 'GFChatBot',
@@ -49,6 +50,10 @@ const ChatBot: FC<ChatBotProps> = () => {
             case SessionType.PROMPT:
                 return (
                     <PromptStartingMessage />
+                )
+            case SessionType.ASSISTANT:
+                return (
+                    <AssistantStartingMessage />
                 )
             default:
                 return null;

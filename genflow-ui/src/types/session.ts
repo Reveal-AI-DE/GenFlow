@@ -11,6 +11,7 @@ import { Prompt, ChatPromptSetting } from '@/types/prompt';
 export enum SessionType {
     LLM = 'llm',
     PROMPT = 'prompt',
+    ASSISTANT = 'assistant',
 };
 
 export enum SessionMode {

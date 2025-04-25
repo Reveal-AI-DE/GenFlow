@@ -82,8 +82,6 @@ class CommonEntity(models.Model):
         Returns the media directory path for the entity.
         """
 
-        pass
-
     def remove_media_dir(self) -> None:
         if osp.exists(self.media_dir()):
             shutil.rmtree(self.media_dir())

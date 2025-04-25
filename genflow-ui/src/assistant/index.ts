@@ -5,8 +5,9 @@
 import { ResourceProps } from 'react-admin';
 import AssistantIcon from '@mui/icons-material/Assistant';
 
-import { AssistantCreate, AssistantEdit } from '@/assistant/form';
+import { AssistantCreate, AssistantEdit, AssistantSelectInput } from '@/assistant/form';
 import { AssistantList } from '@/assistant/list';
+import { AssistantInfo, AssistantStartingMessage } from '@/assistant/show';
 
 const AssistantGroupResourceProps: ResourceProps = {
     name: 'assistant-groups',
@@ -22,5 +23,8 @@ const AssistantResourceProps: ResourceProps = {
 
 export {
     AssistantGroupResourceProps,
-    AssistantResourceProps
+    AssistantResourceProps,
+    AssistantInfo,
+    AssistantSelectInput,
+    AssistantStartingMessage,
 };

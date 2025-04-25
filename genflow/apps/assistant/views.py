@@ -4,7 +4,6 @@
 
 from drf_spectacular.utils import (
     OpenApiResponse, extend_schema, extend_schema_view,
-    OpenApiParameter, OpenApiTypes,
 )
 from rest_framework.permissions import SAFE_METHODS
 
@@ -83,7 +82,7 @@ class AssistantGroupViewSet(EntityGroupViewSetMixin):
             "200": AssistantReadSerializer,
         },
     ),
-        list_files=extend_schema(
+    list_files=extend_schema(
         summary='List files',
         description='List all files associated with the entity',
         responses={

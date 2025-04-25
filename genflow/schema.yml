@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: GenFlow REST API
-  version: 0.1.1.dev20250423075524
+  version: 0.1.1.dev20250425032346
   description: REST API for GenFlow project
   termsOfService: https://www.google.com/policies/terms/
   contact:
@@ -2248,6 +2248,119 @@ paths:
       responses:
         '204':
           description: The session has been deleted
+  /api/sessions/{id}/files:
+    get:
+      operationId: sessions_files_list
+      description: List all files associated with the entity
+      summary: List files
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFileEntityList'
+          description: ''
+  /api/sessions/{id}/files/{filename}:
+    delete:
+      operationId: sessions_files_destroy
+      description: Delete a specific file associated with the entity
+      summary: delete file
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+          pattern: ^[^/]+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: File was removed
+  /api/sessions/{id}/upload_file:
+    post:
+      operationId: sessions_upload_file_create
+      description: Upload a new file and associate it with the entity
+      summary: Upload a file
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+              required:
+              - file
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/FileEntity'
+          description: ''
   /api/system/about:
     get:
       operationId: system_about_retrieve
@@ -3201,6 +3314,8 @@ components:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
           type: integer
+        related_assistant:
+          type: integer
     PatchedTeamWriteRequest:
       type: object
       description: |-
@@ -3543,6 +3658,8 @@ components:
           $ref: '#/components/schemas/ProviderModelConfigRead'
         related_prompt:
           $ref: '#/components/schemas/PromptRead'
+        related_assistant:
+          $ref: '#/components/schemas/AssistantRead'
         created_date:
           type: string
           format: date-time
@@ -3564,10 +3681,12 @@ components:
       enum:
       - llm
       - prompt
+      - assistant
       type: string
       description: |-
         * `llm` - Llm
         * `prompt` - Prompt
+        * `assistant` - Assistant
     SessionWrite:
       type: object
       description: Serializer for writing Session data, to be used by post/patch actions.
@@ -3582,6 +3701,8 @@ components:
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWrite'
         related_prompt:
+          type: integer
+        related_assistant:
           type: integer
       required:
       - name
@@ -3600,6 +3721,8 @@ components:
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
+          type: integer
+        related_assistant:
           type: integer
       required:
       - name

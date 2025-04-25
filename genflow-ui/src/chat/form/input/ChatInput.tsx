@@ -16,6 +16,7 @@ import { createUploadyDestination } from '@/utils';
 import SendButton from '@/chat/form/input/SendButton';
 import AttachButton from '@/chat/form/input/AttachButton';
 import Attachment from '@/chat/form/input/Attachment';
+import PromptSelection, { PromptSelectionButton } from './PromptSelection';
 
 type ChatInputProps = UploadyProps
 
@@ -49,6 +50,7 @@ const ChatInput: FC<ChatInputProps> = ({
             accept='text/plain,text/html,application/pdf'
             destination={destination || undefined}
         >
+            <PromptSelection />
             <Attachment />
             <TextareaAutosize
                 formControlProps={{
@@ -71,6 +73,7 @@ const ChatInput: FC<ChatInputProps> = ({
                                 marginTop: '0 !important'
                             }}
                         >
+                            <PromptSelectionButton />
                             <AttachButton />
                         </InputAdornment>
                     ),

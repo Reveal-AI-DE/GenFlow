@@ -171,9 +171,6 @@ const enUS: TranslationMessages = {
             actions: 'Chat Actions',
             info: 'Session Info',
             usage: 'Session Usage',
-            input: {
-                use_prompt: 'Use Prompt',
-            },
             settings: {
                 btn_label: 'Chat Settings',
                 advanced: 'Advanced',
@@ -258,6 +255,7 @@ const enUS: TranslationMessages = {
         login_email: 'Use Email',
         login_username: 'Use Username',
         google_login: 'Login with Google',
+        use_prompt: 'Use Prompt',
     },
     validation: {
         not_available: 'Not available',

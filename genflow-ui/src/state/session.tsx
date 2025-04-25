@@ -27,11 +27,10 @@ export const SessionState: FC<SessionStateProps> = ({
     actions,
 }) => {
     const session = useRecordContext<Session>();
-    if (!session) return null;
 
     const dataProvider = useDataProvider();
 
-    const [generateURL] = useState<string>(createGenerateURL(session));
+    const [generateURL, setGenerateURL] = useState<string | undefined>(undefined);
 
     const [userInput, setUserInput] = useState<string>('');
     const [attachedFile, setAttachedFile] = useState<BatchItem | undefined>(undefined);
@@ -44,6 +43,15 @@ export const SessionState: FC<SessionStateProps> = ({
 
     const [isResponsiveLayout, setIsResponsiveLayout] = useState<boolean>(true);
     const [floatActions, setFloatActions] = useState<SessionFloatActionKey[]>(actions || []);
+    const [promptSelection, setPromptSelection] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (session) {
+            setGenerateURL(createGenerateURL(session));
+        }
+    }, [session]);
+
+    if (!session) return null;
 
     const fetchSessionMessages = async (): Promise<void> => {
         // get stored messages
@@ -89,6 +97,13 @@ export const SessionState: FC<SessionStateProps> = ({
                     SessionFloatActionKey.NEW,
                 ]);
                 break;
+            case SessionType.ASSISTANT:
+                setFloatActions([
+                    SessionFloatActionKey.INFO,
+                    SessionFloatActionKey.USAGE,
+                    SessionFloatActionKey.NEW,
+                ]);
+                break;
             default:
                 break;
         }
@@ -124,6 +139,8 @@ export const SessionState: FC<SessionStateProps> = ({
 
         isResponsiveLayout,
         floatActions,
+        promptSelection,
+        setPromptSelection,
     }), [
         isLoadingInitialData,
         userInput,
@@ -131,6 +148,7 @@ export const SessionState: FC<SessionStateProps> = ({
         sessionMessages,
         isGenerating,
         attachedFile,
+        promptSelection,
     ]);
 
     return (

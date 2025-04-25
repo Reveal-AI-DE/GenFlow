@@ -11,10 +11,12 @@ from genflow.apps.core.serializers import (
     ProviderModelConfigReadSerializer,
     ProviderModelConfigWriteSerializer,
 )
+from genflow.apps.team.serializers import BasicUserSerializer
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.prompt.serializers import PromptReadSerializer
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.assistant.serializers import AssistantReadSerializer
 from genflow.apps.session.models import Session, SessionMessage, SessionType
-from genflow.apps.team.serializers import BasicUserSerializer
 
 
 class SessionReadSerializer(serializers.ModelSerializer):
@@ -24,6 +26,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigReadSerializer(required=False)
     related_prompt = PromptReadSerializer(required=False)
+    related_assistant = AssistantReadSerializer(required=False)
     owner = BasicUserSerializer()
     usage = serializers.SerializerMethodField()
 
@@ -89,6 +92,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
             "session_mode",
             "related_model",
             "related_prompt",
+            "related_assistant",
             "created_date",
             "updated_date",
             "owner",
@@ -106,11 +110,16 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         required=False,
         queryset=Prompt.objects.none(),  # Default to none
     )
+    related_assistant = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=Assistant.objects.none(), # Default to none
+    )
+
 
     def __init__(self, *args, **kwargs):
         """
         Initializes the serializer and dynamically filters
-        the `related_prompt` queryset based on the IAM context in the request.
+        the `related_prompt` and `related_assistant` queryset based on the IAM context in the request.
         """
 
         super().__init__(*args, **kwargs)
@@ -118,8 +127,10 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "iam_context"):
             team = request.iam_context.team
             if team:
-                # Filter queryset based on the iam_context
+                # Filter querysets based on the iam_context
                 self.fields["related_prompt"].queryset = Prompt.objects.filter(team=team)
+                # Filter querysets based on the iam_context
+                self.fields["related_assistant"].queryset = Assistant.objects.filter(team=team)
 
     class Meta:
         """
@@ -127,7 +138,7 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         """
 
         model = Session
-        fields = ("name", "session_type", "session_mode", "related_model", "related_prompt")
+        fields = ("name", "session_type", "session_mode", "related_model", "related_prompt", "related_assistant")
 
     def validate(self, data) -> dict:
         """
@@ -141,6 +152,8 @@ class SessionWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("related_model is required for LLM session")
         elif session_type == SessionType.PROMPT.value and "related_prompt" not in data:
             raise serializers.ValidationError("related_prompt is required for PROMPT session")
+        elif session_type == SessionType.ASSISTANT.value and "related_assistant" not in data:
+            raise serializers.ValidationError("related_assistant is required for ASSISTANT session")
         return data
 
     @transaction.atomic
