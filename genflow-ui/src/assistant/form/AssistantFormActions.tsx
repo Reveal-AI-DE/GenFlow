@@ -47,7 +47,6 @@ const AssistantFormActions: FC<AssistantFormActionsProps> = () => {
 
     const transform = (values: Assistant): AssistantData => {
         const {
-            avatar,
             group,
             related_model: relatedModel,
             ...rest

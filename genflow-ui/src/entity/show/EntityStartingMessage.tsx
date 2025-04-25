@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -14,7 +14,7 @@ import {
 import get from 'lodash/get';
 
 import { CommonPrompt } from '@/types';
-import { useChatHandler } from '@/hook';
+import { SessionContext, SessionContextInterface } from '@/context';
 import { PagePlaceholder } from '@/common';
 import PromptField from '@/prompt/show/PromptField';
 
@@ -50,7 +50,13 @@ const EntityStartingMessage: FC<EntityStartingMessageProps> = ({
     openingStatementSource='description',
 }) => {
     const entity = useRecordContext<CommonPrompt>();
-    const { handleSendMessage } = useChatHandler();
+
+    const {
+        setUserInput,
+    } = useContext<SessionContextInterface>(SessionContext);
+    const onQuestionClicked = (question: string): void => {
+        setUserInput(question);
+    };
 
     if (!entity) {
         return null;
@@ -75,7 +81,7 @@ const EntityStartingMessage: FC<EntityStartingMessageProps> = ({
                     entity.suggested_questions && entity.suggested_questions.map((question, index) => (
                         <IconButton
                             key={index}
-                            onClick={() => handleSendMessage(question.question)}
+                            onClick={() => onQuestionClicked(question.question)}
                         >
                             <Paper
                                 elevation={2}

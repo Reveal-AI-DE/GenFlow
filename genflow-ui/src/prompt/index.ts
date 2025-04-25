@@ -7,7 +7,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 
 import { PromptList } from '@/prompt/list';
 import { PromptInterface, PromptSelectInput } from '@/prompt/form';
-import { PromptInfo, PromptStartingMessage } from '@/prompt/show';
+import { PromptCard, PromptInfo, PromptStartingMessage } from '@/prompt/show';
 
 const PromptGroupResourceProps: ResourceProps = {
     name: 'prompt-groups',
@@ -24,6 +24,7 @@ const PromptResourceProps: ResourceProps = {
 export {
     PromptGroupResourceProps,
     PromptResourceProps,
+    PromptCard,
     PromptInfo,
     PromptStartingMessage,
     PromptSelectInput,

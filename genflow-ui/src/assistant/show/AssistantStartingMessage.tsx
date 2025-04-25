@@ -15,11 +15,11 @@ type AssistantStartingMessageProps = object;
 const AssistantStartingMessage: FC<AssistantStartingMessageProps> = () => {
     const session = useRecordContext<Session>();
 
-    if (!session || !session.related_prompt) {
+    if (!session || !session.related_assistant) {
         return null;
     }
 
-    const prompt = session.related_prompt;
+    const prompt = session.related_assistant;
 
     return (
         <RecordContextProvider value={prompt}>

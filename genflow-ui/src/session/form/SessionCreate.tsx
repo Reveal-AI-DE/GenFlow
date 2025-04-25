@@ -104,6 +104,14 @@ const ButtonContainer = styled(Grid, {
     }
 }));
 
+const StyledSelectInput = styled(SelectInput)({
+    '& legend': {
+        width: 0,
+    },
+    marginTop: 0,
+    minWidth: 'auto',
+});
+
 type SessionCreateProps = object
 
 const SessionCreate: FC<SessionCreateProps> = () => {
@@ -147,7 +155,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
                                     md: 2
                                 }}
                             >
-                                <SelectInput
+                                <StyledSelectInput
                                     source='session_type'
                                     label={false}
                                     choices={getChoicesFromEnum(SessionType)}
@@ -170,7 +178,7 @@ const SessionCreate: FC<SessionCreateProps> = () => {
                                 size={{
                                     xs: 12,
                                     sm: 12,
-                                    md: 4
+                                    md: 3
                                 }}
                             >
                                 <SaveButton

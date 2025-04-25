@@ -32,6 +32,10 @@ const EntityCardActions: FC<EntityInfoCardActionsProps> = ({
     const { currentMembership } = useContext<GlobalContextInterface>(GlobalContext);
     const isOwnerOrAdmin = currentMembership?.role === TeamRole.OWNER || currentMembership?.role === TeamRole.ADMIN;
 
+    if (!resource) {
+        return null;
+    }
+
     return (
         <CardActions disableSpacing>
             <Link
