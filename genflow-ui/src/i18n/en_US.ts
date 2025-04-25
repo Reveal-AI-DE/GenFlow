@@ -124,6 +124,7 @@ const enUS: TranslationMessages = {
                 name: 'Name',
                 description: 'Description',
                 pre_prompt: 'Prompt',
+                use_prompt_template: 'Prompt Template',
                 opening_statement: 'Starting Message',
                 suggested_questions: 'Suggested Questions',
                 status: 'Status',
@@ -136,9 +137,6 @@ const enUS: TranslationMessages = {
                     config: {
                         parameters: 'Model Parameters',
                     }
-                },
-                collection_config: {
-                    collection_id: 'Collection',
                 },
                 group: {
                     id: 'Group',
@@ -181,21 +179,12 @@ const enUS: TranslationMessages = {
                 advanced: 'Advanced',
             },
         },
-        collection: {
-            interface: {
-                step1: 'Collection Setup',
-                step2: 'Vector Store Setup',
-                step3: 'Files Upload'
-            }
-        },
         assistant: {
-            interface: {
-                step1: 'Assistant Setup',
-                step2: 'Assistant Configuration',
-                step3: 'Context Source',
-                files: 'Uploaded Files',
-                no_files: 'No files uploaded'
-            },
+            step1: 'Setup',
+            step2: 'Intro',
+            step3: 'Context',
+            files: 'Uploaded Files',
+            no_files: 'No files uploaded'
         },
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
@@ -237,6 +226,7 @@ const enUS: TranslationMessages = {
         email_not_confirmed: 'The confirmation link is incorrect or has expired. Please check your email for the correct link or request a new confirmation email.',
         verification_sent: 'Verification Email Sent',
         verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
+        image_not_supported: 'Unsupported image format or file size exceeds the 1MB limit. Please upload a supported image under 1MB.',
     },
     action: {
         test: 'Test',

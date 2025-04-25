@@ -17,6 +17,8 @@ import { Layout } from '@/layout';
 import { themes, Theme, ThemeName } from '@/themes';
 
 // Resources
+import { AssistantGroupResourceProps, AssistantResourceProps } from '@/assistant';
+import { FileResourceProps } from '@/file';
 import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
 import { MessageResourceProps } from '@/message';
@@ -66,6 +68,15 @@ const App = (): JSX.Element => {
             requireAuth
             disableTelemetry
         >
+            <Resource
+                {...AssistantGroupResourceProps}
+            />
+            <Resource
+                {...AssistantResourceProps}
+            />
+            <Resource
+                {...FileResourceProps}
+            />
             <Resource
                 {...InvitationResourceProps}
             />

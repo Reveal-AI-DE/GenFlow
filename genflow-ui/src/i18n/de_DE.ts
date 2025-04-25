@@ -218,21 +218,12 @@ const deDE: TranslationMessages = {
                 bottom: 'Nach unten scrollen',
             }
         },
-        collection: {
-            interface: {
-                step1: 'Kollektion einrichten',
-                step2: 'Vector Store einrichten',
-                step3: 'Dateien hochladen'
-            }
-        },
         assistant: {
-            interface: {
-                step1: 'Assistent Einrichtung',
-                step2: 'Assistent Konfiguration',
-                step3: 'Dateien hochladen',
-                files: 'Hochgeladene Dateien',
-                no_files: 'Keine Dateien hochgeladen'
-            }
+            step1: 'Assistent Einrichtung',
+            step2: 'Assistent Konfiguration',
+            step3: 'Dateien hochladen',
+            files: 'Hochgeladene Dateien',
+            no_files: 'Keine Dateien hochgeladen'
         },
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
@@ -278,6 +269,7 @@ const deDE: TranslationMessages = {
         email_not_confirmed: 'Der Bestätigungslink ist falsch oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Bestätigungs-E-Mail an.',
         verification_sent: 'Bestätigungs-E-Mail gesendet',
         verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
+        image_not_supported: 'Nicht unterstütztes Bildformat oder Dateigröße überschreitet das Limit von 1 MB. Bitte laden Sie ein unterstütztes Bild mit weniger als 1 MB hoch.',
     },
     action: {
         test: 'Test',
