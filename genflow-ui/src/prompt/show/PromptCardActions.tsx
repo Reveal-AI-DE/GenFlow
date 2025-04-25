@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
     useRecordContext, useDataProvider,
-    useRedirect, useTranslate,
+    useRedirect, useTranslate, useNotify,
 } from 'react-admin';
 
 import { Prompt, PromptStatus } from '@/types';
@@ -18,13 +18,14 @@ type PromptCardActionsProps = object;
 
 const PromptCardActions: FC<PromptCardActionsProps> = () => {
     const prompt = useRecordContext<Prompt>();
-    if (!prompt) {
-        return null;
-    }
-
     const dataProvider = useDataProvider();
     const redirect = useRedirect();
     const translate = useTranslate();
+    const notify = useNotify();
+
+    if (!prompt) {
+        return null;
+    }
 
     const OnUseClick = (): void => {
         if (prompt.prompt_status !== PromptStatus.PUBLISHED) {
@@ -39,7 +40,11 @@ const PromptCardActions: FC<PromptCardActionsProps> = () => {
         dataProvider.create('sessions', { data }).then((response) => {
             const { data: session } = response;
             redirect('show', 'sessions', session.id);
-        });
+        }).catch(() => notify(
+            'ra.notification.http_error',
+            {
+                type: 'error',
+            }));
     };
 
     return (

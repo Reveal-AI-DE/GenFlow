@@ -104,7 +104,7 @@ const authProvider: AuthProvider = {
         }
     },
     checkError: async ({ status }) => {
-        if (status === 401 || status === 403) {
+        if (status === 401) {
             throw new Error();
         }
     },

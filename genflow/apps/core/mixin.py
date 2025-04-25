@@ -149,7 +149,7 @@ class FileManagementMixin:
 
         if self.check_file_count_limit(instance.dirname):
             return Response(
-                {"detail": "File count limit exceeded."},
+                {"message": "File count limit exceeded."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -174,7 +174,7 @@ class FileManagementMixin:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not filename:
-            return Response({"detail": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         file_path = osp.join(instance.dirname, filename)
         if osp.exists(file_path):

@@ -72,8 +72,9 @@ class ChatGenerateConsumer(BaseConsumer):
 
         if "MESSAGE" not in settings.GF_LIMITS:
             return False
+        session_id = self.scope["url_route"]["kwargs"]["session_id"]
         limit = settings.GF_LIMITS["MESSAGE"]
-        count = SessionMessage.objects.filter(team_id=team_id).count()
+        count = SessionMessage.objects.filter(session_id=session_id, team_id=team_id).count()
         return count >= limit
 
     def send_chunk(self, chunk: str = None):

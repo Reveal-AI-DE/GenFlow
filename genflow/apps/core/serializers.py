@@ -474,20 +474,20 @@ class FileEntitySerializer(serializers.Serializer):
         dirname = data.get("dirname")
 
         if not uploaded_file:
-            raise serializers.ValidationError({"uploaded_file": "This field is required."})
+            raise serializers.ValidationError({"message": "This field is required."})
 
         if not dirname:
-            raise serializers.ValidationError({"dirname": "This field is required."})
+            raise serializers.ValidationError({"message": "This field is required."})
 
         # check size
         if uploaded_file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_FILE_SIZE"]:
             raise serializers.ValidationError(
-                {"file": f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB."}
+                {"message": f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB."}
             )
         # check type
         if uploaded_file.content_type not in settings.GF_LIMITS['FILE_SUPPORTED_TYPES']:
             raise serializers.ValidationError(
-                {"file": "Unsupported file type."}
+                {"message": "Unsupported file type."}
             )
 
         name = fs.get_valid_name(uploaded_file.name)

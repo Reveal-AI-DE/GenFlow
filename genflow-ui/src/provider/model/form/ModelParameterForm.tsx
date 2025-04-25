@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import {
-    useDataProvider, Labeled,
+    useDataProvider, Labeled, useNotify,
 } from 'react-admin';
 import { useWatch } from 'react-hook-form';
 
@@ -23,6 +23,7 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
     const modelName = useWatch({ name: modelInputName });
     const [configs, setConfigs] = useState<ConfigurationEntity[]>([]);
     const dataProvider = useDataProvider();
+    const notify = useNotify();
 
     useEffect(() => {
         const fetchConfigurations = async (): Promise<void> => {
@@ -37,7 +38,11 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
                         name: inputName,
                     };
                 });
-            });
+            }).catch(() => notify(
+                'ra.notification.http_error',
+                {
+                    type: 'error',
+                }));
             setConfigs(convertedConfigurations);
         }
         if (modelName) {

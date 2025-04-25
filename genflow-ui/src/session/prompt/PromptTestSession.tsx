@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import {
-    ShowBase, CreateResult,
+    ShowBase, CreateResult, useNotify,
     useDataProvider, useRecordContext
 } from 'react-admin';
 import { matchPath, useLocation } from 'react-router';
@@ -23,40 +23,40 @@ type TestSessionProps = object;
 
 const TestSession: FC<TestSessionProps> = () => {
     const prompt = useRecordContext<Prompt>();
-    if (!prompt) {
-        return (
-            <ChatLayout responsive={false}>
-                <TestSessionPlaceholder />
-            </ChatLayout>
-        );
-    }
-
     const dataProvider = useDataProvider();
     const [testSession, setTestSession] = useState<Session | undefined>(undefined);
-
-    const createTestSession = async (): Promise<CreateResult<Session>> => (
-        dataProvider.create(
-            'sessions',
-            {
-                data: {
-                    name: `Testing - ${prompt.name}`,
-                    session_type: SessionType.PROMPT,
-                    session_mode: SessionMode.COMPLETION,
-                    related_prompt: prompt.id,
-                },
-                meta: {
-                    queryParams: {
-                        testing: true,
-                    },
-                },
-            })
-    );
+    const notify = useNotify();
 
     useEffect(() => {
+        if (!prompt) {
+            return;
+        }
+        const createTestSession = async (): Promise<CreateResult<Session>> => (
+            dataProvider.create(
+                'sessions',
+                {
+                    data: {
+                        name: `Testing - ${prompt.name}`,
+                        session_type: SessionType.PROMPT,
+                        session_mode: SessionMode.COMPLETION,
+                        related_prompt: prompt.id,
+                    },
+                    meta: {
+                        queryParams: {
+                            testing: true,
+                        },
+                    },
+                })
+        );
+
         if (!prompt.related_test_session) {
             createTestSession().then(({ data }) => {
                 setTestSession(data);
-            });
+            }).catch(() => notify(
+                'ra.notification.http_error',
+                {
+                    type: 'error',
+                }));
         } else {
             dataProvider.getOne('sessions', { id: prompt.related_test_session }).then((response) => {
                 const { data: session } = response;
@@ -66,12 +66,16 @@ const TestSession: FC<TestSessionProps> = () => {
             }).catch(() => {
                 createTestSession().then(({ data }) => {
                     setTestSession(data);
-                });
+                }).catch(() => notify(
+                    'ra.notification.http_error',
+                    {
+                        type: 'error',
+                    }));
             });
         }
-    }, []);
+    }, [prompt]);
 
-    if (!testSession) {
+    if (!prompt || !testSession) {
         return (
             <ChatLayout responsive={false}>
                 <TestSessionPlaceholder />

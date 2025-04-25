@@ -8,7 +8,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import GradeIcon from '@mui/icons-material/Grade';
 import { styled } from '@mui/material/styles';
 import {
-    useRecordContext, useDataProvider,
+    useRecordContext, useDataProvider, useNotify,
     useResourceContext, useRefresh, useTranslate,
 } from 'react-admin';
 
@@ -31,13 +31,14 @@ const PinButton: FC<PinButtonProps> = ({
 }) => {
     const record = useRecordContext<Prompt>();
     const resource = useResourceContext();
-    if (!record || !resource) {
-        return null;
-    }
-
     const dataProvider = useDataProvider();
     const refresh = useRefresh();
     const translate = useTranslate();
+    const notify = useNotify();
+
+    if (!record || !resource) {
+        return null;
+    }
 
     const Pin = async (): Promise<void> => {
         await dataProvider.update(
@@ -50,7 +51,11 @@ const PinButton: FC<PinButtonProps> = ({
             }
         ).then(() => {
             refresh();
-        });
+        }).catch(() => notify(
+            'ra.notification.http_error',
+            {
+                type: 'error',
+            }));
     };
 
     return (
