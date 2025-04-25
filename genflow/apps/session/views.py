@@ -79,38 +79,34 @@ from genflow.apps.team.middleware import HttpRequestWithIamContext
         },
     ),
     list_files=extend_schema(
-        summary='List files',
-        description='List all files associated with the entity',
+        summary="List files",
+        description="List all files associated with the entity",
         responses={
             200: FileEntitySerializer(many=True),
-        }
+        },
     ),
     upload_file=extend_schema(
-        summary='Upload a file',
-        description='Upload a new file and associate it with the entity',
+        summary="Upload a file",
+        description="Upload a new file and associate it with the entity",
         request={
-        'multipart/form-data': {
-            'type': 'object',
-            'properties': {
-                'file': {
-                    'type': 'string',
-                    'format': 'binary',
-                    'description': 'The file to upload',
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "The file to upload",
+                    },
                 },
-            },
-            'required': ['file'],
-        }
-    },
-        responses={
-            201: FileEntitySerializer()
-        }
+                "required": ["file"],
+            }
+        },
+        responses={201: FileEntitySerializer()},
     ),
     delete_file=extend_schema(
-        summary='delete file',
-        description='Delete a specific file associated with the entity',
-        responses={
-            204: OpenApiResponse(description='File was removed')
-        }
+        summary="delete file",
+        description="Delete a specific file associated with the entity",
+        responses={204: OpenApiResponse(description="File was removed")},
     ),
 )
 class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):

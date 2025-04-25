@@ -3,22 +3,22 @@
 # SPDX-License-Identifier: MIT
 
 import os
-from os import path as osp
 from http.client import HTTPResponse
+from os import path as osp
 
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
-from genflow.apps.common.entities import FileEntity
-from genflow.apps.core.tests.utils import enable_provider
-from genflow.apps.prompt.tests.utils import PROVIDER_DATA
 from genflow.apps.assistant.tests.utils import (
     ASSISTANT_DATA,
     ASSISTANT_GROUP_DATA,
     create_dummy_assistant,
     create_dummy_assistant_group,
 )
+from genflow.apps.common.entities import FileEntity
+from genflow.apps.core.tests.utils import enable_provider
+from genflow.apps.prompt.tests.utils import PROVIDER_DATA
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
@@ -62,7 +62,9 @@ class AssistantCreateTestCase(AssistantTestCase):
             user = item["user"]
             for team_membership in item["teams"]:
                 team = team_membership["team"]
-                group = create_dummy_assistant_group(team=team, owner=user, data=ASSISTANT_GROUP_DATA)
+                group = create_dummy_assistant_group(
+                    team=team, owner=user, data=ASSISTANT_GROUP_DATA
+                )
                 team_membership["group"] = group
 
     def create_assistant(self, user, data, team_id=None) -> HTTPResponse:
@@ -158,7 +160,11 @@ class AssistantRetrieveTestCase(AssistantTestCase):
         cls.create_assistants()
 
     def retrieve_assistant(self, user, assistant_id, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}?team={team_id}" if team_id else f"/api/assistants/{assistant_id}"
+        url = (
+            f"/api/assistants/{assistant_id}?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}"
+        )
         with ForceLogin(user, self.client):
             response = self.client.get(url)
         return response
@@ -171,7 +177,9 @@ class AssistantRetrieveTestCase(AssistantTestCase):
 
     def test_retrieve_assistant_admin(self):
         team = self.regular_users[0]["teams"][0]["team"]
-        response = self.retrieve_assistant(self.admin_user, assistant_id=self.assistant.id, team_id=team.id)
+        response = self.retrieve_assistant(
+            self.admin_user, assistant_id=self.assistant.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(response.data["is_pinned"])
 
@@ -185,7 +193,9 @@ class AssistantRetrieveTestCase(AssistantTestCase):
     def test_retrieve_assistant_user_another_team(self):
         team = self.regular_users[0]["teams"][0]["team"]
         another_user = self.regular_users[1]["user"]
-        response = self.retrieve_assistant(another_user, assistant_id=self.assistant.id, team_id=team.id)
+        response = self.retrieve_assistant(
+            another_user, assistant_id=self.assistant.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_retrieve_assistant_team_member(self):
@@ -205,7 +215,11 @@ class AssistantDeleteTestCase(AssistantTestCase):
         self.create_assistants()
 
     def delete_assistant(self, user, assistant_id, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}?team={team_id}" if team_id else f"/api/assistants/{assistant_id}"
+        url = (
+            f"/api/assistants/{assistant_id}?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}"
+        )
         with ForceLogin(user, self.client):
             response = self.client.delete(url)
         return response
@@ -216,7 +230,9 @@ class AssistantDeleteTestCase(AssistantTestCase):
 
     def test_delete_assistant_admin(self):
         team = self.regular_users[0]["teams"][0]["team"]
-        response = self.delete_assistant(self.admin_user, assistant_id=self.assistant.id, team_id=team.id)
+        response = self.delete_assistant(
+            self.admin_user, assistant_id=self.assistant.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_assistant_user(self):
@@ -228,7 +244,9 @@ class AssistantDeleteTestCase(AssistantTestCase):
     def test_delete_assistant_user_another_team(self):
         team = self.regular_users[0]["teams"][0]["team"]
         another_user = self.regular_users[1]["user"]
-        response = self.delete_assistant(another_user, assistant_id=self.assistant.id, team_id=team.id)
+        response = self.delete_assistant(
+            another_user, assistant_id=self.assistant.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_assistant_user_owner(self):
@@ -248,7 +266,11 @@ class AssistantUpdateTestCase(AssistantTestCase):
         cls.create_assistants()
 
     def update_assistant(self, user, assistant_id, data, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}?team={team_id}" if team_id else f"/api/assistants/{assistant_id}"
+        url = (
+            f"/api/assistants/{assistant_id}?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}"
+        )
         with ForceLogin(user, self.client):
             response = self.client.patch(url, data, format="json")
         return response
@@ -257,7 +279,9 @@ class AssistantUpdateTestCase(AssistantTestCase):
         new_data = {
             "name": "new name",
         }
-        response = self.update_assistant(self.admin_user, assistant_id=self.assistant.id, data=new_data)
+        response = self.update_assistant(
+            self.admin_user, assistant_id=self.assistant.id, data=new_data
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], new_data["name"])
 
@@ -378,7 +402,11 @@ class AssistantUploadAvatarTestCase(AssistantTestCase):
             f.write(b"fake image content")
 
     def upload_avatar(self, user, assistant_id, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}/upload_avatar?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/upload_avatar"
+        url = (
+            f"/api/assistants/{assistant_id}/upload_avatar?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}/upload_avatar"
+        )
         with ForceLogin(user, self.client):
             with open(self.avatar_path, "rb") as avatar:
                 response = self.client.post(url, {"avatar": avatar}, format="multipart")
@@ -430,7 +458,11 @@ class AssistantListFilesTestCase(AssistantTestCase):
         self.assertEqual(response.data["results"][0]["path"], self.files[0].path)
 
     def list_files(self, user, assistant_id, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}/files?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/files"
+        url = (
+            f"/api/assistants/{assistant_id}/files?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}/files"
+        )
         with ForceLogin(user, self.client):
             response = self.client.get(url)
         return response
@@ -488,7 +520,11 @@ class AssistantUploadFileTestCase(AssistantTestCase):
         self.assertEqual(response.data["path"], self.file.path)
 
     def upload_file(self, user, assistant_id, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}/upload_file?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/upload_file"
+        url = (
+            f"/api/assistants/{assistant_id}/upload_file?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}/upload_file"
+        )
         with ForceLogin(user, self.client):
             with open(self.path, "rb") as file:
                 response = self.client.post(url, {"file": file}, format="multipart")
@@ -542,7 +578,11 @@ class AssistantDeleteFileTestCase(AssistantTestCase):
         self.create_files(2)
 
     def delete_file(self, user, assistant_id, filename, team_id=None) -> HTTPResponse:
-        url = f"/api/assistants/{assistant_id}/files/{filename}?team={team_id}" if team_id else f"/api/assistants/{assistant_id}/files/{filename}"
+        url = (
+            f"/api/assistants/{assistant_id}/files/{filename}?team={team_id}"
+            if team_id
+            else f"/api/assistants/{assistant_id}/files/{filename}"
+        )
         with ForceLogin(user, self.client):
             response = self.client.delete(url)
         return response
@@ -554,7 +594,9 @@ class AssistantDeleteFileTestCase(AssistantTestCase):
 
     def test_delete_file_admin(self):
         team = self.regular_users[0]["teams"][0]["team"]
-        response = self.delete_file(self.admin_user, self.assistant.id, self.files[0].id, team_id=team.id)
+        response = self.delete_file(
+            self.admin_user, self.assistant.id, self.files[0].id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertTrue(not osp.exists(self.files[0].path))
 
@@ -568,14 +610,18 @@ class AssistantDeleteFileTestCase(AssistantTestCase):
     def test_delete_file_user_invalid_filename(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
-        response = self.delete_file(user, self.assistant.id, f"{self.files[0].id}-invalid", team_id=team.id)
+        response = self.delete_file(
+            user, self.assistant.id, f"{self.files[0].id}-invalid", team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(osp.exists(self.files[0].path))
 
     def test_delete_file_user_another_team(self):
         team = self.regular_users[0]["teams"][0]["team"]
         another_user = self.regular_users[1]["user"]
-        response = self.delete_file(another_user, self.assistant.id, self.files[0].id, team_id=team.id)
+        response = self.delete_file(
+            another_user, self.assistant.id, self.files[0].id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(osp.exists(self.files[0].path))
 

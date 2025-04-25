@@ -8,16 +8,16 @@ from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from genflow.apps.assistant.models import Assistant
 from genflow.apps.core.serializers import (
-    EntityGroupReadSerializer,
-    ProviderModelConfigReadSerializer,
     EntityBaseWriteSerializer,
+    EntityGroupReadSerializer,
     FileEntitySerializer,
+    ProviderModelConfigReadSerializer,
     common_entity_read_fields,
     common_entity_write_fields,
 )
 from genflow.apps.prompt.serializers import common_prompt_read_fields, common_prompt_write_fields
-from genflow.apps.assistant.models import Assistant
 
 
 class AssistantReadSerializer(serializers.ModelSerializer):
@@ -40,7 +40,6 @@ class AssistantReadSerializer(serializers.ModelSerializer):
 
         return [file.model_dump() for file in instance.files]
 
-
     class Meta:
         """
         Defines the model and fields to be serialized.
@@ -48,16 +47,20 @@ class AssistantReadSerializer(serializers.ModelSerializer):
 
         model = Assistant
         # Dynamically includes fields from `CommonEntity` and `CommonPrompt` using precomputed lists.
-        fields = common_entity_read_fields + common_prompt_read_fields + [
-            "id",
-            "opening_statement",
-            'context_source',
-            'collection_config',
-            "assistant_status",
-            "related_model",
-            "group",
-            "files",
-        ]
+        fields = (
+            common_entity_read_fields
+            + common_prompt_read_fields
+            + [
+                "id",
+                "opening_statement",
+                "context_source",
+                "collection_config",
+                "assistant_status",
+                "related_model",
+                "group",
+                "files",
+            ]
+        )
 
 
 class AssistantWriteSerializer(EntityBaseWriteSerializer):
@@ -70,14 +73,18 @@ class AssistantWriteSerializer(EntityBaseWriteSerializer):
 
     class Meta:
         model = Assistant
-        fields = common_entity_write_fields + common_prompt_write_fields + [
-            "opening_statement",
-            "context_source",
-            "collection_config",
-            "assistant_status",
-            "related_model",
-            "group_id",
-        ]
+        fields = (
+            common_entity_write_fields
+            + common_prompt_write_fields
+            + [
+                "opening_statement",
+                "context_source",
+                "collection_config",
+                "assistant_status",
+                "related_model",
+                "group_id",
+            ]
+        )
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Assistant:
@@ -87,7 +94,9 @@ class AssistantWriteSerializer(EntityBaseWriteSerializer):
 
         group, related_model = super().create(validated_data)
         # Creates a new Assistant instance with the provided data.
-        assistant = Assistant.objects.create(related_model=related_model, group=group, **validated_data)
+        assistant = Assistant.objects.create(
+            related_model=related_model, group=group, **validated_data
+        )
         # Ensures the media directory for the Assistant instance exists by creating it if necessary.
         os.makedirs(assistant.media_dir(), exist_ok=True)
         return assistant

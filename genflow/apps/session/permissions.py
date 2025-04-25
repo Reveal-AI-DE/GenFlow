@@ -91,7 +91,7 @@ class SessionPermission(GenFLowBasePermission):
 
         # team owner or sessions owner can update the sessions
         # team owner or sessions owner can delete the sessions
-         # team owner or sessions owner can list files
+        # team owner or sessions owner can list files
         # team owner or sessions owner can delete a file
         if (
             self.scope == self.Scopes.UPDATE

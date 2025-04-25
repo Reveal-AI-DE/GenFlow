@@ -4,4 +4,4 @@
 
 from django.core.files.storage import FileSystemStorage
 
-fs = FileSystemStorage(location='', allow_overwrite=True)
+fs = FileSystemStorage(location="", allow_overwrite=True)

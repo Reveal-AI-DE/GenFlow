@@ -9,12 +9,12 @@ from django.conf import settings
 from django.db import models
 from llama_index.core import SimpleDirectoryReader
 
-from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
-from genflow.apps.common.entities import FileEntity
 from genflow.apps.ai.llm.entities import Usage
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.common.entities import FileEntity
+from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
 from genflow.apps.core.models import ProviderModelConfig
 from genflow.apps.prompt.models import Prompt
-from genflow.apps.assistant.models import Assistant
 
 
 class SessionMode(models.TextChoices):
@@ -74,28 +74,20 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
         return osp.relpath(full_path, settings.BASE_DIR)
 
     def load_user_files(self, user_files: list[FileEntity]) -> str:
-        '''
+        """
         Load user files.
-        '''
+        """
 
-        content = ''
+        content = ""
         if osp.exists(self.dirname):
             input_files = [
-                osp.join(
-                    settings.BASE_DIR,
-                    user_file.path
-                )
+                osp.join(settings.BASE_DIR, user_file.path)
                 for user_file in user_files
-                if osp.exists(
-                    osp.join(
-                        settings.BASE_DIR,
-                        user_file.path
-                    )
-                )
+                if osp.exists(osp.join(settings.BASE_DIR, user_file.path))
             ]
             if input_files:
                 documents = SimpleDirectoryReader(input_files=input_files).load_data()
-                content = ' '.join([document.get_content() for document in documents])
+                content = " ".join([document.get_content() for document in documents])
         return content
 
     def get_usage(self) -> List[Dict[str, Any]]:

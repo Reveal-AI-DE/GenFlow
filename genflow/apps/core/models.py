@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: MIT
 
 import shutil
-from os import path as osp
 from abc import abstractmethod
 from json import JSONDecodeError
 from json import loads as json_loads
+from os import path as osp
 from typing import Any, Optional
 
 from django.db import models

@@ -4,9 +4,9 @@
 
 from django.conf import settings
 
-from genflow.apps.team.models import TeamRole
+from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission
-from genflow.apps.core.permissions import EntityGroupPermission, EntityBasePermission
+from genflow.apps.team.models import TeamRole
 
 
 class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
@@ -22,9 +22,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         scopes_dict = EntityBasePermission.get_scopes_dict()
 
-        return [
-            scopes_dict.get(view.action, None)
-        ]
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):
@@ -62,6 +60,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         return EntityGroupPermission.filter(self, queryset)
 
+
 class PromptPermission(GenFLowBasePermission, EntityBasePermission):
     """
     Handles the permissions for prompt-related actions.
@@ -75,9 +74,7 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
 
         scopes_dict = EntityBasePermission.get_scopes_dict()
 
-        return [
-            scopes_dict.get(view.action, None)
-        ]
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):

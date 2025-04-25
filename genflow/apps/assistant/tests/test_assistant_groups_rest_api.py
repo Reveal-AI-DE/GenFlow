@@ -40,7 +40,9 @@ class AssistantGroupCreateTestCase(AssistantGroupTestCase):
 
     def test_create_assistant_group_admin(self):
         team = self.regular_users[0]["teams"][0]["team"]
-        response = self.create_assistant_group(self.admin_user, ASSISTANT_GROUP_DATA, team_id=team.id)
+        response = self.create_assistant_group(
+            self.admin_user, ASSISTANT_GROUP_DATA, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
 
@@ -100,7 +102,9 @@ class AssistantGroupRetrieveTestCase(AssistantGroupTestCase):
     def test_retrieve_assistant_group_user(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
-        response = self.retrieve_assistant_group(user, group_id=self.assistant_group.id, team_id=team.id)
+        response = self.retrieve_assistant_group(
+            user, group_id=self.assistant_group.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
 
@@ -118,7 +122,9 @@ class AssistantGroupRetrieveTestCase(AssistantGroupTestCase):
         membership = self.regular_users[0]["teams"][0]["membership"]
         membership.role = TeamRole.MEMBER.value
         membership.save()
-        response = self.retrieve_assistant_group(user, group_id=self.assistant_group.id, team_id=team.id)
+        response = self.retrieve_assistant_group(
+            user, group_id=self.assistant_group.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
 
@@ -152,7 +158,9 @@ class AssistantGroupDeleteTestCase(AssistantGroupTestCase):
     def test_delete_assistant_group_user(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
-        response = self.delete_assistant_group(user, group_id=self.assistant_group.id, team_id=team.id)
+        response = self.delete_assistant_group(
+            user, group_id=self.assistant_group.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_assistant_group_user_another_team(self):
@@ -169,7 +177,9 @@ class AssistantGroupDeleteTestCase(AssistantGroupTestCase):
         membership = self.regular_users[0]["teams"][0]["membership"]
         membership.role = TeamRole.MEMBER.value
         membership.save()
-        response = self.delete_assistant_group(user, group_id=self.assistant_group.id, team_id=team.id)
+        response = self.delete_assistant_group(
+            user, group_id=self.assistant_group.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 

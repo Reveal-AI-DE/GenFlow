@@ -6,17 +6,17 @@ import pandas as pd
 from django.db import transaction
 from rest_framework import serializers
 
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.assistant.serializers import AssistantReadSerializer
 from genflow.apps.core.config.llm_model_bundle import LLMModelBundle
 from genflow.apps.core.serializers import (
     ProviderModelConfigReadSerializer,
     ProviderModelConfigWriteSerializer,
 )
-from genflow.apps.team.serializers import BasicUserSerializer
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.prompt.serializers import PromptReadSerializer
-from genflow.apps.assistant.models import Assistant
-from genflow.apps.assistant.serializers import AssistantReadSerializer
 from genflow.apps.session.models import Session, SessionMessage, SessionType
+from genflow.apps.team.serializers import BasicUserSerializer
 
 
 class SessionReadSerializer(serializers.ModelSerializer):
@@ -112,9 +112,8 @@ class SessionWriteSerializer(serializers.ModelSerializer):
     )
     related_assistant = serializers.PrimaryKeyRelatedField(
         required=False,
-        queryset=Assistant.objects.none(), # Default to none
+        queryset=Assistant.objects.none(),  # Default to none
     )
-
 
     def __init__(self, *args, **kwargs):
         """
@@ -138,7 +137,14 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         """
 
         model = Session
-        fields = ("name", "session_type", "session_mode", "related_model", "related_prompt", "related_assistant")
+        fields = (
+            "name",
+            "session_type",
+            "session_mode",
+            "related_model",
+            "related_prompt",
+            "related_assistant",
+        )
 
     def validate(self, data) -> dict:
         """

@@ -8,21 +8,18 @@ from django.db import transaction
 from rest_framework import serializers
 
 from genflow.apps.core.serializers import (
+    EntityBaseWriteSerializer,
     EntityGroupReadSerializer,
     ProviderModelConfigReadSerializer,
-    EntityBaseWriteSerializer,
     common_entity_read_fields,
     common_entity_write_fields,
 )
 from genflow.apps.prompt.models import CommonPrompt, Prompt
 
 # Precompute the read and write fields for CommonPrompt
-common_prompt_read_fields = [
-    field.name for field in CommonPrompt._meta.get_fields()
-]
-common_prompt_write_fields = [
-    field.name for field in CommonPrompt._meta.get_fields()
-]
+common_prompt_read_fields = [field.name for field in CommonPrompt._meta.get_fields()]
+common_prompt_write_fields = [field.name for field in CommonPrompt._meta.get_fields()]
+
 
 class PromptReadSerializer(serializers.ModelSerializer):
     """
@@ -49,13 +46,17 @@ class PromptReadSerializer(serializers.ModelSerializer):
 
         model = Prompt
         # Dynamically includes fields from `CommonEntity` and `CommonPrompt` using precomputed lists.
-        fields = common_entity_read_fields + common_prompt_read_fields + [
-            "id",
-            "prompt_status",
-            "related_model",
-            "group",
-            "related_test_session",
-        ]
+        fields = (
+            common_entity_read_fields
+            + common_prompt_read_fields
+            + [
+                "id",
+                "prompt_status",
+                "related_model",
+                "group",
+                "related_test_session",
+            ]
+        )
 
 
 class PromptWriteSerializer(EntityBaseWriteSerializer):
@@ -68,11 +69,15 @@ class PromptWriteSerializer(EntityBaseWriteSerializer):
 
     class Meta:
         model = Prompt
-        fields = common_entity_write_fields + common_prompt_write_fields + [
-            "prompt_status",
-            "related_model",
-            "group_id",
-        ]
+        fields = (
+            common_entity_write_fields
+            + common_prompt_write_fields
+            + [
+                "prompt_status",
+                "related_model",
+                "group_id",
+            ]
+        )
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Prompt:

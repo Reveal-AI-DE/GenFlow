@@ -4,8 +4,8 @@
 
 from django.contrib.auth.models import User
 
-from genflow.apps.core.models import EntityGroup
 from genflow.apps.assistant.models import Assistant
+from genflow.apps.core.models import EntityGroup
 from genflow.apps.team.models import Team
 
 ASSISTANT_GROUP_DATA = {

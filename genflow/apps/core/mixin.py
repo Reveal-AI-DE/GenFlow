@@ -5,18 +5,20 @@
 from os import path as osp
 from typing import cast
 
-from drf_spectacular.utils import (
-    OpenApiResponse, extend_schema, extend_schema_view,
-)
-from rest_framework import viewsets, status
-from rest_framework.permissions import SAFE_METHODS
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
-from genflow.apps.common.storage import fs
 from genflow.apps.common.file_utils import get_files
+from genflow.apps.common.storage import fs
 from genflow.apps.core.models import EntityGroup
-from genflow.apps.core.serializers import EntityGroupReadSerializer, EntityGroupWriteSerializer, FileEntitySerializer
+from genflow.apps.core.serializers import (
+    EntityGroupReadSerializer,
+    EntityGroupWriteSerializer,
+    FileEntitySerializer,
+)
 from genflow.apps.team.middleware import HttpRequestWithIamContext
 
 
@@ -127,7 +129,7 @@ class FileManagementMixin:
 
         files = get_files(instance.dirname)
         serializer = FileEntitySerializer(files, many=True)
-        return Response(data={'results': serializer.data, 'count': len(serializer.data)})
+        return Response(data={"results": serializer.data, "count": len(serializer.data)})
 
     @action(detail=True, methods=["post"])
     def upload_file(self, request, pk=None):
@@ -140,10 +142,9 @@ class FileManagementMixin:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         uploaded_file = request.FILES.get("file", None)
-        serializer = FileEntitySerializer(data={
-            "dirname": instance.dirname,
-            "uploaded_file": uploaded_file
-        })
+        serializer = FileEntitySerializer(
+            data={"dirname": instance.dirname, "uploaded_file": uploaded_file}
+        )
 
         if serializer.is_valid():
             serializer.save()

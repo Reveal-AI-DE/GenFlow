@@ -5,11 +5,11 @@
 from django.db.models.query import QuerySet
 
 from genflow.apps.ai.llm.entities import Result
+from genflow.apps.assistant.models import Assistant, AssistantContextSource
 from genflow.apps.core.config.llm_model_bundle import LLMModelBundle
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
 from genflow.apps.core.models import Provider
-from genflow.apps.prompt.models import PromptType, Prompt
-from genflow.apps.assistant.models import AssistantContextSource, Assistant
+from genflow.apps.prompt.models import Prompt, PromptType
 from genflow.apps.session.generator.base import BaseGenerator
 from genflow.apps.session.generator.entities import GenerateEntity, GenerateRequest
 from genflow.apps.session.models import Session, SessionMode, SessionType
@@ -123,7 +123,7 @@ class ChatGenerator(BaseGenerator):
             if assistant.context_source == AssistantContextSource.FILES.value:
                 context = assistant.get_files_context()
             elif assistant.context_source == AssistantContextSource.COLLECTIONS.value:
-                context = ''
+                context = ""
 
         input_messages, stop = self.organize_input_messages(
             prompt_template_entity=self.generate_entity.prompt_entity,

@@ -4,9 +4,9 @@
 
 from django.conf import settings
 
-from genflow.apps.team.models import TeamRole
+from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
-from genflow.apps.core.permissions import EntityGroupPermission, EntityBasePermission
+from genflow.apps.team.models import TeamRole
 
 
 class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
@@ -22,9 +22,7 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         scopes_dict = EntityBasePermission.get_scopes_dict()
 
-        return [
-            scopes_dict.get(view.action, None)
-        ]
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):
@@ -94,9 +92,7 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
 
         scopes_dict.update(file_management_scopes_dict)
 
-        return [
-            scopes_dict.get(view.action, None)
-        ]
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):

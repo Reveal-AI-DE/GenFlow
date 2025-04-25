@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Callable, Generator, Optional, Union, List
+from typing import Callable, Generator, List, Optional, Union
 
 from genflow.apps.ai.base.entities.model import PropertyKey
 from genflow.apps.ai.llm.entities import Result, Usage

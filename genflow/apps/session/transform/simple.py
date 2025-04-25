@@ -30,7 +30,7 @@ class SimplePromptTransform(BasePromptTransform):
     def get_prompt(
         self,
         prompt_template_entity: PromptTemplateEntity,
-        query:Optional[str] = None,
+        query: Optional[str] = None,
         context: Optional[str] = None,
         files: Optional[str] = None,
         memory: bool = False,
