@@ -14,7 +14,7 @@ import { useFormContext } from 'react-hook-form';
 import {
     ImageInput as RAImageInput,
     ImageInputProps as RAImageInputProps,
-    Button, ImageField,
+    Button, ImageField, useNotify,
 } from 'react-admin';
 
 import { Dialog, CancelButton } from '@/common';
@@ -27,12 +27,17 @@ const ImageInput: FC<RAImageInputProps> = ({
     const [open, setOpen] = useState<boolean>(false);
     const [file, setFile] = useState<File | null>(null);
     const { setValue } = useFormContext();
+    const notify = useNotify();
 
     const handleClose = (): void => setOpen(false);
 
     const onDropAccepted: DropzoneProps['onDropAccepted'] = (files: File[]): void => {
         setFile(files[0]);
         setOpen(true);
+    };
+
+    const onDropRejected: DropzoneProps['onDropRejected'] = (): void => {
+        notify('message.image_not_supported', { type: 'warning'});
     };
 
     const transformFile = (fileObj: File): any => {
@@ -64,8 +69,13 @@ const ImageInput: FC<RAImageInputProps> = ({
                 {...props}
                 options={{
                     ...options,
+                    accept: {
+                        'image/*': ['.png', '.jpg']
+                    },
                     onDropAccepted,
+                    onDropRejected,
                 }}
+                maxSize={1024 * 1024} // 1MB
             >
                 <ImageField source='src' />
             </RAImageInput>

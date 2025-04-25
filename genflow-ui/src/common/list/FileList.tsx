@@ -40,8 +40,8 @@ const FileItem: FC<FileItemProps> = ({
             <InsertDriveFileIcon fontSize='small' />
         </ListItemIcon>
         <ListItemText
-            title={item.id}
-            secondary={truncateText(item.id, 50, 'characters')}
+            title={item.id as string}
+            secondary={truncateText(item.id as string, 50, 'characters')}
         />
     </ListItem>
 );
@@ -70,7 +70,7 @@ const FileList: FC<FileListProps> = ({
         </List>
     ) : (
         <Typography variant='body2'>
-            {translate('label.assistant.interface.no_files')}
+            {translate('label.assistant.no_files')}
         </Typography>
     ));
 }

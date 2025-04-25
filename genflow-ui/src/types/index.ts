@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
+export * from '@/types/assistant';
 export * from '@/types/common';
+export * from '@/types/file';
 export * from '@/types/message';
 export * from '@/types/model';
 export * from '@/types/prompt';
