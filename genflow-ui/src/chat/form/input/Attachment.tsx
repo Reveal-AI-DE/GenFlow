@@ -55,19 +55,23 @@ const Attachment: FC<AttachmentProps> = () => {
         setAttachedFile,
     } = useContext<SessionContextInterface>(SessionContext);
 
-    if (!attachedFile) {
-        return null;
-    }
+    const attachedFileId = attachedFile?.id || undefined;
 
-    const { completed } = useItemProgressListener(attachedFile.id) || { completed: 0 };
+    const { completed } = useItemProgressListener(attachedFileId) || { completed: 0 };
     const translate = useTranslate();
 
     useItemFinalizeListener((it: BatchItem) => {
-        setAttachedFile({
-            ...attachedFile,
-            state: it.state,
-        });
-    }, attachedFile.id);
+        if (attachedFile) {
+            setAttachedFile({
+                ...attachedFile,
+                state: it.state,
+            });
+        }
+    }, attachedFileId);
+
+    if (!attachedFile || !attachedFile.id) {
+        return null;
+    }
 
     const isSuccess = attachedFile.state === FILE_STATES.FINISHED;
     const isFinished = ![FILE_STATES.PENDING, FILE_STATES.UPLOADING].includes(
@@ -75,7 +79,9 @@ const Attachment: FC<AttachmentProps> = () => {
     );
 
     const handleRemoveAttachment = (): void => {
-        setAttachedFile(undefined);
+        if (attachedFile) {
+            setAttachedFile(undefined);
+        }
     }
 
     return (

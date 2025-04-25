@@ -10,7 +10,7 @@ import {
     useResourceContext,
 } from 'react-admin'
 
-import { Group } from '@/types';
+import { EntityGroup } from '@/types';
 import GroupFormDialog from '@/group/form/GroupFormDialog';
 import { GroupField } from '@/group/show';
 
@@ -39,7 +39,7 @@ interface GroupSelectInputProps extends ReferenceInputProps {
 }
 
 const GroupSelectInput: FC<GroupSelectInputProps> = ({
-    source='group_id',
+    source='group.id',
     reference,
     showCreateOption=true,
     ...props
@@ -47,7 +47,7 @@ const GroupSelectInput: FC<GroupSelectInputProps> = ({
     const getResourceLabel = useGetResourceLabel();
     const translate = useTranslate();
 
-    const renderOptionText = useCallback((choice: Group) => (
+    const renderOptionText = useCallback((choice: EntityGroup) => (
         <RecordContextProvider value={choice}>
             <GroupField key={choice.id} />
         </RecordContextProvider>

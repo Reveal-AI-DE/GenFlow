@@ -5,8 +5,9 @@
 import { DataProvider } from 'react-admin';
 
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
+import { entityDataProvider } from '@/entity';
+import { fileDataProvider } from '@/file';
 import { modelDataProvider } from '@/provider/model';
-import { promptDataProvider } from '@/prompt';
 import { systemDataProvider } from '@/system';
 import { userDataProvider } from '@/user';
 
@@ -15,7 +16,13 @@ type Providers = {
 };
 
 const providers: Providers = {
+    assistants: {
+        ...defaultDataProvider,
+        ...entityDataProvider,
+    },
+    'assistant-groups': defaultDataProvider,
     invitations: defaultDataProvider,
+    files: fileDataProvider,
     memberships: defaultDataProvider,
     messages: defaultDataProvider,
     models: {
@@ -24,7 +31,7 @@ const providers: Providers = {
     },
     prompts: {
         ...defaultDataProvider,
-        ...promptDataProvider
+        ...entityDataProvider
     },
     'prompt-groups': defaultDataProvider,
     providers: defaultDataProvider,
@@ -56,11 +63,16 @@ const dataProviderWrapper: DataProvider = {
     updateMany: createMethod('updateMany'),
     delete: createMethod('delete'),
     deleteMany: createMethod('deleteMany'),
-    // Add any additional methods here
+    // system
     getAbout: createMethod('getAbout'),
+    // users
     self: createMethod('self'),
     check: createMethod('check'),
+    // models
     getParameterConfig: createMethod('getParameterConfig'),
+    // files
+    getFiles: createMethod('getFiles'),
+    deleteFile: createMethod('deleteFile'),
 };
 
 export {

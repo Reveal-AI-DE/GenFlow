@@ -6,17 +6,17 @@ import React, { FC, useContext, useState } from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTranslate, useRecordContext } from 'react-admin';
 import Uploady, { UploadyProps } from '@rpldy/uploady';
-import queryString from 'query-string';
 
 import { SessionContext, SessionContextInterface } from '@/context';
 import { Session } from '@/types';
 import { useChatHandler } from '@/hook';
-import { ResourceURL } from '@/utils';
-import { createOptions } from '@/auth/authProvider';
 import { TextareaAutosize } from '@/common';
+import { createUploadyDestination } from '@/utils';
+
 import SendButton from '@/chat/form/input/SendButton';
 import AttachButton from '@/chat/form/input/AttachButton';
 import Attachment from '@/chat/form/input/Attachment';
+import PromptSelection, { PromptSelectionButton } from './PromptSelection';
 
 type ChatInputProps = UploadyProps
 
@@ -39,19 +39,7 @@ const ChatInput: FC<ChatInputProps> = ({
         setUserInput(value);
     }
 
-    const url = ResourceURL(`/files?${queryString.stringify({
-        resource: 'sessions',
-        resource_id: session?.id,
-    })}`);
-    const options = createOptions(url);
-    if (!options.user || !options.headers) {
-        return null;
-    }
-    options.headers.set('authorization', options.user.token);
-    const headersRecord: Record<string, string> = {};
-    options.headers.forEach((value, key) => {
-        headersRecord[key] = value;
-    });
+    const destination = session ? createUploadyDestination('sessions', session.id) : undefined;
 
     return (
         <Uploady
@@ -60,11 +48,9 @@ const ChatInput: FC<ChatInputProps> = ({
             autoUpload={false}
             clearPendingOnAdd
             accept='text/plain,text/html,application/pdf'
-            destination={{
-                url,
-                headers: headersRecord,
-            }}
+            destination={destination || undefined}
         >
+            <PromptSelection />
             <Attachment />
             <TextareaAutosize
                 formControlProps={{
@@ -87,6 +73,7 @@ const ChatInput: FC<ChatInputProps> = ({
                                 marginTop: '0 !important'
                             }}
                         >
+                            <PromptSelectionButton />
                             <AttachButton />
                         </InputAdornment>
                     ),

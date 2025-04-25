@@ -13,7 +13,7 @@ import {
 } from 'react-admin';
 
 import {
-    PromptStatus, Prompt
+    PromptStatus, Prompt, PromptData,
 } from '@/types';
 import { CancelButton } from '@/common';
 
@@ -31,17 +31,31 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
     const redirect = useRedirect();
     const prompt = useRecordContext<Prompt>();
 
-    const transformToPublish = (data: any): Prompt => ({
-        ...data,
-        status: data.status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
+    const transform = (values: Prompt): PromptData => {
+        const { group, related_model: relatedModel, ...rest } = values;
+        const { provider_name: providerName, model_name: modelName, config } = relatedModel;
+        return ({
+            group_id: group.id,
+            related_model: {
+                provider_name: providerName,
+                model_name: modelName,
+                config,
+            },
+            ...rest,
+        })
+    };
+
+    const transformToPublish = (data: Prompt): PromptData => ({
+        ...transform(data),
+        prompt_status: data.prompt_status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
     });
 
     const renderPublishButton = (currentPrompt: Prompt | undefined): JSX.Element | null => (currentPrompt ? (
         <SaveButton
             type='button'
-            label={currentPrompt.status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
+            label={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
             variant='outlined'
-            icon={currentPrompt.status === PromptStatus.PUBLISHED ? (
+            icon={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? (
                 <UnpublishedIcon />
             ) : (
                 <PublishIcon />
@@ -64,6 +78,7 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
             icon={<BiotechIcon />}
             variant='outlined'
             alwaysEnable={!createMode}
+            transform={transform}
         />
     );
 
@@ -94,6 +109,7 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
                         label='action.draft'
                         variant='outlined'
                         icon={<SaveAsIcon />}
+                        transform={transform}
                     />
                 ) : (
                     renderPublishButton(prompt)

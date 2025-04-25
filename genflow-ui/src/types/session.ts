@@ -4,13 +4,14 @@
 
 import { RaRecord } from 'react-admin'
 
-import { FileEntity } from '@/types/common';
+import { FileEntity } from '@/types/file';
 import { ModelConfigWithEntity, Parameters, ChatModelSetting } from '@/types/model';
 import { Prompt, ChatPromptSetting } from '@/types/prompt';
 
 export enum SessionType {
     LLM = 'llm',
     PROMPT = 'prompt',
+    ASSISTANT = 'assistant',
 };
 
 export enum SessionMode {

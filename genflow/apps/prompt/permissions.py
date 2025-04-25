@@ -4,25 +4,15 @@
 
 from django.conf import settings
 
-from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
+from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
+from genflow.apps.iam.permissions import GenFLowBasePermission
 from genflow.apps.team.models import TeamRole
 
 
-class PromptGroupPermission(GenFLowBasePermission):
+class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
     """
     Handles the permissions for prompt group-related actions.
     """
-
-    class Scopes(StrEnum):
-        """
-        Defines the possible scopes of actions.
-        """
-
-        LIST = "list"
-        CREATE = "create"
-        RETRIEVE = "retrieve"
-        UPDATE = "update"
-        DELETE = "delete"
 
     @staticmethod
     def get_scopes(request, view, obj):
@@ -30,16 +20,9 @@ class PromptGroupPermission(GenFLowBasePermission):
         Returns the scope of the action being performed based on the view's action.
         """
 
-        Scopes = __class__.Scopes
-        return [
-            {
-                "list": Scopes.LIST,
-                "create": Scopes.CREATE,
-                "retrieve": Scopes.RETRIEVE,
-                "destroy": Scopes.DELETE,
-                "partial_update": Scopes.UPDATE,
-            }.get(view.action, None)
-        ]
+        scopes_dict = EntityBasePermission.get_scopes_dict()
+
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):
@@ -68,48 +51,20 @@ class PromptGroupPermission(GenFLowBasePermission):
             return True
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
-
-        # team member cam list prompt groups
-        # team member can create a prompt group
-        # team member can retrieve a prompt group
-        if (
-            self.scope == self.Scopes.LIST
-            or self.scope == self.Scopes.CREATE
-            or self.scope == self.Scopes.RETRIEVE
-        ):
-            return self.team_role is not None
-
-        # team owner or prompt group owner can update the prompt group
-        # team owner or prompt group owner can delete the prompt group
-        if self.scope == self.Scopes.UPDATE or self.scope == self.Scopes.DELETE:
-            return is_team_owner or self.obj.owner_id == self.user_id
-
-        return False
+        return EntityBasePermission.check_base_scopes(self, is_team_owner)
 
     def filter(self, queryset):
-        """'
-        Filters the queryset based on the permissions
+        """
+        Filters the queryset based on the user's permissions.
         """
 
-        return queryset
+        return EntityGroupPermission.filter(self, queryset)
 
 
-class PromptPermission(GenFLowBasePermission):
+class PromptPermission(GenFLowBasePermission, EntityBasePermission):
     """
     Handles the permissions for prompt-related actions.
     """
-
-    class Scopes(StrEnum):
-        """
-        Defines the possible scopes of actions.
-        """
-
-        LIST = "list"
-        CREATE = "create"
-        RETRIEVE = "retrieve"
-        UPDATE = "update"
-        DELETE = "delete"
-        UPLOAD_AVATAR = "upload_avatar"
 
     @staticmethod
     def get_scopes(request, view, obj):
@@ -117,17 +72,9 @@ class PromptPermission(GenFLowBasePermission):
         Returns the scope of the action being performed based on the view's action.
         """
 
-        Scopes = __class__.Scopes
-        return [
-            {
-                "list": Scopes.LIST,
-                "create": Scopes.CREATE,
-                "retrieve": Scopes.RETRIEVE,
-                "destroy": Scopes.DELETE,
-                "partial_update": Scopes.UPDATE,
-                "upload_avatar": Scopes.UPLOAD_AVATAR,
-            }.get(view.action, None)
-        ]
+        scopes_dict = EntityBasePermission.get_scopes_dict()
+
+        return [scopes_dict.get(view.action, None)]
 
     @classmethod
     def create(cls, request, view, obj, iam_context):
@@ -147,6 +94,7 @@ class PromptPermission(GenFLowBasePermission):
         """
         Checks if the user has access based on their group name and team role.
         """
+
         # if no team -> no access
         if self.team_id is None:
             return False
@@ -156,27 +104,11 @@ class PromptPermission(GenFLowBasePermission):
             return True
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
-
-        # team member cam list prompt groups
-        # team member can create a prompt group
-        # team member can retrieve a prompt group
-        if (
-            self.scope == self.Scopes.LIST
-            or self.scope == self.Scopes.CREATE
-            or self.scope == self.Scopes.RETRIEVE
-        ):
-            return self.team_role is not None
-
-        # team owner or prompt group owner can update the prompt group
-        # team owner or prompt group owner can delete the prompt group
-        if self.scope == self.Scopes.UPDATE or self.scope == self.Scopes.DELETE:
-            return is_team_owner or self.obj.owner_id == self.user_id
-
-        return False
+        return EntityBasePermission.check_base_scopes(self, is_team_owner)
 
     def filter(self, queryset):
-        """'
-        Filters the queryset based on the permissions
+        """
+        Filters the queryset based on the user's permissions.
         """
 
-        return queryset
+        return EntityBasePermission.filter(self, queryset)

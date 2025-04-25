@@ -10,7 +10,7 @@ import { useRecordContext } from 'react-admin';
 import { styled } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 
-import { Group } from '@/types';
+import { EntityGroup } from '@/types';
 
 interface StyledBoxProps {
     color: string;
@@ -38,9 +38,9 @@ interface GroupFieldProps {
 const GroupField: FC<GroupFieldProps> = ({
     slots = [GroupFieldSlot.COLOR, GroupFieldSlot.LABEL],
 }) => {
-    const record = useRecordContext<Group>();
+    const groupEntity = useRecordContext<EntityGroup>();
 
-    if (!record) {
+    if (!groupEntity) {
         return null;
     }
 
@@ -48,16 +48,16 @@ const GroupField: FC<GroupFieldProps> = ({
         switch (slot) {
             case GroupFieldSlot.COLOR:
                 return (
-                    <Tooltip title={record.name}>
+                    <Tooltip title={groupEntity.name}>
                         <StyledBox
-                            ownerState={{ color: record.color }}
+                            ownerState={{ color: groupEntity.color }}
                         />
                     </Tooltip>
                 );
             case GroupFieldSlot.LABEL:
                 return (
                     <Typography>
-                        {record.name}
+                        {groupEntity.name}
                     </Typography>
                 );
             default:

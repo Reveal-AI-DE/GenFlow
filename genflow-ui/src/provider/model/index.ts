@@ -5,7 +5,7 @@
 import { ResourceProps } from 'react-admin';
 
 import modelDataProvider from '@/provider/model/modelDataProvider';
-import { ModelSelectInput } from '@/provider/model/form';
+import { ModelParameterForm, ModelSelectInput } from '@/provider/model/form';
 import { ModelConfigCard } from '@/provider/model/show';
 
 const ModelResourceProps: ResourceProps = {
@@ -14,6 +14,7 @@ const ModelResourceProps: ResourceProps = {
 
 export {
     ModelResourceProps,
+    ModelParameterForm,
     ModelSelectInput,
     ModelConfigCard,
     modelDataProvider,

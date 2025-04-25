@@ -9,7 +9,7 @@ from django.db import models
 from django.utils.text import get_valid_filename
 
 from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
-from genflow.apps.core.models import EntityGroup, ProviderModelConfig
+from genflow.apps.core.models import AIAssociatedEntity, CommonEntity
 
 
 def get_prompt_media_path(instance: "Prompt", filename: str) -> str:
@@ -41,37 +41,52 @@ class PromptStatus(models.TextChoices):
     PUBLISHED = "published"
 
 
-class Prompt(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
+class CommonPrompt(models.Model):
+    """
+    Abstract base model for prompts common fields.
+
+    Attributes:
+        pre_prompt (models.TextField): The text content of the pre-prompt.
+        suggested_questions (models.JSONField): A JSON field to store suggested questions, can be null.
+        prompt_type (models.CharField): The type of the prompt, with choices defined in `PromptType`
+            and a default value of `PromptType.SIMPLE`.
+
+    Meta:
+        abstract (bool): Indicates that this is an abstract model and will not be used to create any database table.
+    """
+
+    pre_prompt = models.TextField()
+    suggested_questions = models.JSONField(null=True)
+    prompt_type = models.CharField(
+        max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Prompt(
+    CommonEntity,
+    CommonPrompt,
+    AIAssociatedEntity,
+    TimeAuditModel,
+    UserOwnedModel,
+    TeamAssociatedModel,
+):
     """
     Represents a Prompt entity with various attributes and relationships.
 
     Attributes:
-        name (str): The name of the prompt, limited to 255 characters.
-        description (str): A detailed description of the prompt.
-        pre_prompt (str): Text that serves as a pre-prompt for the main content.
-        suggested_questions (dict, optional): JSON field containing suggested questions related to the prompt.
-        type (str): The type of the prompt, with choices defined in `PromptType`. Defaults to `PromptType.SIMPLE`.
-        status (str): The status of the prompt, with choices defined in `PromptStatus`. Defaults to `PromptStatus.DRAFTED`.
+        prompt_status (str): The status of the prompt, with choices defined in `PromptStatus`. Defaults to `PromptStatus.DRAFTED`.
         avatar (ImageField, optional): An image associated with the prompt, uploaded to a specific media path. Can be null or blank.
-        group (ForeignKey): A foreign key linking the prompt to a `PromptGroup`. Cannot be null.
-        related_model (OneToOneField, optional): A one-to-one relationship with `ProviderModelConfig`. Can be null.
         related_test_session (int, optional): An integer field representing a related test session. Can be null.
-        is_pinned (bool): A boolean indicating whether the prompt is pinned. Defaults to `False`.
     """
 
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    pre_prompt = models.TextField()
-    suggested_questions = models.JSONField(null=True)
-    type = models.CharField(max_length=10, choices=PromptType.choices, default=PromptType.SIMPLE)
-    status = models.CharField(
+    prompt_status = models.CharField(
         max_length=10, choices=PromptStatus.choices, default=PromptStatus.DRAFTED
     )
     avatar = models.ImageField(upload_to=get_prompt_media_path, null=True, blank=True)
-    group = models.ForeignKey(EntityGroup, null=False, on_delete=models.CASCADE)
-    related_model = models.OneToOneField(ProviderModelConfig, null=True, on_delete=models.CASCADE)
     related_test_session = models.IntegerField(null=True)
-    is_pinned = models.BooleanField(default=False)
 
     def media_dir(self) -> str:
         """

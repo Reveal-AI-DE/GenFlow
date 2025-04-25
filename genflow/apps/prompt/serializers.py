@@ -7,13 +7,18 @@ import os
 from django.db import transaction
 from rest_framework import serializers
 
-from genflow.apps.core.models import EntityGroup, ProviderModelConfig
 from genflow.apps.core.serializers import (
+    EntityBaseWriteSerializer,
     EntityGroupReadSerializer,
     ProviderModelConfigReadSerializer,
-    ProviderModelConfigWriteSerializer,
+    common_entity_read_fields,
+    common_entity_write_fields,
 )
-from genflow.apps.prompt.models import Prompt
+from genflow.apps.prompt.models import CommonPrompt, Prompt
+
+# Precompute the read and write fields for CommonPrompt
+common_prompt_read_fields = [field.name for field in CommonPrompt._meta.get_fields()]
+common_prompt_write_fields = [field.name for field in CommonPrompt._meta.get_fields()]
 
 
 class PromptReadSerializer(serializers.ModelSerializer):
@@ -40,57 +45,39 @@ class PromptReadSerializer(serializers.ModelSerializer):
         """
 
         model = Prompt
-        fields = [
-            "id",
-            "name",
-            "description",
-            "pre_prompt",
-            "is_pinned",
-            "suggested_questions",
-            "type",
-            "status",
-            "related_model",
-            "group",
-            "group_id",
-            "avatar",
-            "related_test_session",
-        ]
+        # Dynamically includes fields from `CommonEntity` and `CommonPrompt` using precomputed lists.
+        fields = (
+            common_entity_read_fields
+            + common_prompt_read_fields
+            + [
+                "id",
+                "prompt_status",
+                "related_model",
+                "group",
+                "related_test_session",
+            ]
+        )
 
 
-class PromptWriteSerializer(serializers.ModelSerializer):
+class PromptWriteSerializer(EntityBaseWriteSerializer):
     """
     Serializer for writing Prompt data, to be used by post/patch actions.
     """
 
-    related_model = ProviderModelConfigWriteSerializer()
-    group_id = serializers.PrimaryKeyRelatedField(
-        queryset=EntityGroup.objects.none(), source="group"  # Default to none
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request = self.context.get("request")
-        if request and hasattr(request, "iam_context"):
-            team = request.iam_context.team
-            if team:
-                # Filter queryset based on the iam_context
-                self.fields["group_id"].queryset = EntityGroup.objects.filter(
-                    entity_type=self.Meta.model.__name__.lower(), team=team
-                )
 
     class Meta:
         model = Prompt
-        fields = [
-            "name",
-            "description",
-            "pre_prompt",
-            "suggested_questions",
-            "is_pinned",
-            "type",
-            "status",
-            "related_model",
-            "group_id",
-        ]
+        fields = (
+            common_entity_write_fields
+            + common_prompt_write_fields
+            + [
+                "prompt_status",
+                "related_model",
+                "group_id",
+            ]
+        )
 
     @transaction.atomic
     def create(self, validated_data: dict) -> Prompt:
@@ -98,11 +85,7 @@ class PromptWriteSerializer(serializers.ModelSerializer):
         Creates and returns a new Prompt instance along with its related model and media directory.
         """
 
-        related_model = validated_data.pop("related_model")
-        group = validated_data.pop("group")
-        # Creates a new ProviderModelConfig instance using the 'related_model' data.
-        related_model = ProviderModelConfig.objects.create(**related_model)
-        # Creates a new Prompt instance with the provided data.
+        group, related_model = super().create(validated_data)
         prompt = Prompt.objects.create(related_model=related_model, group=group, **validated_data)
         # Ensures the media directory for the Prompt instance exists by creating it if necessary.
         os.makedirs(prompt.media_dir(), exist_ok=True)
@@ -112,17 +95,8 @@ class PromptWriteSerializer(serializers.ModelSerializer):
     def update(self, instance: Prompt, validated_data: dict) -> Prompt:
         """
         Updates the instance with the provided validated data.
-
-        If the `related_model` key is present in the validated data, it updates
-        the related model using the `ProviderModelConfigWriteSerializer`.
         """
 
-        related_model = validated_data.pop("related_model", None)
-        if related_model:
-            related_model_serializer = ProviderModelConfigWriteSerializer(
-                instance=instance.related_model, context=self.context
-            )
-            related_model_serializer.update(instance.related_model, related_model)
         return super().update(instance, validated_data)
 
     def to_representation(self, instance: Prompt) -> dict:

@@ -11,10 +11,7 @@ from genflow.apps.core.models import Provider
 from genflow.apps.session.generator.chat import ChatGenerator
 from genflow.apps.session.generator.entities import GenerateRequest
 from genflow.apps.session.models import Session, SessionMessage
-from genflow.apps.session.serializers import (
-    GenerateRequestSerializer,
-    SessionMessageReadSerializer,
-)
+from genflow.apps.session.serializers import GenerateRequestSerializer, SessionMessageReadSerializer
 from genflow.apps.websocket.auth_middleware import WebSocketRequest
 from genflow.apps.websocket.consumer import exception
 from genflow.apps.websocket.consumer.base import BaseConsumer

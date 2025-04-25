@@ -25,6 +25,7 @@ const ModelParameters: FC<ModelParametersProps> = ({
         .filter((config) => !config.advanced);
     const advancedConfigs = parameterConfigs
         .filter((config) => config.advanced);
+
     const renderParameter = (config: ConfigurationEntity): JSX.Element => {
         const source = namePrefix ? `${namePrefix}.${config.name}` : ''
 
@@ -36,7 +37,7 @@ const ModelParameters: FC<ModelParametersProps> = ({
                 <TextField
                     source={source}
                     defaultValue={
-                        parameters ? parameters[config.name] as string : config.default as string
+                        parameters[config.name] ? parameters[config.name] as string : config.default as string
                     }
                 />
             </Labeled>

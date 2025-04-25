@@ -21,7 +21,7 @@ import genflow.apps.core.permissions as perms
 from genflow.apps.ai.base.entities.shared import ModelType
 from genflow.apps.core.config.entities import ModelWithProviderEntity
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
-from genflow.apps.core.models import AboutSystem, Provider
+from genflow.apps.core.models import AboutSystem, CommonEntity, Provider
 from genflow.apps.core.serializers import (
     AIProviderConfigurationSerializer,
     ConfigurationEntitySerializer,
@@ -344,3 +344,46 @@ class AIModelViewSet(
         self.check_object_permissions(request, model)
 
         return model
+
+
+class EntityBaseViewSet(viewsets.ModelViewSet):
+    """
+    Base view set for managing entities. It provides common functionality.
+    It must be inherited by other view sets that manage models that are
+    subclassed from CommonEntity.
+    """
+
+    search_fields = ["name", "description"]
+    filterset_fields = ["group__id", "is_pinned"]
+    ordering_fields = ["name", "group__name"]
+    iam_team_field = "team"
+
+    def perform_create(self, serializer):
+        """
+        Saves a new instance, associating it with the current user and team.
+        """
+
+        request = cast(HttpRequestWithIamContext, self.request)
+        serializer.save(
+            owner=self.request.user,
+            team=request.iam_context.team,
+        )
+
+    def perform_destroy(self, instance: CommonEntity):
+        """
+        Deletes the instance and removes its associated media directory if it exists.
+        """
+
+        instance.remove_media_dir()
+        return super().perform_destroy(instance)
+
+    @action(detail=True, methods=["post"])
+    def upload_avatar(self, request, pk=None):
+        """
+        A custom action to upload an avatar for a specific instance.
+        """
+
+        entity: CommonEntity = self.get_object()
+        entity.avatar = request.FILES.get("avatar", None)
+        entity.save()
+        return Response(status=status.HTTP_200_OK)

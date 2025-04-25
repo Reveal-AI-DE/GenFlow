@@ -27,11 +27,10 @@ export const SessionState: FC<SessionStateProps> = ({
     actions,
 }) => {
     const session = useRecordContext<Session>();
-    if (!session) return null;
 
     const dataProvider = useDataProvider();
 
-    const [generateURL] = useState<string>(createGenerateURL(session));
+    const [generateURL, setGenerateURL] = useState<string | undefined>(undefined);
 
     const [userInput, setUserInput] = useState<string>('');
     const [attachedFile, setAttachedFile] = useState<BatchItem | undefined>(undefined);
@@ -44,11 +43,18 @@ export const SessionState: FC<SessionStateProps> = ({
 
     const [isResponsiveLayout, setIsResponsiveLayout] = useState<boolean>(true);
     const [floatActions, setFloatActions] = useState<SessionFloatActionKey[]>(actions || []);
+    const [promptSelection, setPromptSelection] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (session) {
+            setGenerateURL(createGenerateURL(session));
+        }
+    }, [session]);
 
     const fetchSessionMessages = async (): Promise<void> => {
         // get stored messages
         dataProvider.getList('messages', {
-            filter: {session: session.id},
+            filter: {session: session?.id},
             pagination: { page: 1, perPage: -1 }
         }).then((messageData: any) => {
             const { data: messages } = messageData;
@@ -58,7 +64,7 @@ export const SessionState: FC<SessionStateProps> = ({
     };
 
     const initializeChatSetting = async (): Promise<void> => {
-        if (!session.related_model || !session.related_model.entity.parameter_configs) return;
+        if (!session?.related_model || !session.related_model.entity.parameter_configs) return;
         // initialize chat setting
         setChatSetting({
             ...chatSetting,
@@ -73,7 +79,7 @@ export const SessionState: FC<SessionStateProps> = ({
     };
 
     const fetchInitialData = async (): Promise<void> => {
-        switch(session.session_type) {
+        switch(session?.session_type) {
             case SessionType.LLM:
                 setFloatActions([
                     SessionFloatActionKey.SETTINGS,
@@ -83,6 +89,13 @@ export const SessionState: FC<SessionStateProps> = ({
                 ]);
                 break;
             case SessionType.PROMPT:
+                setFloatActions([
+                    SessionFloatActionKey.INFO,
+                    SessionFloatActionKey.USAGE,
+                    SessionFloatActionKey.NEW,
+                ]);
+                break;
+            case SessionType.ASSISTANT:
                 setFloatActions([
                     SessionFloatActionKey.INFO,
                     SessionFloatActionKey.USAGE,
@@ -100,9 +113,11 @@ export const SessionState: FC<SessionStateProps> = ({
 
     useEffect(() => {
         (async () => {
-            await fetchInitialData().then(() => setIsLoadingInitialData(false));
+            if (session) {
+                await fetchInitialData().then(() => setIsLoadingInitialData(false));
+            }
         })();
-    }, []);
+    }, [session]);
 
     const contextValue = React.useMemo(() => ({
         generateURL,
@@ -124,6 +139,8 @@ export const SessionState: FC<SessionStateProps> = ({
 
         isResponsiveLayout,
         floatActions,
+        promptSelection,
+        setPromptSelection,
     }), [
         isLoadingInitialData,
         userInput,
@@ -131,7 +148,10 @@ export const SessionState: FC<SessionStateProps> = ({
         sessionMessages,
         isGenerating,
         attachedFile,
+        promptSelection,
     ]);
+
+    if (!session) return null;
 
     return (
         <SessionContext.Provider value={contextValue}>

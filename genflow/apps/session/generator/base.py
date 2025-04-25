@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import Callable, Generator, Optional, Union
+from typing import Callable, Generator, List, Optional, Union
 
 from genflow.apps.ai.base.entities.model import PropertyKey
 from genflow.apps.ai.llm.entities import Result, Usage
@@ -120,11 +120,11 @@ class BaseGenerator:
     def organize_input_messages(
         self,
         prompt_template_entity: PromptTemplateEntity,
-        files: Optional[str] = None,
         query: Optional[str] = None,
-        context: Optional[str] = None,
+        context: Optional[str | List[str]] = None,
+        files: Optional[str] = None,
         memory: bool = False,
-    ) -> tuple[list[Message], Optional[list[str]]]:
+    ) -> tuple[list[Message], Optional[List[str]]]:
         """
         Organizes input messages based on the provided prompt template, files, query,
             context, and memory. Returns the generated input messages and stop tokens.
@@ -143,9 +143,9 @@ class BaseGenerator:
             )
             input_messages, stop = prompt_transform.get_prompt(
                 prompt_template_entity=prompt_template_entity,
-                files=files or "",
-                query=query or "",
-                context=context or "",
+                context=context,
+                query=query,
+                files=files,
                 memory=memory,
             )
         else:

@@ -305,7 +305,7 @@ class PromptListTestCase(PromptTestCase):
         url = f"/api/prompts?team={team_id}" if team_id else "/api/prompts"
         with ForceLogin(user, self.client):
             response = self.client.get(url)
-            return response
+        return response
 
     def test_list_prompt_admin_no_team(self):
         response = self.list_prompt(self.admin_user)

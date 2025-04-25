@@ -4,44 +4,33 @@
 
 import React, { FC } from 'react';
 import {
-    useRecordContext, SimpleShowLayout,
-    TextField, ReferenceField, RecordContextProvider,
+    useRecordContext, RecordContextProvider,
 } from 'react-admin';
 
 import { Prompt } from '@/types';
 import { TruncatedTextField } from '@/common';
+import { EntityInfo } from '@/entity';
 import { ModelConfigCard } from '@/provider/model';
-import { GroupField } from '@/group';
 
 type PromptInfoProps = object;
 
 const PromptInfo: FC<PromptInfoProps> = () => {
-    const record = useRecordContext<Prompt>();
+    const prompt = useRecordContext<Prompt>();
 
-    if (!record) {
+    if (!prompt) {
         return null;
     }
 
     return (
-        <>
-            <SimpleShowLayout
-                spacing={1}
-                sx={{ pl: 0 }}
-            >
-                <ReferenceField
-                    source='group_id'
-                    reference='prompt-groups'
-                >
-                    <GroupField />
-                </ReferenceField>
-                <TextField source='name' />
-                <TruncatedTextField source='description' />
+        <EntityInfo
+            additionalFields={(
                 <TruncatedTextField source='pre_prompt' />
-            </SimpleShowLayout>
-            <RecordContextProvider value={record.related_model}>
+            )}
+        >
+            <RecordContextProvider value={prompt.related_model}>
                 <ModelConfigCard />
             </RecordContextProvider>
-        </>
+        </EntityInfo>
 
     );
 };

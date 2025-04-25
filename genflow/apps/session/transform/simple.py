@@ -30,10 +30,10 @@ class SimplePromptTransform(BasePromptTransform):
     def get_prompt(
         self,
         prompt_template_entity: PromptTemplateEntity,
-        files: str,
-        query: str,
-        context: Optional[str],
-        memory: bool,
+        query: Optional[str] = None,
+        context: Optional[str] = None,
+        files: Optional[str] = None,
+        memory: bool = False,
     ) -> tuple[List[Message], Optional[List[str]]]:
         """
         Generates a list of chat model messages and optionally a list of
@@ -54,10 +54,10 @@ class SimplePromptTransform(BasePromptTransform):
     def _get_chat_model_messages(
         self,
         pre_prompt: str,
-        files: str,
-        query: Optional[str],
         context: Optional[str],
-        memory: bool,
+        query: Optional[str] = None,
+        files: Optional[str] = None,
+        memory: bool = False,
     ) -> tuple[list[Message], Optional[list[str]]]:
         """
         Constructs the chat model messages by combining the pre-prompt,
@@ -88,14 +88,15 @@ class SimplePromptTransform(BasePromptTransform):
     def get_last_user_message(
         self,
         prompt: str,
-        files: str,
+        files: Optional[str] = None,
     ) -> UserMessage:
         """
         Creates and returns the last user message by combining the prompt and
             files into a single message content.
         """
-
-        message_contents = f"{prompt}\n{files}"
+        message_contents = prompt
+        if files is not None:
+            message_contents += f"\n{files}"
         message = UserMessage(content=message_contents)
 
         return message

@@ -37,7 +37,7 @@ const ListGridSwitcher = ({
     };
 
     let width = '100%';
-    if (isSmall) width = 'auto';
+    if (isSmall && aside) width = 'auto';
     if (aside) width = 'calc(100% - 16em)';
 
     const renderTopBar = (): JSX.Element | null => {

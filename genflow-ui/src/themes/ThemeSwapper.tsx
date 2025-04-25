@@ -13,7 +13,7 @@ import { themes, ThemeName, Theme } from './Themes';
 
 const ucFirst = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-const themeSwapper = (): JSX.Element => {
+const ThemeSwapper = (): JSX.Element => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
@@ -28,6 +28,7 @@ const themeSwapper = (): JSX.Element => {
         const newTheme = themes[index];
         setThemeName(newTheme.name);
         setAnchorEl(null);
+        window.location.reload();
     };
     const currentTheme = themes.find((theme: Theme) => theme.name === themeName);
 
@@ -64,4 +65,4 @@ const themeSwapper = (): JSX.Element => {
     );
 };
 
-export default themeSwapper;
+export default ThemeSwapper;

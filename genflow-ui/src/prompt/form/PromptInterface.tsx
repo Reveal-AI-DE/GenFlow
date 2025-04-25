@@ -11,7 +11,7 @@ import {
 } from 'react-admin';
 import { matchPath, useLocation } from 'react-router';
 
-import { ModelParameterForm } from '@/provider/model/form';
+import { ModelParameterForm } from '@/provider/model';
 
 import { PromptInfo } from '@/prompt/show';
 import { PromptTestSession} from '@/session/prompt';

@@ -2,7 +2,9 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { RaRecord } from 'react-admin';
+import { RaRecord, Identifier } from 'react-admin';
+
+import { ModelConfig, ModelConfigWithEntity } from '@/types/model';
 
 export interface MetaParams {
     queryParams?: {
@@ -77,13 +79,33 @@ export enum ModelType {
     LLM = 'llm',
 };
 
-export interface Group extends RaRecord {
+export interface EntityGroup extends RaRecord {
     name: string;
     description: string;
     color: string;
 };
 
-export interface FileEntity {
-    id: string;
-    path: string;
+export interface CommonEntity extends RaRecord {
+    name: string;
+    description: string;
+    group: EntityGroup;
+    avatar: string;
+    is_pinned: boolean;
+};
+
+export interface CommonEntityData extends Omit<CommonEntity, 'group'> {
+    group_id: Identifier;
+};
+
+export interface AIAssociatedEntity {
+    related_model: ModelConfigWithEntity;
+};
+
+export interface AIAssociatedEntityData {
+    related_model: ModelConfig;
+};
+
+export enum FormMode {
+    CREATE = 'create',
+    EDIT = 'edit',
 };

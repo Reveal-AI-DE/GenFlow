@@ -7,18 +7,26 @@ from os import path as osp
 from typing import Any, cast
 
 from django.conf import settings
+from django.db import transaction
 from rest_framework import serializers
 
 from genflow.apps.ai import ai_provider_factory
 from genflow.apps.ai.base.entities.provider import CommonAIProviderEntity
-from genflow.apps.common.entities import ConfigurationEntity, TranslationEntity
+from genflow.apps.common.entities import ConfigurationEntity, FileEntity, TranslationEntity
 from genflow.apps.common.file_utils import create_media_symbolic_links
 from genflow.apps.common.security.encryptor import decrypt_token, encrypt_token
+from genflow.apps.common.storage import fs
 from genflow.apps.core.config.entities import AIProviderConfiguration, ModelWithProviderEntity
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
-from genflow.apps.core.models import EntityGroup, Provider, ProviderModelConfig
+from genflow.apps.core.models import CommonEntity, EntityGroup, Provider, ProviderModelConfig
 from genflow.apps.team.middleware import HttpRequestWithIamContext
 from genflow.apps.team.models import Team
+
+# Precompute the read and write fields for CommonEntity
+common_entity_read_fields = [field.name for field in CommonEntity._meta.get_fields()]
+common_entity_write_fields = [
+    field.name for field in CommonEntity._meta.get_fields() if field.name not in ["avatar", "group"]
+]
 
 
 class EntityGroupReadSerializer(serializers.ModelSerializer):
@@ -402,3 +410,103 @@ class ProviderModelConfigWriteSerializer(serializers.ModelSerializer):
         )
         data["config"] = config
         return data
+
+
+class EntityBaseWriteSerializer(serializers.ModelSerializer):
+    """
+    Base serializer for writing data with shared logic for `ProviderModelConfig` and `EntityGroup`.
+    """
+
+    related_model = ProviderModelConfigWriteSerializer()
+    group_id = serializers.PrimaryKeyRelatedField(
+        queryset=EntityGroup.objects.none(), source="group"  # Default to none
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request and hasattr(request, "iam_context"):
+            team = request.iam_context.team
+            if team:
+                # Filter queryset based on the iam_context
+                self.fields["group_id"].queryset = EntityGroup.objects.filter(
+                    entity_type=self.Meta.model.__name__.lower(), team=team
+                )
+
+    @transaction.atomic
+    def create(self, validated_data: dict):
+        """
+        Creates and returns new group and related model.
+        """
+        related_model = validated_data.pop("related_model")
+        group = validated_data.pop("group")
+        # Creates a new ProviderModelConfig instance using the 'related_model' data.
+        related_model = ProviderModelConfig.objects.create(**related_model)
+        return group, related_model
+
+    @transaction.atomic
+    def update(self, instance, validated_data: dict):
+        """
+        Updates the instance with the provided validated data.
+
+        If the `related_model` key is present in the validated data, it updates
+        the related model using the `ProviderModelConfigWriteSerializer`.
+        """
+
+        related_model = validated_data.pop("related_model", None)
+        if related_model:
+            related_model_serializer = ProviderModelConfigWriteSerializer(
+                instance=instance.related_model, context=self.context
+            )
+            related_model_serializer.update(instance.related_model, related_model)
+        return super().update(instance, validated_data)
+
+
+class FileEntitySerializer(serializers.Serializer):
+    id = serializers.CharField(read_only=True)
+    path = serializers.CharField(read_only=True)
+
+    def to_internal_value(self, data):
+        return data
+
+    def validate(self, data: dict) -> dict:
+        uploaded_file = data.get("uploaded_file")
+        dirname = data.get("dirname")
+
+        if not uploaded_file:
+            raise serializers.ValidationError({"uploaded_file": "This field is required."})
+
+        if not dirname:
+            raise serializers.ValidationError({"dirname": "This field is required."})
+
+        name = fs.get_valid_name(uploaded_file.name)
+        save_path = osp.join(dirname, name)
+
+        return {
+            "name": name,
+            "path": save_path,
+            "file": uploaded_file,
+        }
+
+    def create(self, validated_data):
+        """
+        Handles the creation of a FileEntity instance.
+        Saves the uploaded file to the specified path using FileSystemStorage.
+        """
+
+        name = validated_data["name"]
+        path = validated_data["path"]
+        uploaded_file = validated_data["file"]
+
+        fs.save(path, uploaded_file)
+        return FileEntity(id=name, path=path)
+
+    def to_representation(self, instance: FileEntity) -> dict[str, Any]:
+        """
+        Serializes FileEntity into json
+        """
+
+        return {
+            "id": instance.id,
+            "path": instance.path,
+        }

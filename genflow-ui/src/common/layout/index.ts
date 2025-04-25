@@ -6,6 +6,7 @@ import CircularProgress from '@/common/layout/CircularProgress';
 import ControlledAccordion from '@/common/layout/ControlledAccordion';
 import Dialog, { DialogProps, FormDialog } from '@/common/layout/Dialog';
 import Popover from '@/common/layout/Popover';
+import ResourceTotalCard from '@/common/layout/ResourceTotalCard';
 import PagePlaceholder from '@/common/layout/PagePlaceholder';
 import TabsController, { TabItems } from '@/common/layout/TabsController';
 import WithTooltip from '@/common/layout/WithTooltip';
@@ -16,6 +17,7 @@ export {
     Dialog,
     FormDialog,
     Popover,
+    ResourceTotalCard,
     PagePlaceholder,
     TabsController,
     WithTooltip,

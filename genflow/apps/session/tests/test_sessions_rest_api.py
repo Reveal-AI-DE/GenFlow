@@ -75,13 +75,13 @@ class SessionCreateTestCase(SessionTestCase):
         data = SESSION_DATA.copy()
 
         # type: llm but no related_model
-        data["type"] = SessionType.LLM.value
+        data["session_type"] = SessionType.LLM.value
         del data["related_model"]
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # type: prompt but no related_prompt
-        data["type"] = SessionType.PROMPT.value
+        data["session_type"] = SessionType.PROMPT.value
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -106,7 +106,7 @@ class SessionCreateTestCase(SessionTestCase):
 
         # type: prompt
         data = SESSION_DATA.copy()
-        data["type"] = SessionType.PROMPT.value
+        data["session_type"] = SessionType.PROMPT.value
         data["related_prompt"] = prompt.id
         response = self.create_session(self.admin_user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -123,7 +123,7 @@ class SessionCreateTestCase(SessionTestCase):
 
         # type: prompt
         data = SESSION_DATA.copy()
-        data["type"] = SessionType.PROMPT.value
+        data["session_type"] = SessionType.PROMPT.value
         data["related_prompt"] = prompt.id
         response = self.create_session(user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

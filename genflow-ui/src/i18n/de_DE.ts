@@ -130,8 +130,8 @@ const deDE: TranslationMessages = {
             fields: {
                 name: 'Name',
                 description: 'Beschreibung',
-                type: 'Type',
-                status: 'Status',
+                prompt_type: 'Type',
+                prompt_status: 'Status',
                 pre_prompt: 'Prompt',
                 q: 'Suche nach Name und Beschreibung',
                 group: {
@@ -157,6 +157,7 @@ const deDE: TranslationMessages = {
                 name: 'Name',
                 description: 'Beschreibung',
                 pre_prompt: 'Prompt',
+                use_prompt_template: 'Prompt Template',
                 opening_statement: 'Start-Nachricht',
                 suggested_questions: 'Vorgeschlagene Fragen',
                 status: 'Status',
@@ -203,12 +204,6 @@ const deDE: TranslationMessages = {
             actions: 'Chat-Aktionen',
             info: 'Session Info',
             usage: 'Sitzung Verwendung',
-            input: {
-                send: 'Nachricht senden',
-                stop: 'stoppen',
-                use_prompt: 'Prompt verwenden',
-                placeholder: 'Alles fragen!'
-            },
             settings: {
                 btn_label: 'Chat-Einstellungen',
                 advanced: 'Erweiterte',
@@ -218,21 +213,12 @@ const deDE: TranslationMessages = {
                 bottom: 'Nach unten scrollen',
             }
         },
-        collection: {
-            interface: {
-                step1: 'Kollektion einrichten',
-                step2: 'Vector Store einrichten',
-                step3: 'Dateien hochladen'
-            }
-        },
         assistant: {
-            interface: {
-                step1: 'Assistent Einrichtung',
-                step2: 'Assistent Konfiguration',
-                step3: 'Dateien hochladen',
-                files: 'Hochgeladene Dateien',
-                no_files: 'Keine Dateien hochgeladen'
-            }
+            step1: 'Assistent Einrichtung',
+            step2: 'Assistent Konfiguration',
+            step3: 'Dateien hochladen',
+            files: 'Hochgeladene Dateien',
+            no_files: 'Keine Dateien hochgeladen'
         },
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
@@ -278,6 +264,7 @@ const deDE: TranslationMessages = {
         email_not_confirmed: 'Der Bestätigungslink ist falsch oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Bestätigungs-E-Mail an.',
         verification_sent: 'Bestätigungs-E-Mail gesendet',
         verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
+        image_not_supported: 'Nicht unterstütztes Bildformat oder Dateigröße überschreitet das Limit von 1 MB. Bitte laden Sie ein unterstütztes Bild mit weniger als 1 MB hoch.',
     },
     action: {
         test: 'Test',
@@ -304,6 +291,7 @@ const deDE: TranslationMessages = {
         login_email: 'E-Mail verwenden',
         login_username: 'Benutzername verwenden',
         google_login: 'Mit Google anmelden',
+        use_prompt: 'Prompt verwenden',
     },
     validation: {
         not_available: 'Nicht verfügbar',

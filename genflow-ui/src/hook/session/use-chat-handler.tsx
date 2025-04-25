@@ -63,7 +63,7 @@ const useChatHandler = (): ChatHandlerHook => {
             }).catch((error) => {
                 console.log(error);
                 notify(
-                    error.message,
+                    error.message || 'An error occurred while generating the response',
                     {
                         type: 'error',
                     }

@@ -6,16 +6,12 @@
 #    pip-compile-multi
 #
 -r base.txt
-click==8.1.8
-    # via uvicorn
 coverage==7.6.8
     # via -r genflow/requirements/production.in
 httptools==0.6.4
     # via uvicorn
 psycopg2-binary==2.9.10
     # via -r genflow/requirements/production.in
-python-dotenv==1.1.0
-    # via uvicorn
 uvicorn[standard]==0.32.1
     # via -r genflow/requirements/production.in
 uvloop==0.21.0

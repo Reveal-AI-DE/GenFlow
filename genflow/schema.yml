@@ -12,6 +12,588 @@ info:
     name: MIT License
     url: https://en.wikipedia.org/wiki/MIT_License
 paths:
+  /api/assistant/groups:
+    get:
+      operationId: assistant_groups_list
+      description: List all groups
+      summary: List groups
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - assistant-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEntityGroupReadList'
+          description: ''
+    post:
+      operationId: assistant_groups_create
+      description: Create a new group
+      summary: Create a group
+      tags:
+      - assistant-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+  /api/assistant/groups/{id}:
+    get:
+      operationId: assistant_groups_retrieve
+      description: Get details of a group
+      summary: Get group details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - assistant-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+    put:
+      operationId: assistant_groups_update
+      description: Provides CRUD operations for the EntityGroup model associated with
+        assistants.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - assistant-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EntityGroupWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupWrite'
+          description: ''
+    patch:
+      operationId: assistant_groups_partial_update
+      description: Update an existing group
+      summary: Update a group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - assistant-groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEntityGroupWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/EntityGroupRead'
+          description: ''
+    delete:
+      operationId: assistant_groups_destroy
+      description: Delete an existing group
+      summary: Delete a group
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this entity group.
+        required: true
+      tags:
+      - assistant-groups
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The group has been deleted
+  /api/assistants:
+    get:
+      operationId: assistants_list
+      description: List all assistants
+      summary: List assistants
+      parameters:
+      - name: X-Team
+        in: header
+        description: Team identifier
+        schema:
+          type: string
+      - in: query
+        name: assistant_status
+        schema:
+          type: string
+          enum:
+          - drafted
+          - published
+        description: |-
+          * `drafted` - Drafted
+          * `published` - Published
+      - in: query
+        name: group__id
+        schema:
+          type: integer
+      - in: query
+        name: is_pinned
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: prompt_type
+        schema:
+          type: string
+          enum:
+          - advanced
+          - simple
+        description: |-
+          * `simple` - Simple
+          * `advanced` - Advanced
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
+      tags:
+      - assistants
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAssistantReadList'
+          description: ''
+    post:
+      operationId: assistants_create
+      description: Create a new assistant
+      summary: Create a assistant
+      tags:
+      - assistants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/AssistantRead'
+          description: ''
+  /api/assistants/{id}:
+    get:
+      operationId: assistants_retrieve
+      description: Get details of a assistant
+      summary: Get assistant details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/AssistantRead'
+          description: ''
+    put:
+      operationId: assistants_update
+      description: |-
+        Provides CRUD operations and additional functionality
+        for managing Prompt objects..
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/AssistantWrite'
+          description: ''
+    patch:
+      operationId: assistants_partial_update
+      description: Update an existing assistant
+      summary: Update a assistant
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAssistantWriteRequest'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/AssistantRead'
+          description: ''
+    delete:
+      operationId: assistants_destroy
+      description: Delete an existing assistant
+      summary: Delete a assistant
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: The assistant has been deleted
+  /api/assistants/{id}/files:
+    get:
+      operationId: assistants_files_list
+      description: List all files associated with the entity
+      summary: List files
+      parameters:
+      - in: query
+        name: assistant_status
+        schema:
+          type: string
+          enum:
+          - drafted
+          - published
+        description: |-
+          * `drafted` - Drafted
+          * `published` - Published
+      - in: query
+        name: group__id
+        schema:
+          type: integer
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      - in: query
+        name: is_pinned
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: prompt_type
+        schema:
+          type: string
+          enum:
+          - advanced
+          - simple
+        description: |-
+          * `simple` - Simple
+          * `advanced` - Advanced
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - assistants
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFileEntityList'
+          description: ''
+  /api/assistants/{id}/files/{filename}:
+    delete:
+      operationId: assistants_files_destroy
+      description: Delete a specific file associated with the entity
+      summary: delete file
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+          pattern: ^[^/]+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: File was removed
+  /api/assistants/{id}/upload_avatar:
+    post:
+      operationId: assistants_upload_avatar_create
+      description: Upload a new avatar image for the assistant
+      summary: Upload a assistant avatar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssistantWriteRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/AssistantRead'
+          description: ''
+  /api/assistants/{id}/upload_file:
+    post:
+      operationId: assistants_upload_file_create
+      description: Upload a new file and associate it with the entity
+      summary: Upload a file
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this assistant.
+        required: true
+      tags:
+      - assistants
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+              required:
+              - file
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/FileEntity'
+          description: ''
   /api/auth/login:
     post:
       operationId: auth_login_create
@@ -920,14 +1502,8 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
-      - name: search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
       - in: query
-        name: status
+        name: prompt_status
         schema:
           type: string
           enum:
@@ -936,13 +1512,8 @@ paths:
         description: |-
           * `drafted` - Drafted
           * `published` - Published
-      - name: team
-        in: query
-        description: Team identifier
-        schema:
-          type: integer
       - in: query
-        name: type
+        name: prompt_type
         schema:
           type: string
           enum:
@@ -951,6 +1522,17 @@ paths:
         description: |-
           * `simple` - Simple
           * `advanced` - Advanced
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - name: team
+        in: query
+        description: Team identifier
+        schema:
+          type: integer
       tags:
       - prompts
       security:
@@ -1666,6 +2248,119 @@ paths:
       responses:
         '204':
           description: The session has been deleted
+  /api/sessions/{id}/files:
+    get:
+      operationId: sessions_files_list
+      description: List all files associated with the entity
+      summary: List files
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFileEntityList'
+          description: ''
+  /api/sessions/{id}/files/{filename}:
+    delete:
+      operationId: sessions_files_destroy
+      description: Delete a specific file associated with the entity
+      summary: delete file
+      parameters:
+      - in: path
+        name: filename
+        schema:
+          type: string
+          pattern: ^[^/]+$
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: File was removed
+  /api/sessions/{id}/upload_file:
+    post:
+      operationId: sessions_upload_file_create
+      description: Upload a new file and associate it with the entity
+      summary: Upload a file
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload
+              required:
+              - file
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/FileEntity'
+          description: ''
   /api/system/about:
     get:
       operationId: system_about_retrieve
@@ -1909,6 +2604,132 @@ components:
       - version
       title: AboutSystem
       type: object
+    AssistantRead:
+      type: object
+      description: Serializer for reading Assistant data, to be used by get actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        group:
+          $ref: '#/components/schemas/EntityGroupRead'
+        is_pinned:
+          type: boolean
+        pre_prompt:
+          type: string
+        suggested_questions:
+          nullable: true
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        id:
+          type: integer
+          readOnly: true
+        opening_statement:
+          type: string
+          nullable: true
+        context_source:
+          $ref: '#/components/schemas/ContextSourceEnum'
+        collection_config:
+          nullable: true
+        assistant_status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigRead'
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileEntity'
+          readOnly: true
+      required:
+      - description
+      - group
+      - name
+      - pre_prompt
+      - related_model
+    AssistantWrite:
+      type: object
+      description: Serializer for writing Assistant data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_pinned:
+          type: boolean
+        pre_prompt:
+          type: string
+        suggested_questions:
+          nullable: true
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        opening_statement:
+          type: string
+          nullable: true
+        context_source:
+          $ref: '#/components/schemas/ContextSourceEnum'
+        collection_config:
+          nullable: true
+        assistant_status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWrite'
+        group_id:
+          type: integer
+      required:
+      - description
+      - group_id
+      - name
+      - pre_prompt
+      - related_model
+    AssistantWriteRequest:
+      type: object
+      description: Serializer for writing Assistant data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        is_pinned:
+          type: boolean
+        pre_prompt:
+          type: string
+          minLength: 1
+        suggested_questions:
+          nullable: true
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        opening_statement:
+          type: string
+          nullable: true
+          minLength: 1
+        context_source:
+          $ref: '#/components/schemas/ContextSourceEnum'
+        collection_config:
+          nullable: true
+        assistant_status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        group_id:
+          type: integer
+      required:
+      - description
+      - group_id
+      - name
+      - pre_prompt
+      - related_model
     BasicUser:
       type: object
       description: |-
@@ -1938,6 +2759,14 @@ components:
           maxLength: 150
       required:
       - username
+    ContextSourceEnum:
+      enum:
+      - files
+      - collections
+      type: string
+      description: |-
+        * `files` - Files
+        * `collections` - Collections
     EntityGroupRead:
       type: object
       description: Serializer for reading EntityGroup data, to be used by get actions.
@@ -1998,6 +2827,15 @@ components:
       - color
       - description
       - name
+    FileEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        path:
+          type: string
+          readOnly: true
     InvitationRead:
       type: object
       description: |-
@@ -2098,6 +2936,29 @@ components:
       oneOf:
       - $ref: '#/components/schemas/User'
       - $ref: '#/components/schemas/BasicUser'
+    PaginatedAssistantReadList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssistantRead'
     PaginatedEntityGroupReadList:
       type: object
       required:
@@ -2121,6 +2982,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntityGroupRead'
+    PaginatedFileEntityList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileEntity'
     PaginatedInvitationReadList:
       type: object
       required:
@@ -2306,6 +3190,41 @@ components:
           minLength: 1
       required:
       - email
+    PatchedAssistantWriteRequest:
+      type: object
+      description: Serializer for writing Assistant data, to be used by post/patch
+        actions.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        is_pinned:
+          type: boolean
+        pre_prompt:
+          type: string
+          minLength: 1
+        suggested_questions:
+          nullable: true
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        opening_statement:
+          type: string
+          nullable: true
+          minLength: 1
+        context_source:
+          $ref: '#/components/schemas/ContextSourceEnum'
+        collection_config:
+          nullable: true
+        assistant_status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
+        group_id:
+          type: integer
     PatchedEntityGroupWriteRequest:
       type: object
       description: Serializer for writing EntityGroup data, to be used by post/patch
@@ -2355,16 +3274,16 @@ components:
         description:
           type: string
           minLength: 1
+        is_pinned:
+          type: boolean
         pre_prompt:
           type: string
           minLength: 1
         suggested_questions:
           nullable: true
-        is_pinned:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        status:
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        prompt_status:
           $ref: '#/components/schemas/StatusEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
@@ -2395,6 +3314,8 @@ components:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
           type: integer
+        related_assistant:
+          type: integer
     PatchedTeamWriteRequest:
       type: object
       description: |-
@@ -2411,35 +3332,32 @@ components:
       type: object
       description: Serializer for reading Prompt data, to be used by get actions.
       properties:
-        id:
-          type: integer
-          readOnly: true
         name:
           type: string
           maxLength: 255
         description:
           type: string
-        pre_prompt:
-          type: string
-        is_pinned:
-          type: boolean
-        suggested_questions:
-          nullable: true
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        status:
-          $ref: '#/components/schemas/StatusEnum'
-        related_model:
-          $ref: '#/components/schemas/ProviderModelConfigRead'
-        group:
-          $ref: '#/components/schemas/EntityGroupRead'
-        group_id:
-          type: integer
-          readOnly: true
         avatar:
           type: string
           format: uri
           nullable: true
+        group:
+          $ref: '#/components/schemas/EntityGroupRead'
+        is_pinned:
+          type: boolean
+        pre_prompt:
+          type: string
+        suggested_questions:
+          nullable: true
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        id:
+          type: integer
+          readOnly: true
+        prompt_status:
+          $ref: '#/components/schemas/StatusEnum'
+        related_model:
+          $ref: '#/components/schemas/ProviderModelConfigRead'
         related_test_session:
           type: integer
           description: Returns the related test session for the given Prompt instance.
@@ -2450,6 +3368,14 @@ components:
       - name
       - pre_prompt
       - related_model
+    PromptTypeEnum:
+      enum:
+      - simple
+      - advanced
+      type: string
+      description: |-
+        * `simple` - Simple
+        * `advanced` - Advanced
     PromptWrite:
       type: object
       description: Serializer for writing Prompt data, to be used by post/patch actions.
@@ -2459,15 +3385,15 @@ components:
           maxLength: 255
         description:
           type: string
+        is_pinned:
+          type: boolean
         pre_prompt:
           type: string
         suggested_questions:
           nullable: true
-        is_pinned:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        status:
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        prompt_status:
           $ref: '#/components/schemas/StatusEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWrite'
@@ -2490,16 +3416,16 @@ components:
         description:
           type: string
           minLength: 1
+        is_pinned:
+          type: boolean
         pre_prompt:
           type: string
           minLength: 1
         suggested_questions:
           nullable: true
-        is_pinned:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/TypeEnum'
-        status:
+        prompt_type:
+          $ref: '#/components/schemas/PromptTypeEnum'
+        prompt_status:
           $ref: '#/components/schemas/StatusEnum'
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
@@ -2732,6 +3658,8 @@ components:
           $ref: '#/components/schemas/ProviderModelConfigRead'
         related_prompt:
           $ref: '#/components/schemas/PromptRead'
+        related_assistant:
+          $ref: '#/components/schemas/AssistantRead'
         created_date:
           type: string
           format: date-time
@@ -2753,10 +3681,12 @@ components:
       enum:
       - llm
       - prompt
+      - assistant
       type: string
       description: |-
         * `llm` - Llm
         * `prompt` - Prompt
+        * `assistant` - Assistant
     SessionWrite:
       type: object
       description: Serializer for writing Session data, to be used by post/patch actions.
@@ -2771,6 +3701,8 @@ components:
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWrite'
         related_prompt:
+          type: integer
+        related_assistant:
           type: integer
       required:
       - name
@@ -2789,6 +3721,8 @@ components:
         related_model:
           $ref: '#/components/schemas/ProviderModelConfigWriteRequest'
         related_prompt:
+          type: integer
+        related_assistant:
           type: integer
       required:
       - name
@@ -2881,14 +3815,6 @@ components:
       - en_US
       title: TranslationEntity
       type: object
-    TypeEnum:
-      enum:
-      - simple
-      - advanced
-      type: string
-      description: |-
-        * `simple` - Simple
-        * `advanced` - Advanced
     User:
       type: object
       description: |-

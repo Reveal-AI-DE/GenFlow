@@ -2,93 +2,57 @@
 //
 // SPDX-License-Identifier: MIT
 
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import {
-    ListBase, Datagrid, TextField,
-    ReferenceField, ExportButton, CreateButton,
-    BulkDeleteWithConfirmButton, SearchInput,
-    SelectInput, BooleanInput,
+    ListBase, TextField,
+    ReferenceField, SelectInput,
 } from 'react-admin';
 
-import { PromptType, PromptStatus, TeamRole } from '@/types';
-import { GlobalContext, GlobalContextInterface } from '@/context';
+import { PromptType, PromptStatus } from '@/types';
 import { ListGridSwitcher } from '@/common';
-import { GroupField, GroupSelectInput } from '@/group';
+import {
+    EntityDatagrid, EntityListActions, EntityLisFilters
+} from '@/entity';
+import { GroupField } from '@/group';
 import { getChoicesFromEnum } from '@/utils';
 import { PromptCard } from '@/prompt/show';
 
-const PromptListActions = [
-    <CreateButton key='create' />,
-    <ExportButton key='export' />,
-];
-
 const PromptFilters = [
-    <SearchInput
-        source='q'
-        variant='outlined'
-    />,
-    <GroupSelectInput
-        source='group__id'
-        reference='prompt-groups'
-        showCreateOption={false}
-        validate={undefined}
-        variant='outlined'
-    />,
+    ...EntityLisFilters(
+        'prompt-groups',
+        'prompt_status',
+        PromptStatus,
+    ),
     <SelectInput
-        source='type'
+        source='prompt_type'
         choices={getChoicesFromEnum(PromptType)}
         variant='outlined'
     />,
-    <SelectInput
-        source='status'
-        choices={getChoicesFromEnum(PromptStatus)}
-        variant='outlined'
-    />,
-    <BooleanInput
-        source='is_pinned'
-        variant='outlined'
-    />
 ];
-
-const PromptBulkActionButtons: FC = () => (
-    <BulkDeleteWithConfirmButton mutationMode='pessimistic' />
-);
 
 type PromptListProps = object
 
-const PromptList: FC<PromptListProps> = () => {
-    const { currentMembership } = useContext<GlobalContextInterface>(GlobalContext);
-    const isOwnerOrAdmin = currentMembership?.role === TeamRole.OWNER || currentMembership?.role === TeamRole.ADMIN;
-
-    return (
-        <ListBase perPage={12}>
-            <ListGridSwitcher
-                actions={PromptListActions}
-                filters={PromptFilters}
-                ItemComponent={<PromptCard />}
-            >
-                <Datagrid
-                    bulkActionButtons={
-                        isOwnerOrAdmin ? (
-                            <PromptBulkActionButtons />
-                        ) : false
-                    }
-                    rowClick={isOwnerOrAdmin ? 'edit' : false}
+const PromptList: FC<PromptListProps> = () => (
+    <ListBase perPage={12}>
+        <ListGridSwitcher
+            actions={EntityListActions}
+            filters={PromptFilters}
+            ItemComponent={<PromptCard />}
+        >
+            <EntityDatagrid>
+                <TextField source='name' />
+                <ReferenceField
+                    source='group.id'
+                    reference='prompt-groups'
+                    sortBy='group__name'
                 >
-                    <TextField source='name' />
-                    <ReferenceField
-                        source='group.id'
-                        reference='prompt-groups'
-                        sortBy='group__name'
-                    >
-                        <GroupField />
-                    </ReferenceField>
-                    <TextField source='type' />
-                    <TextField source='status' />
-                </Datagrid>
-            </ListGridSwitcher>
-        </ListBase>
-    );
-};
+                    <GroupField />
+                </ReferenceField>
+                <TextField source='prompt_type' />
+                <TextField source='prompt_status' />
+            </EntityDatagrid>
+        </ListGridSwitcher>
+    </ListBase>
+);
 
 export default PromptList;

@@ -130,6 +130,7 @@ export default <DataProvider>{
             method: 'POST',
             body: JSON.stringify(params.data),
         });
+
         return {
             data: { ...json },
         };

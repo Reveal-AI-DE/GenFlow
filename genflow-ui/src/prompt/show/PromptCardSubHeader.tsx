@@ -1,19 +1,18 @@
 // Copyright (C) 2025 Reveal AI
 //
 // SPDX-License-Identifier: MIT
+
 import React, { FC } from 'react';
-import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
-import SettingsInputSvideoIcon from '@mui/icons-material/SettingsInputSvideo';
 import { useRecordContext, ReferenceField } from 'react-admin';
 
 import {
-    Prompt, PromptStatus, PromptType,
+    Prompt, PromptStatus,
 } from '@/types';
 import { GroupField, GroupFieldSlot } from '@/group';
+import { EntityCardSubHeader } from '@/entity';
 
 type PromptCardSubHeaderProps = object;
 
@@ -23,21 +22,9 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
         return null;
     }
 
-    const renderType = (type: PromptType): JSX.Element => (
-        <Tooltip
-            title={type.toUpperCase()}
-        >
-            { type === PromptType.SIMPLE ? (
-                <TextSnippetIcon color='success' />
-            ) : (
-                <SettingsInputSvideoIcon color='success' />
-            )}
-        </Tooltip>
-    );
-
-    const renderStatus = (status: PromptStatus): JSX.Element => (
-        <Tooltip title={status.toUpperCase()}>
-            { status === PromptStatus.DRAFTED ? (
+    const renderStatus = (prompt_status: string): JSX.Element => (
+        <Tooltip title={prompt_status.toUpperCase()}>
+            { prompt_status === PromptStatus.DRAFTED ? (
                 <DraftsIcon color='warning' />
             ) : (
                 <PublishedWithChangesIcon color='success' />
@@ -46,10 +33,9 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
     );
 
     return (
-        <Stack
-            direction='row'
-            spacing={1}
-            mt={1}
+        <EntityCardSubHeader
+            statusSource='prompt_status'
+            renderStatus={renderStatus}
         >
             <ReferenceField
                 source='group.id'
@@ -59,13 +45,7 @@ const PromptCardSubHeader: FC<PromptCardSubHeaderProps> = () => {
                     slots={[GroupFieldSlot.COLOR]}
                 />
             </ReferenceField>
-            {
-                renderType(prompt.type)
-            }
-            {
-                renderStatus(prompt.status)
-            }
-        </Stack>
+        </EntityCardSubHeader>
     );
 };
 

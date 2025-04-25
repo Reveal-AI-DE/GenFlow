@@ -14,9 +14,13 @@ import { authProvider, Login } from '@/auth';
 import englishMessages from '@/i18n/en_US';
 
 import { Layout } from '@/layout';
+import { Dashboard } from '@/dashboard';
 import { themes, Theme, ThemeName } from '@/themes';
 
 // Resources
+import { AssistantGroupResourceProps, AssistantResourceProps } from '@/assistant';
+import { CollectionResourceProps } from '@/collection';
+import { FileResourceProps } from '@/file';
 import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
 import { MessageResourceProps } from '@/message';
@@ -63,9 +67,22 @@ const App = (): JSX.Element => {
             dataProvider={dataProvider}
             authProvider={authProvider}
             loginPage={Login}
+            dashboard={Dashboard}
             requireAuth
             disableTelemetry
         >
+            <Resource
+                {...AssistantGroupResourceProps}
+            />
+            <Resource
+                {...AssistantResourceProps}
+            />
+            <Resource
+                {...CollectionResourceProps}
+            />
+            <Resource
+                {...FileResourceProps}
+            />
             <Resource
                 {...InvitationResourceProps}
             />
@@ -88,10 +105,10 @@ const App = (): JSX.Element => {
                 {...ProviderResourceProps}
             />
             <Resource
-                {...TeamResourceProps}
+                {...SessionResourceProps}
             />
             <Resource
-                {...SessionResourceProps}
+                {...TeamResourceProps}
             />
             <CustomRoutes>
                 {layoutCustomRoutes}
