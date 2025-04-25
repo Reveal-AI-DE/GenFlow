@@ -59,7 +59,7 @@ class ChatGenerator(BaseGenerator):
                 simple_prompt_template=prompt.pre_prompt,
             )
         if db_session.session_type == SessionType.ASSISTANT.value:
-            assistant: Assistant = db_session.related_prompt
+            assistant: Assistant = db_session.related_assistant
             prompt_entity = PromptTemplateEntity(
                 prompt_type=PromptType.SIMPLE.value,
                 simple_prompt_template=assistant.pre_prompt,
@@ -119,7 +119,7 @@ class ChatGenerator(BaseGenerator):
         # get context
         context = None
         if self.db_session.session_type == SessionType.ASSISTANT.value:
-            assistant: Assistant = self.session.related_assistant
+            assistant: Assistant = self.db_session.related_assistant
             if assistant.context_source == AssistantContextSource.FILES.value:
                 context = assistant.get_files_context()
             elif assistant.context_source == AssistantContextSource.COLLECTIONS.value:
