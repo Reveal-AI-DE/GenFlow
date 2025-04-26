@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+from abc import ABCMeta, abstractmethod
 from os import path as osp
 from typing import cast
 
@@ -20,6 +21,7 @@ from genflow.apps.core.serializers import (
     FileEntitySerializer,
 )
 from genflow.apps.team.middleware import HttpRequestWithIamContext
+from genflow.apps.restriction.mixin import TeamLimitMixin
 
 
 @extend_schema_view(
@@ -111,17 +113,39 @@ class EntityGroupViewSetMixin(viewsets.ModelViewSet):
         )
 
 
-class FileManagementMixin:
+class FileManagementMixin(TeamLimitMixin, metaclass=ABCMeta):
     """
     Mixin to add file management functionality to a viewset.
     Provides endpoints for listing, uploading, and deleting files.
     """
 
-    def check_file_count_limit(self, dirname):
+    @abstractmethod
+    def get_file_limit_key(self) -> str:
         """
-        Checks if the number of files exceeds the limit.
+        Get the key for the file limit.
+        This should be overridden in subclasses to provide the correct key.
         """
-        return False
+        ...
+
+    def get_team_usage(self) -> int:
+        """
+        Get files count.
+        """
+
+        instance = self.get_object()
+        return len(get_files(instance.dirname))
+
+    def check_limit(self) -> bool:
+        """
+        Check if the limit has been reached.
+        """
+
+        request = cast(HttpRequestWithIamContext, self.request)
+        team = request.iam_context.team
+        key = self.get_file_limit_key()
+        if team is None:
+            return self.check_global_limit(key)
+        return self.check_team_limit(team, key)
 
     @action(detail=True, methods=["get"], url_path="files")
     def list_files(self, request, pk=None):
@@ -147,7 +171,7 @@ class FileManagementMixin:
         if not hasattr(instance, "dirname"):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        if self.check_file_count_limit(instance.dirname):
+        if self.check_limit():
             return Response(
                 {"message": "File count limit exceeded."},
                 status=status.HTTP_400_BAD_REQUEST,

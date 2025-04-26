@@ -7,11 +7,12 @@ from django.conf import settings
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission
 from genflow.apps.team.models import TeamRole
+from genflow.apps.restriction.mixin import LimitMixin
 from genflow.apps.core.models import EntityGroup
 from genflow.apps.prompt.models import Prompt
 
 
-class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
+class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitMixin):
     """
     Handles the permissions for prompt group-related actions.
     """
@@ -40,21 +41,28 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         return permissions
 
-    def check_limit(self) -> bool:
+    def get_user_usage(self) -> int:
         """
-        Checks if the user has reached their prompt group limit.
+        Get the number of prompt group owned by the user.
         """
 
-        if "PROMPT-GROUP" not in settings.GF_LIMITS:
-            return False
-        limit = settings.GF_LIMITS["PROMPT-GROUP"]
-        return GenFLowBasePermission.check_limit(
-            queryset=EntityGroup.objects.filter(
-                entity_type=Prompt.__name__.lower()
-            ),
-            team_id=self.team_id,
-            limit=limit
-        )
+        return EntityGroup.objects.filter(
+            entity_type=Prompt.__name__.lower(),
+            owner_id=self.user_id
+        ).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of prompt group owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return EntityGroup.objects.filter(
+            entity_type=Prompt.__name__.lower(),
+            team_id=self.team_id
+        ).count()
 
     def check_access(self) -> bool:
         """
@@ -68,6 +76,17 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
 
+        # check limits
+        if (
+            self.scope == self.Scopes.CREATE
+            and self.check_limit(
+                user_id=self.user_id,
+                team_id=self.team_id,
+                key="PROMPT_GROUP",
+            )
+        ):
+            return False
+
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
         return EntityBasePermission.check_base_scopes(self, is_team_owner)
 
@@ -79,7 +98,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         return EntityGroupPermission.filter(self, queryset)
 
 
-class PromptPermission(GenFLowBasePermission, EntityBasePermission):
+class PromptPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
     """
     Handles the permissions for prompt-related actions.
     """
@@ -108,19 +127,26 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
 
         return permissions
 
-    def check_limit(self) -> bool:
+    def get_user_usage(self) -> int:
         """
-        Checks if the user has reached their prompt limit.
+        Get the number of prompt owned by the user.
         """
 
-        if "PROMPT" not in settings.GF_LIMITS:
-            return False
-        limit = settings.GF_LIMITS["PROMPT"]
-        return GenFLowBasePermission.check_limit(
-            queryset=Prompt.objects.all(),
-            team_id=self.team_id,
-            limit=limit
-        )
+        return Prompt.objects.filter(
+            owner_id=self.user_id
+        ).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of prompt owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Prompt.objects.filter(
+            team_id=self.team_id
+        ).count()
 
     def check_access(self) -> bool:
         """
@@ -134,6 +160,17 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
         # admin users have full control
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
+
+        # check limits
+        if (
+            self.scope == self.Scopes.CREATE
+            and self.check_limit(
+                user_id=self.user_id,
+                team_id=self.team_id,
+                key="PROMPT",
+            )
+        ):
+            return False
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
         return EntityBasePermission.check_base_scopes(self, is_team_owner)

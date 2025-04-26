@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "genflow.apps.team",
     "genflow.apps.iam",
+    "genflow.apps.restriction",
     "genflow.apps.core",
     "genflow.apps.prompt",
     "genflow.apps.assistant",
@@ -162,7 +163,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "dj_pagination.middleware.PaginationMiddleware",
-    "genflow.apps.team.middleware.ContextMiddleware",
+    "genflow.apps.team.middleware.IAMContextMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
 
@@ -306,6 +307,9 @@ os.makedirs(DATA_ROOT, exist_ok=True)
 ASSISTANTS_ROOT = os.path.join(DATA_ROOT, "assistants")
 os.makedirs(ASSISTANTS_ROOT, exist_ok=True)
 
+SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
+os.makedirs(SESSIONS_ROOT, exist_ok=True)
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
@@ -323,9 +327,6 @@ os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 
 ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
 os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
-
-SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
-os.makedirs(SESSIONS_ROOT, exist_ok=True)
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
@@ -384,9 +385,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 GF_LIMITS = {
-    "PROMPT-GROUP": 10,
+    "PROMPT_GROUP": 10,
     "PROMPT": 5,
-    "ASSISTANT-GROUP": 10,
+    "ASSISTANT_GROUP": 10,
     "ASSISTANT": 5,
     "MAX_FILES_PER_ASSISTANT": 2, # 2 files
     "SESSION": 10,

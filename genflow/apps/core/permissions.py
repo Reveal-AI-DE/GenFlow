@@ -200,10 +200,6 @@ class EntityGroupPermission:
         Checks base scopes for entity-related actions.
         """
 
-        # check limit
-        if subclass.scope == cls.Scopes.CREATE and subclass.check_limit():
-            return False
-
         # team member cam list groups
         # team member can create a group
         # team member can retrieve a group
@@ -268,10 +264,6 @@ class EntityBasePermission:
         """
         Checks base scopes for entity-related actions.
         """
-
-        # check limit
-        if subclass.scope == cls.Scopes.CREATE and subclass.check_limit():
-            return False
 
         # team member cam list entities
         # team member can create an entity

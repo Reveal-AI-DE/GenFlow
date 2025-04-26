@@ -8,6 +8,7 @@ from django.conf import settings
 from channels.db import database_sync_to_async
 
 from genflow.apps.ai.llm.entities import Result
+from genflow.apps.restriction.models import Limit
 from genflow.apps.core.models import Provider
 from genflow.apps.session.generator.chat import ChatGenerator
 from genflow.apps.session.generator.entities import GenerateRequest
@@ -53,7 +54,7 @@ class ChatGenerateConsumer(BaseConsumer):
                 raise exception.ForbiddenError("You do not have permission to access this session")
 
             # check limit
-            if self.check_limit(team.id):
+            if self.check_limit(db_session):
                 raise exception.ForbiddenError("User has reached the message limit")
 
             # initialize provider queryset
@@ -65,17 +66,20 @@ class ChatGenerateConsumer(BaseConsumer):
         except Exception as e:
             raise e
 
-    def check_limit(self, team_id) -> bool:
+    def check_limit(self, db_session: Session) -> bool:
         """
         Checks if the user has reached their message limit.
         """
 
-        if "MESSAGE" not in settings.GF_LIMITS:
+        try:
+            global_limit = Limit.objects.get(key="MESSAGE", user=None, team=None)
+            if global_limit.value <= db_session.sessionmessage_set.count():
+                return True # Global limit reached
+            else:
+                return False
+        except Limit.DoesNotExist:
+            # If no limit is set globally, return False (not limited)
             return False
-        session_id = self.scope["url_route"]["kwargs"]["session_id"]
-        limit = settings.GF_LIMITS["MESSAGE"]
-        count = SessionMessage.objects.filter(session_id=session_id, team_id=team_id).count()
-        return count >= limit
 
     def send_chunk(self, chunk: str = None):
         """

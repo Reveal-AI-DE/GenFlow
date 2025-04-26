@@ -175,15 +175,12 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
             shutil.rmtree(instance.dirname)
         return super().perform_destroy(instance)
 
-    def check_file_count_limit(self, dirname):
+    def get_file_limit_key(self) -> str:
         """
-        Checks if the number of files exceeds the limit.
+        Gets the key for the file limit.
         """
 
-        files = get_files(dirname)
-        if len(files) >= settings.GF_LIMITS["MAX_FILES_PER_SESSION"]:
-            return True
-        return False
+        return "MAX_FILES_PER_SESSION"
 
 
 @extend_schema(tags=["messages"])

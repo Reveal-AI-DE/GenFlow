@@ -4,13 +4,13 @@
 
 from http.client import HTTPResponse
 
-from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from genflow.apps.assistant.tests.utils import ASSISTANT_GROUP_DATA, create_dummy_assistant_group
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class AssistantGroupTestCase(APITestCase):
@@ -70,15 +70,21 @@ class AssistantGroupCreateTestCase(AssistantGroupTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
 
-    @override_settings(GF_LIMITS={"ASSISTANT-GROUP": 0})
-    def test_create_assistant_group_user_user_check_limit(self):
+    def test_create_assistant_group_user_user_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT_GROUP",
+            value=0,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(GF_LIMITS={"ASSISTANT-GROUP": 1})
-    def test_create_assistant_group_user_another_team_check_limit(self):
+    def test_create_assistant_group_user_another_team_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT_GROUP",
+            value=1,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         # create assistant group to reach limit

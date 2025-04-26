@@ -4,7 +4,6 @@
 
 from http.client import HTTPResponse
 
-from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -18,6 +17,7 @@ from genflow.apps.prompt.tests.utils import (
 )
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class PromptTestCase(APITestCase):
@@ -135,15 +135,21 @@ class PromptCreateTestCase(PromptTestCase):
         response = self.create_prompt(user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @override_settings(GF_LIMITS={"PROMPT": 0})
-    def test_create_prompt_user_user_check_limit(self):
+    def test_create_prompt_user_user_check_global_limit(self):
+        override_limit(
+            key="PROMPT",
+            value=0,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         response = self.create_prompt(user, PROMPT_DATA, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(GF_LIMITS={"PROMPT": 1})
-    def test_create_prompt_user_user_another_team_check_limit(self):
+    def test_create_prompt_user_user_another_team_check_global_limit(self):
+        override_limit(
+            key="PROMPT",
+            value=1,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
 

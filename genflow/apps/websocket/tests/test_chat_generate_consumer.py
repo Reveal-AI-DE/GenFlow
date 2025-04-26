@@ -13,6 +13,7 @@ from rest_framework.authtoken.models import Token
 from genflow.apps.session.models import SessionType
 from genflow.apps.session.tests.utils import SESSION_DATA, create_dummy_session
 from genflow.apps.team.tests.utils import create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.websocket.consumer import status
 from genflow.apps.websocket.tests.utils import application
 
@@ -49,6 +50,11 @@ class ChatGenerateConsumerCheckPermissionTestCase(TransactionTestCase):
                 self.tokens.append(token)
 
         self.admin_user, self.regular_users = create_dummy_users(create_teams=True)
+
+        override_limit(
+            key="MESSAGE",
+            value=0,
+        )
 
     async def test_connect_invalid_team(self):
         subprotocols = ["json", self.tokens[0].key, "1000"]
@@ -96,7 +102,7 @@ class ChatGenerateConsumerCheckPermissionTestCase(TransactionTestCase):
         self.assertEqual(subprotocols, status.WS_404_NOT_FOUND)
 
     @override_settings(GF_LIMITS={"MESSAGE": 0})
-    async def test_connect_session_check_limit(self):
+    async def test_connect_session_check_global_limit(self):
         user = self.regular_users[0]["user"]
         team = self.regular_users[0]["teams"][0]["team"]
         data = SESSION_DATA.copy()

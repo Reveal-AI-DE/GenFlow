@@ -4,13 +4,13 @@
 
 from http.client import HTTPResponse
 
-from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from genflow.apps.prompt.tests.utils import PROMPT_GROUP_DATA, create_dummy_prompt_group
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class PromptGroupTestCase(APITestCase):
@@ -68,15 +68,21 @@ class PromptGroupCreateTestCase(PromptGroupTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], PROMPT_GROUP_DATA["name"])
 
-    @override_settings(GF_LIMITS={"PROMPT-GROUP": 0})
-    def test_create_prompt_group_user_check_limit(self):
+    def test_create_prompt_group_user_check_global_limit(self):
+        override_limit(
+            key="PROMPT_GROUP",
+            value=0,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         response = self.create_prompt_group(user, PROMPT_GROUP_DATA, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(GF_LIMITS={"PROMPT-GROUP": 1})
-    def test_create_prompt_group_user_another_team_check_limit(self):
+    def test_create_prompt_group_user_another_team_check_global_limit(self):
+        override_limit(
+            key="PROMPT_GROUP",
+            value=1,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         data = PROMPT_GROUP_DATA.copy()

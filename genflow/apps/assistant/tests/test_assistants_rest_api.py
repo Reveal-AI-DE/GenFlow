@@ -5,12 +5,12 @@
 import os
 from http.client import HTTPResponse
 from os import path as osp
+from pathlib import Path
 
 from django.test import override_settings
 from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
-from pathlib import Path
 
 from genflow.apps.assistant.tests.utils import (
     ASSISTANT_DATA,
@@ -23,6 +23,7 @@ from genflow.apps.core.tests.utils import enable_provider
 from genflow.apps.prompt.tests.utils import PROVIDER_DATA
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class AssistantTestCase(APITestCase):
@@ -154,8 +155,11 @@ class AssistantCreateTestCase(AssistantTestCase):
         response = self.create_assistant(user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @override_settings(GF_LIMITS={"ASSISTANT": 0})
-    def test_create_assistant_user_user_check_limit(self):
+    def test_create_assistant_user_user_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT",
+            value=0,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         group = self.regular_users[0]["teams"][0]["group"]
@@ -167,8 +171,11 @@ class AssistantCreateTestCase(AssistantTestCase):
         response = self.create_assistant(user, data, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(GF_LIMITS={"ASSISTANT": 1})
-    def test_create_assistant_user_user_another_team_check_limit(self):
+    def test_create_assistant_user_user_another_team_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT",
+            value=1,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
 
@@ -626,19 +633,17 @@ class AssistantUploadFileTestCase(AssistantTestCase):
         response = self.upload_file(another_user, self.assistant.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @override_settings(GF_LIMITS={
-        "MAX_FILES_PER_ASSISTANT": 0,
-        "MAX_FILE_SIZE": 1,
-        "FILE_SUPPORTED_TYPES": []
-    })
-    def test_upload_file_user_check_files_limit(self):
+    def test_upload_file_user_check_files_global_limit(self):
+        override_limit(
+            key="MAX_FILES_PER_ASSISTANT",
+            value=0,
+        )
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         response = self.upload_file(user, self.assistant.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @override_settings(GF_LIMITS={
-        "MAX_FILES_PER_ASSISTANT": 2,
         "MAX_FILE_SIZE": 0,
         "FILE_SUPPORTED_TYPES": ["text/plain"]
     })

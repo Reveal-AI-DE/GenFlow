@@ -12,10 +12,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import LazyObject
 from rest_framework.authtoken.models import Token
 
-from genflow.apps.team.middleware import TeamContext
+from genflow.apps.team.middleware import IAMContext as BaseIAMContext
 
 
-class TeamContextWithRole(TeamContext):
+class IAMContext(BaseIAMContext):
     team_role: Optional[str] = None
 
 
@@ -32,7 +32,7 @@ class WebSocketRequest:
         The parsed query string parameters from the WebSocket connection.
     headers : dict
         The headers associated with the WebSocket connection.
-    iam_context : TeamContextWithRole
+    iam_context : IAMContext
         The IAM context for the WebSocket connection, initialized to None.
     """
 
@@ -44,7 +44,7 @@ class WebSocketRequest:
         self.user = scope["user"]
         self.GET: dict = parse_qs(scope["query_string"].decode())
         self.headers: dict = {"X-Team": scope["subprotocols"][2]}
-        self.iam_context: TeamContextWithRole = None
+        self.iam_context: IAMContext = None
 
 
 class WebSocketRequestLazyObject(LazyObject):
