@@ -482,13 +482,13 @@ class FileEntitySerializer(serializers.Serializer):
         # check size
         if uploaded_file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_FILE_SIZE"]:
             raise serializers.ValidationError(
-                {"message": f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB."}
+                {
+                    "message": f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB."
+                }
             )
         # check type
-        if uploaded_file.content_type not in settings.GF_LIMITS['FILE_SUPPORTED_TYPES']:
-            raise serializers.ValidationError(
-                {"message": "Unsupported file type."}
-            )
+        if uploaded_file.content_type not in settings.GF_LIMITS["FILE_SUPPORTED_TYPES"]:
+            raise serializers.ValidationError({"message": "Unsupported file type."})
 
         name = fs.get_valid_name(uploaded_file.name)
         save_path = osp.join(dirname, name)

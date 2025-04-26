@@ -18,6 +18,8 @@ django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter(
     {
-        "websocket": TokenAuthMiddlewareStack(IAMContextMiddleware(URLRouter(websocket_urlpatterns))),
+        "websocket": TokenAuthMiddlewareStack(
+            IAMContextMiddleware(URLRouter(websocket_urlpatterns))
+        ),
     }
 )

@@ -20,8 +20,8 @@ from genflow.apps.core.serializers import (
     EntityGroupWriteSerializer,
     FileEntitySerializer,
 )
-from genflow.apps.team.middleware import HttpRequestWithIamContext
 from genflow.apps.restriction.mixin import TeamLimitMixin
+from genflow.apps.team.middleware import HttpRequestWithIamContext
 
 
 @extend_schema_view(
@@ -198,7 +198,9 @@ class FileManagementMixin(TeamLimitMixin, metaclass=ABCMeta):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not filename:
-            return Response({"message": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         file_path = osp.join(instance.dirname, filename)
         if osp.exists(file_path):

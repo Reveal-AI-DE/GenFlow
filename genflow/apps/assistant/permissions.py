@@ -4,12 +4,12 @@
 
 from django.conf import settings
 
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.core.models import EntityGroup
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
-from genflow.apps.team.models import TeamRole
 from genflow.apps.restriction.mixin import LimitMixin
-from genflow.apps.core.models import EntityGroup
-from genflow.apps.assistant.models import Assistant
+from genflow.apps.team.models import TeamRole
 
 
 class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitMixin):
@@ -47,8 +47,7 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission, Lim
         """
 
         return EntityGroup.objects.filter(
-            entity_type=Assistant.__name__.lower(),
-            owner_id=self.user_id
+            entity_type=Assistant.__name__.lower(), owner_id=self.user_id
         ).count()
 
     def get_team_usage(self) -> int:
@@ -60,8 +59,7 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission, Lim
             return 0
 
         return EntityGroup.objects.filter(
-            entity_type=Assistant.__name__.lower(),
-            team_id=self.team_id
+            entity_type=Assistant.__name__.lower(), team_id=self.team_id
         ).count()
 
     def check_access(self) -> bool:
@@ -77,13 +75,10 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission, Lim
             return True
 
         # check limits
-        if (
-            self.scope == self.Scopes.CREATE
-            and self.check_limit(
-                user_id=self.user_id,
-                team_id=self.team_id,
-                key="ASSISTANT_GROUP",
-            )
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="ASSISTANT_GROUP",
         ):
             return False
 
@@ -150,9 +145,7 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission, LimitMixi
         Get the number of assistant owned by the user.
         """
 
-        return Assistant.objects.filter(
-            owner_id=self.user_id
-        ).count()
+        return Assistant.objects.filter(owner_id=self.user_id).count()
 
     def get_team_usage(self) -> int:
         """
@@ -162,9 +155,7 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission, LimitMixi
         if self.team_id is None:
             return 0
 
-        return Assistant.objects.filter(
-            team_id=self.team_id
-        ).count()
+        return Assistant.objects.filter(team_id=self.team_id).count()
 
     def check_access(self) -> bool:
         """
@@ -180,13 +171,10 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission, LimitMixi
             return True
 
         # check limits
-        if (
-            self.scope == self.Scopes.CREATE
-            and self.check_limit(
-                user_id=self.user_id,
-                team_id=self.team_id,
-                key="ASSISTANT",
-            )
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="ASSISTANT",
         ):
             return False
 

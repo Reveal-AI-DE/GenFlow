@@ -6,6 +6,7 @@
 from genflow.apps.restriction.models import Limit
 from genflow.apps.restriction.registry import LIMIT_REGISTRY, LimitDefinition
 
+
 def add_global_limits(app_name: str):
     """
     Adds global limits corresponding to app_name.

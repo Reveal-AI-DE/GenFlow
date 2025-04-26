@@ -24,6 +24,8 @@ from genflow.apps.websocket.urls import websocket_urlpatterns
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": TokenAuthMiddlewareStack(IAMContextMiddleware(URLRouter(websocket_urlpatterns))),
+        "websocket": TokenAuthMiddlewareStack(
+            IAMContextMiddleware(URLRouter(websocket_urlpatterns))
+        ),
     }
 )

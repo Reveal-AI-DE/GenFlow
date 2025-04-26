@@ -26,10 +26,7 @@ class UserLimitMixin(metaclass=ABCMeta):
 
         try:
             user_limit = Limit.objects.get(key=key, user_id=user_id)
-            if user_limit.value <= self.get_user_usage():
-                return True # Limit reached
-            else:
-                return False
+            return bool(user_limit.value <= self.get_user_usage())
         except Limit.DoesNotExist:
             # If no limit is set for the user, return False (not limited)
             return False
@@ -54,10 +51,7 @@ class TeamLimitMixin(metaclass=ABCMeta):
 
         try:
             global_limit = Limit.objects.get(key=key, user=None, team=None)
-            if global_limit.value <= self.get_team_usage():
-                return True # Global limit reached
-            else:
-                return False
+            return bool(global_limit.value <= self.get_team_usage())
         except Limit.DoesNotExist:
             # If no global limit is set, return False (not limited)
             return False
@@ -69,10 +63,7 @@ class TeamLimitMixin(metaclass=ABCMeta):
 
         try:
             team_limit = Limit.objects.get(key=key, team_id=team_id)
-            if team_limit.value <= self.get_team_usage():
-                return True # Limit reached
-            else:
-                return False
+            return bool(team_limit.value <= self.get_team_usage())
         except Limit.DoesNotExist:
             # If no limit is set for the team, check for global limit
             return self.check_global_limit(key)

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 from django.conf import settings
-from django.db.models import Model
 
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
 from genflow.apps.team.models import TeamRole

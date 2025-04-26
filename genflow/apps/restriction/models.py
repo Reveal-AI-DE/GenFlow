@@ -2,11 +2,12 @@
 #
 # SPDX-License-Identifier: MIT
 
-from django.db import models
 from django.contrib.auth import get_user_model
-from genflow.apps.team.models import Team
+from django.db import models
 
 from genflow.apps.common.models import TimeAuditModel
+from genflow.apps.team.models import Team
+
 
 class Limit(TimeAuditModel):
     """
@@ -15,10 +16,12 @@ class Limit(TimeAuditModel):
 
     key = models.CharField(max_length=255, unique=False)
     value = models.IntegerField()
-    user = models.ForeignKey(get_user_model(), null=True, blank=True,
-            on_delete=models.CASCADE, related_name="limits")
-    team = models.ForeignKey(Team, null=True, blank=True,
-            on_delete=models.CASCADE, related_name="limits")
+    user = models.ForeignKey(
+        get_user_model(), null=True, blank=True, on_delete=models.CASCADE, related_name="limits"
+    )
+    team = models.ForeignKey(
+        Team, null=True, blank=True, on_delete=models.CASCADE, related_name="limits"
+    )
 
     class Meta:
         # Unique constraint on team and user.

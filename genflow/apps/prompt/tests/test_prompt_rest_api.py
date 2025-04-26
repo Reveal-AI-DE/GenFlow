@@ -15,9 +15,9 @@ from genflow.apps.prompt.tests.utils import (
     create_dummy_prompt,
     create_dummy_prompt_group,
 )
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
-from genflow.apps.restriction.tests.utils import override_limit
 
 
 class PromptTestCase(APITestCase):

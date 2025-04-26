@@ -6,6 +6,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+
 class LimitDefinition(BaseModel):
     """
     Represents a limit definition for a specific app.
@@ -15,7 +16,9 @@ class LimitDefinition(BaseModel):
     description: str
     default: Optional[int] = None
 
+
 LIMIT_REGISTRY = {}
+
 
 def register_limit(app_name, key, description, default=None):
     """
@@ -24,7 +27,10 @@ def register_limit(app_name, key, description, default=None):
 
     if app_name not in LIMIT_REGISTRY:
         LIMIT_REGISTRY[app_name] = []
-    LIMIT_REGISTRY[app_name].append(LimitDefinition(key=key, description=description, default=default))
+    LIMIT_REGISTRY[app_name].append(
+        LimitDefinition(key=key, description=description, default=default)
+    )
+
 
 def get_limit_description(key):
     """

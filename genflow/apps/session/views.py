@@ -6,7 +6,6 @@ import shutil
 from os import path as osp
 from typing import cast
 
-from django.conf import settings
 from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
@@ -18,7 +17,6 @@ from rest_framework import status, viewsets
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
-from genflow.apps.common.file_utils import get_files
 from genflow.apps.core.mixin import FileManagementMixin
 from genflow.apps.core.serializers import FileEntitySerializer
 from genflow.apps.prompt.models import Prompt

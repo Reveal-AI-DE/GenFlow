@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-from django.conf import settings
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework.permissions import SAFE_METHODS
 
-from genflow.apps.common.file_utils import get_files
 from genflow.apps.assistant import permissions as perms
 from genflow.apps.assistant.models import Assistant
 from genflow.apps.assistant.serializers import AssistantReadSerializer, AssistantWriteSerializer

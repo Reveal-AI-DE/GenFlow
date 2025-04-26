@@ -389,9 +389,9 @@ GF_LIMITS = {
     "PROMPT": 5,
     "ASSISTANT_GROUP": 10,
     "ASSISTANT": 5,
-    "MAX_FILES_PER_ASSISTANT": 2, # 2 files
+    "MAX_FILES_PER_ASSISTANT": 2,  # 2 files
     "SESSION": 10,
-    "MAX_FILES_PER_SESSION": 1, # 1 file
+    "MAX_FILES_PER_SESSION": 1,  # 1 file
     "MESSAGE": 100,
     "MAX_FILE_SIZE": 2,  # 2MB
     "FILE_SUPPORTED_TYPES": [

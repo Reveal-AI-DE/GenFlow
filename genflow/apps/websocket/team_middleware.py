@@ -7,7 +7,8 @@ from channels.middleware import BaseMiddleware
 from django.utils.functional import SimpleLazyObject
 
 from genflow.apps.iam.permissions import get_membership
-from genflow.apps.team.middleware import IAMContext as BaseIAMContext, get_team
+from genflow.apps.team.middleware import IAMContext as BaseIAMContext
+from genflow.apps.team.middleware import get_team
 from genflow.apps.websocket.auth_middleware import IAMContext, WebSocketRequest
 
 

@@ -10,10 +10,10 @@ from django.dispatch import receiver
 from django.test import TransactionTestCase, override_settings
 from rest_framework.authtoken.models import Token
 
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.session.models import SessionType
 from genflow.apps.session.tests.utils import SESSION_DATA, create_dummy_session
 from genflow.apps.team.tests.utils import create_dummy_users
-from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.websocket.consumer import status
 from genflow.apps.websocket.tests.utils import application
 

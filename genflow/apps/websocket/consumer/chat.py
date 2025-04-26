@@ -4,12 +4,11 @@
 
 import asyncio
 
-from django.conf import settings
 from channels.db import database_sync_to_async
 
 from genflow.apps.ai.llm.entities import Result
-from genflow.apps.restriction.models import Limit
 from genflow.apps.core.models import Provider
+from genflow.apps.restriction.models import Limit
 from genflow.apps.session.generator.chat import ChatGenerator
 from genflow.apps.session.generator.entities import GenerateRequest
 from genflow.apps.session.models import Session, SessionMessage
@@ -73,10 +72,7 @@ class ChatGenerateConsumer(BaseConsumer):
 
         try:
             global_limit = Limit.objects.get(key="MESSAGE", user=None, team=None)
-            if global_limit.value <= db_session.sessionmessage_set.count():
-                return True # Global limit reached
-            else:
-                return False
+            return bool(global_limit.value <= db_session.sessionmessage_set.count())
         except Limit.DoesNotExist:
             # If no limit is set globally, return False (not limited)
             return False

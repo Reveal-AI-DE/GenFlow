@@ -4,12 +4,12 @@
 
 from django.conf import settings
 
+from genflow.apps.core.models import EntityGroup
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission
-from genflow.apps.team.models import TeamRole
-from genflow.apps.restriction.mixin import LimitMixin
-from genflow.apps.core.models import EntityGroup
 from genflow.apps.prompt.models import Prompt
+from genflow.apps.restriction.mixin import LimitMixin
+from genflow.apps.team.models import TeamRole
 
 
 class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitMixin):
@@ -47,8 +47,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitM
         """
 
         return EntityGroup.objects.filter(
-            entity_type=Prompt.__name__.lower(),
-            owner_id=self.user_id
+            entity_type=Prompt.__name__.lower(), owner_id=self.user_id
         ).count()
 
     def get_team_usage(self) -> int:
@@ -60,8 +59,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitM
             return 0
 
         return EntityGroup.objects.filter(
-            entity_type=Prompt.__name__.lower(),
-            team_id=self.team_id
+            entity_type=Prompt.__name__.lower(), team_id=self.team_id
         ).count()
 
     def check_access(self) -> bool:
@@ -77,13 +75,10 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitM
             return True
 
         # check limits
-        if (
-            self.scope == self.Scopes.CREATE
-            and self.check_limit(
-                user_id=self.user_id,
-                team_id=self.team_id,
-                key="PROMPT_GROUP",
-            )
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="PROMPT_GROUP",
         ):
             return False
 
@@ -132,9 +127,7 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
         Get the number of prompt owned by the user.
         """
 
-        return Prompt.objects.filter(
-            owner_id=self.user_id
-        ).count()
+        return Prompt.objects.filter(owner_id=self.user_id).count()
 
     def get_team_usage(self) -> int:
         """
@@ -144,9 +137,7 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
         if self.team_id is None:
             return 0
 
-        return Prompt.objects.filter(
-            team_id=self.team_id
-        ).count()
+        return Prompt.objects.filter(team_id=self.team_id).count()
 
     def check_access(self) -> bool:
         """
@@ -162,13 +153,10 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
             return True
 
         # check limits
-        if (
-            self.scope == self.Scopes.CREATE
-            and self.check_limit(
-                user_id=self.user_id,
-                team_id=self.team_id,
-                key="PROMPT",
-            )
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="PROMPT",
         ):
             return False
 

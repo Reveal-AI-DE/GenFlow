@@ -8,9 +8,9 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from genflow.apps.assistant.tests.utils import ASSISTANT_GROUP_DATA, create_dummy_assistant_group
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
-from genflow.apps.restriction.tests.utils import override_limit
 
 
 class AssistantGroupTestCase(APITestCase):

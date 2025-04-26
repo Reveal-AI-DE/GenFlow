@@ -7,6 +7,7 @@ from django.dispatch import receiver
 
 from genflow.apps.restriction.signals import add_global_limits
 
+
 # post_migrate is different from other signals
 @receiver(post_migrate)
 def add_assistant_global_limits(sender, **kwargs):
