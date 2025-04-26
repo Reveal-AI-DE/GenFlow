@@ -15,6 +15,7 @@ from genflow.apps.prompt.tests.utils import (
     create_dummy_prompt,
     create_dummy_prompt_group,
 )
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
@@ -126,6 +127,40 @@ class PromptCreateTestCase(PromptTestCase):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         group = self.regular_users[0]["teams"][0]["group"]
+
+        data = PROMPT_DATA.copy()
+        data["group_id"] = group.id
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+
+        response = self.create_prompt(user, data, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_prompt_user_user_check_global_limit(self):
+        override_limit(
+            key="PROMPT",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.create_prompt(user, PROMPT_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_prompt_user_user_another_team_check_global_limit(self):
+        override_limit(
+            key="PROMPT",
+            value=1,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+
+        # create prompt to reach limit
+        data = PROMPT_DATA.copy()
+        del data["related_model"]
+        create_dummy_prompt(team=team, owner=user, data=data)
+
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        group = self.regular_users[1]["teams"][0]["group"]
 
         data = PROMPT_DATA.copy()
         data["group_id"] = group.id

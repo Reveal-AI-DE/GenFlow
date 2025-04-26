@@ -2,14 +2,20 @@
 #
 # SPDX-License-Identifier: MIT
 
+import os
 from http.client import HTTPResponse
 from os import path as osp
+from pathlib import Path
 
+from django.conf import settings
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from genflow.apps.common.entities import FileEntity
 from genflow.apps.core.tests.utils import enable_provider
 from genflow.apps.prompt.tests.utils import PROVIDER_DATA
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.session.models import Session, SessionType
 from genflow.apps.session.tests.utils import (
     SESSION_DATA,
@@ -42,6 +48,18 @@ class SessionTestCase(APITestCase):
         data = SESSION_DATA.copy()
         data["session_type"] = SessionType.PROMPT.value
         cls.prompt_session = create_dummy_session(team=team, owner=user, data=data)
+
+    @classmethod
+    def create_files(cls, files_count):
+        os.makedirs(cls.llm_session.dirname, exist_ok=True)
+        cls.files = []
+        for i in range(files_count):
+            file = FileEntity(id=f"test_file_{i}.txt", path=cls.llm_session.dirname)
+            file.path = osp.join(cls.llm_session.dirname, file.id)
+            # create file
+            with open(file.path, "w") as f:
+                f.write("fake content")
+            cls.files.append(file)
 
 
 class SessionCreateTestCase(SessionTestCase):
@@ -134,6 +152,36 @@ class SessionCreateTestCase(SessionTestCase):
         another_team = self.regular_users[1]["teams"][0]["team"]
         response = self.create_session(user, SESSION_DATA, team_id=another_team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_session_user_check_global_limit(self):
+        override_limit(
+            key="SESSION",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+        response = self.create_session(user, SESSION_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_session_user_check_limit_global_another_team(self):
+        override_limit(
+            key="SESSION",
+            value=1,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+
+        # create session to reach limit
+        data = SESSION_DATA.copy()
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+        create_dummy_session(team=team, owner=user, data=data)
+
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+        response = self.create_session(user, SESSION_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class SessionRetrieveTestCase(SessionTestCase):
@@ -420,3 +468,232 @@ class SessionListTestCase(SessionTestCase):
         response = self.list_sessions(another_user, team_id=another_team.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 0)
+
+
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
+class SessionListFilesTestCase(SessionTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_sessions()
+        # create file
+        cls.create_files(2)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        for file in cls.files:
+            if osp.exists(file.path):
+                os.remove(file.path)
+
+    def check_data(self, response):
+        self.assertEqual(response.data["count"], 2)
+        self.assertIn(response.data["results"][0]["id"], [file.id for file in self.files])
+        self.assertIn(response.data["results"][0]["path"], [file.path for file in self.files])
+
+    def list_files(self, user, session_id, team_id=None) -> HTTPResponse:
+        url = (
+            f"/api/sessions/{session_id}/files?team={team_id}"
+            if team_id
+            else f"/api/sessions/{session_id}/files"
+        )
+        with ForceLogin(user, self.client):
+            response = self.client.get(url)
+        return response
+
+    def test_list_files_admin_no_team(self):
+        response = self.list_files(self.admin_user, self.llm_session.id)
+        # session team
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.list_files(self.admin_user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.list_files(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.list_files(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_list_files_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.list_files(another_user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
+class SessionUploadFileTestCase(SessionTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_sessions()
+        cls.file = FileEntity(id=f"test_file.txt", path=cls.llm_session.dirname)
+        cls.file.path = osp.join(cls.llm_session.dirname, cls.file.id)
+        # create file
+        cls.path = osp.join(settings.SESSIONS_ROOT, cls.file.id)
+        with open(cls.path, "w") as f:
+            f.write("fake content")
+
+    def check_data(self, response):
+        self.assertEqual(response.data["id"], self.file.id)
+        self.assertEqual(response.data["path"], self.file.path)
+        os.remove(self.file.path)
+
+    def upload_file(self, user, session_id, team_id=None) -> HTTPResponse:
+        url = (
+            f"/api/sessions/{session_id}/upload_file?team={team_id}"
+            if team_id
+            else f"/api/sessions/{session_id}/upload_file"
+        )
+        with ForceLogin(user, self.client):
+            with open(self.path, "rb") as file:
+                response = self.client.post(url, {"file": file}, format="multipart")
+        return response
+
+    def test_upload_file_admin_no_team(self):
+        response = self.upload_file(self.admin_user, self.llm_session.id)
+        # session team
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.upload_file(self.admin_user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.upload_file(user, self.llm_session.id, team_id=team.id)
+        # session owner
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.check_data(response)
+
+    def test_upload_file_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.upload_file(another_user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_upload_file_user_check_files_global_limit(self):
+        override_limit(
+            key="MAX_FILES_PER_SESSION",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(GF_LIMITS={"MAX_FILE_SIZE": 0, "FILE_SUPPORTED_TYPES": ["text/plain"]})
+    def test_upload_file_user_check_size(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(
+        GF_LIMITS={"MAX_FILES_PER_SESSION": 2, "MAX_FILE_SIZE": 1, "FILE_SUPPORTED_TYPES": []}
+    )
+    def test_upload_file_user_check_type(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.llm_session.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
+class SessionDeleteFileTestCase(SessionTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_sessions()
+
+    def setUp(self):
+        super().setUp()
+        self.create_files(2)
+
+    def delete_file(self, user, session_id, filename, team_id=None) -> HTTPResponse:
+        url = (
+            f"/api/sessions/{session_id}/files/{filename}?team={team_id}"
+            if team_id
+            else f"/api/sessions/{session_id}/files/{filename}"
+        )
+        with ForceLogin(user, self.client):
+            response = self.client.delete(url)
+        return response
+
+    def test_delete_file_admin_no_team(self):
+        response = self.delete_file(self.admin_user, self.llm_session.id, self.files[0].id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.delete_file(
+            self.admin_user, self.llm_session.id, self.files[0].id, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.delete_file(user, self.llm_session.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))
+
+    def test_delete_file_user_invalid_filename(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.delete_file(
+            user, self.llm_session.id, f"{self.files[0].id}-invalid", team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(osp.exists(self.files[0].path))
+
+    def test_delete_file_user_another_team(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        another_user = self.regular_users[1]["user"]
+        response = self.delete_file(
+            another_user, self.llm_session.id, self.files[0].id, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(osp.exists(self.files[0].path))
+
+    def test_delete_file_user_owner(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.delete_file(user, self.llm_session.id, self.files[0].id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(not osp.exists(self.files[0].path))

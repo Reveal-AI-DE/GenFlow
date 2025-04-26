@@ -4,12 +4,15 @@
 
 from django.conf import settings
 
+from genflow.apps.core.models import EntityGroup
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission
+from genflow.apps.prompt.models import Prompt
+from genflow.apps.restriction.mixin import LimitMixin
 from genflow.apps.team.models import TeamRole
 
 
-class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
+class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitMixin):
     """
     Handles the permissions for prompt group-related actions.
     """
@@ -38,6 +41,27 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of prompt group owned by the user.
+        """
+
+        return EntityGroup.objects.filter(
+            entity_type=Prompt.__name__.lower(), owner_id=self.user_id
+        ).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of prompt group owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return EntityGroup.objects.filter(
+            entity_type=Prompt.__name__.lower(), team_id=self.team_id
+        ).count()
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -50,6 +74,14 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
 
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="PROMPT_GROUP",
+        ):
+            return False
+
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
         return EntityBasePermission.check_base_scopes(self, is_team_owner)
 
@@ -61,7 +93,7 @@ class PromptGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         return EntityGroupPermission.filter(self, queryset)
 
 
-class PromptPermission(GenFLowBasePermission, EntityBasePermission):
+class PromptPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
     """
     Handles the permissions for prompt-related actions.
     """
@@ -90,6 +122,23 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of prompt owned by the user.
+        """
+
+        return Prompt.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of prompt owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Prompt.objects.filter(team_id=self.team_id).count()
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -102,6 +151,14 @@ class PromptPermission(GenFLowBasePermission, EntityBasePermission):
         # admin users have full control
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
+
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="PROMPT",
+        ):
+            return False
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
         return EntityBasePermission.check_base_scopes(self, is_team_owner)

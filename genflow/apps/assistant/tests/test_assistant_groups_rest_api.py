@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from genflow.apps.assistant.tests.utils import ASSISTANT_GROUP_DATA, create_dummy_assistant_group
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
@@ -68,6 +69,31 @@ class AssistantGroupCreateTestCase(AssistantGroupTestCase):
         response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["name"], ASSISTANT_GROUP_DATA["name"])
+
+    def test_create_assistant_group_user_user_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT_GROUP",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_assistant_group_user_another_team_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT_GROUP",
+            value=1,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        # create assistant group to reach limit
+        data = ASSISTANT_GROUP_DATA.copy()
+        create_dummy_assistant_group(team=team, owner=user, data=data)
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        response = self.create_assistant_group(user, ASSISTANT_GROUP_DATA, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class AssistantGroupRetrieveTestCase(AssistantGroupTestCase):

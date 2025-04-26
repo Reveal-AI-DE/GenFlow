@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+from abc import ABCMeta, abstractmethod
 from os import path as osp
 from typing import cast
 
@@ -19,6 +20,7 @@ from genflow.apps.core.serializers import (
     EntityGroupWriteSerializer,
     FileEntitySerializer,
 )
+from genflow.apps.restriction.mixin import TeamLimitMixin
 from genflow.apps.team.middleware import HttpRequestWithIamContext
 
 
@@ -111,11 +113,39 @@ class EntityGroupViewSetMixin(viewsets.ModelViewSet):
         )
 
 
-class FileManagementMixin:
+class FileManagementMixin(TeamLimitMixin, metaclass=ABCMeta):
     """
     Mixin to add file management functionality to a viewset.
     Provides endpoints for listing, uploading, and deleting files.
     """
+
+    @abstractmethod
+    def get_file_limit_key(self) -> str:
+        """
+        Get the key for the file limit.
+        This should be overridden in subclasses to provide the correct key.
+        """
+        ...
+
+    def get_team_usage(self) -> int:
+        """
+        Get files count.
+        """
+
+        instance = self.get_object()
+        return len(get_files(instance.dirname))
+
+    def check_limit(self) -> bool:
+        """
+        Check if the limit has been reached.
+        """
+
+        request = cast(HttpRequestWithIamContext, self.request)
+        team = request.iam_context.team
+        key = self.get_file_limit_key()
+        if team is None:
+            return self.check_global_limit(key)
+        return self.check_team_limit(team, key)
 
     @action(detail=True, methods=["get"], url_path="files")
     def list_files(self, request, pk=None):
@@ -141,6 +171,12 @@ class FileManagementMixin:
         if not hasattr(instance, "dirname"):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+        if self.check_limit():
+            return Response(
+                {"message": "File count limit exceeded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         uploaded_file = request.FILES.get("file", None)
         serializer = FileEntitySerializer(
             data={"dirname": instance.dirname, "uploaded_file": uploaded_file}
@@ -162,7 +198,9 @@ class FileManagementMixin:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not filename:
-            return Response({"detail": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         file_path = osp.join(instance.dirname, filename)
         if osp.exists(file_path):

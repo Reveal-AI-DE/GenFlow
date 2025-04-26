@@ -6,10 +6,10 @@ from asgiref.testing import ApplicationCommunicator
 from django.test import TransactionTestCase
 
 from genflow.apps.websocket.auth_middleware import TokenAuthMiddleware
-from genflow.apps.websocket.team_middleware import ContextMiddleware
+from genflow.apps.websocket.team_middleware import IAMContextMiddleware
 
 
-class TeamMiddlewareTestCase(TransactionTestCase):
+class IAMContextMiddlewareTestCase(TransactionTestCase):
     """
     Test the TeamMiddleware to ensure it populates the scope correctly.
     """
@@ -20,7 +20,7 @@ class TeamMiddlewareTestCase(TransactionTestCase):
             pass
 
         # Wrap the dummy app with the middleware
-        self.middleware = TokenAuthMiddleware(ContextMiddleware(dummy_app))
+        self.middleware = TokenAuthMiddleware(IAMContextMiddleware(dummy_app))
 
         # Create a fake ASGI scope
         self.scope = {

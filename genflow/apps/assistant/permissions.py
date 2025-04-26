@@ -4,12 +4,15 @@
 
 from django.conf import settings
 
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.core.models import EntityGroup
 from genflow.apps.core.permissions import EntityBasePermission, EntityGroupPermission
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
+from genflow.apps.restriction.mixin import LimitMixin
 from genflow.apps.team.models import TeamRole
 
 
-class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
+class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission, LimitMixin):
     """
     Handles the permissions for assistant group-related actions.
     """
@@ -38,6 +41,27 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of assistant group owned by the user.
+        """
+
+        return EntityGroup.objects.filter(
+            entity_type=Assistant.__name__.lower(), owner_id=self.user_id
+        ).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of assistant group owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return EntityGroup.objects.filter(
+            entity_type=Assistant.__name__.lower(), team_id=self.team_id
+        ).count()
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -50,6 +74,14 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
 
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="ASSISTANT_GROUP",
+        ):
+            return False
+
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
         return EntityBasePermission.check_base_scopes(self, is_team_owner)
 
@@ -61,7 +93,7 @@ class AssistantGroupPermission(GenFLowBasePermission, EntityGroupPermission):
         return EntityGroupPermission.filter(self, queryset)
 
 
-class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
+class AssistantPermission(GenFLowBasePermission, EntityBasePermission, LimitMixin):
     """
     Handles the permissions for assistant-related actions.
     """
@@ -108,6 +140,23 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of assistant owned by the user.
+        """
+
+        return Assistant.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of assistant owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Assistant.objects.filter(team_id=self.team_id).count()
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -121,14 +170,22 @@ class AssistantPermission(GenFLowBasePermission, EntityBasePermission):
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
 
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="ASSISTANT",
+        ):
+            return False
+
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
 
-        # team member cam list files
+        # team member can list files
         if self.scope == self.FileManagementScopes.LIST_FILES:
             return self.team_role is not None
 
-        # team owner or entity owner can upload a file
-        # team owner or entity owner can delete a file
+        # team owner or assistant owner can upload a file
+        # team owner or assistant owner can delete a file
         if (
             self.scope == self.FileManagementScopes.UPLOAD_FILE
             or self.scope == self.FileManagementScopes.DELETE_FILE

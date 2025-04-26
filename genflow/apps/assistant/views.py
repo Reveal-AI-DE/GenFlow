@@ -143,3 +143,10 @@ class AssistantsViewSet(EntityBaseViewSet, FileManagementMixin):
             perm = perms.AssistantPermission.create_scope_list(self.request)
             queryset = perm.filter(queryset)
         return queryset
+
+    def get_file_limit_key(self) -> str:
+        """
+        Gets the key for the file limit.
+        """
+
+        return "MAX_FILES_PER_ASSISTANT"

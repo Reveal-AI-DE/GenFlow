@@ -7,18 +7,19 @@ from channels.middleware import BaseMiddleware
 from django.utils.functional import SimpleLazyObject
 
 from genflow.apps.iam.permissions import get_membership
-from genflow.apps.team.middleware import TeamContext, get_team
-from genflow.apps.websocket.auth_middleware import TeamContextWithRole, WebSocketRequest
+from genflow.apps.team.middleware import IAMContext as BaseIAMContext
+from genflow.apps.team.middleware import get_team
+from genflow.apps.websocket.auth_middleware import IAMContext, WebSocketRequest
 
 
-def build_iam_context(request: WebSocketRequest) -> TeamContextWithRole:
+def build_iam_context(request: WebSocketRequest) -> IAMContext:
     """
     Constructs an IAM context for a WebSocket request.
     """
 
-    initial_context: TeamContext = get_team(request)
+    initial_context: BaseIAMContext = get_team(request)
     membership = get_membership(request, initial_context.team)
-    iam_context = TeamContextWithRole(
+    iam_context = IAMContext(
         team=initial_context.team,
         privilege=initial_context.privilege,
         team_role=getattr(membership, "role", None),
@@ -35,7 +36,7 @@ def get_iam_context(scope) -> None:
     scope["request"].iam_context = SimpleLazyObject(lambda: build_iam_context(scope["request"]))
 
 
-class ContextMiddleware(BaseMiddleware):
+class IAMContextMiddleware(BaseMiddleware):
     """
     Injects and populate the ASGI scope with additional context.
 
@@ -53,7 +54,7 @@ class ContextMiddleware(BaseMiddleware):
 
         if "request" not in scope:
             raise ValueError(
-                "ContextMiddleware cannot find request in scope. "
+                "IAMContextMiddleware cannot find request in scope. "
                 "TokenAuthMiddlewareStack must be above it."
             )
 

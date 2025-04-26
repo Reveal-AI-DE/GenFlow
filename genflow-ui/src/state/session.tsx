@@ -6,7 +6,7 @@ import React, {
     useState, FC, ReactNode, useEffect,
 } from 'react';
 import { BatchItem } from '@rpldy/uploady';
-import { useRecordContext, useDataProvider } from 'react-admin';
+import { useRecordContext, useDataProvider, useNotify } from 'react-admin';
 
 import {
     Session, SessionMessage, FileEntity,SessionFloatActionKey,
@@ -29,6 +29,7 @@ export const SessionState: FC<SessionStateProps> = ({
     const session = useRecordContext<Session>();
 
     const dataProvider = useDataProvider();
+    const notify = useNotify();
 
     const [generateURL, setGenerateURL] = useState<string | undefined>(undefined);
 
@@ -60,7 +61,11 @@ export const SessionState: FC<SessionStateProps> = ({
             const { data: messages } = messageData;
             setSessionMessages(messages);
             if (useResponsiveLayout !== undefined) setIsResponsiveLayout(useResponsiveLayout);
-        });
+        }).catch(() => notify(
+            'ra.notification.http_error',
+            {
+                type: 'error',
+            }));
     };
 
     const initializeChatSetting = async (): Promise<void> => {

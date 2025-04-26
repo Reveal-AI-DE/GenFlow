@@ -1,0 +1,18 @@
+# Copyright (C) 2025 Reveal AI
+#
+# SPDX-License-Identifier: MIT
+
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+
+from genflow.apps.restriction.signals import add_global_limits
+
+
+# post_migrate is different from other signals
+@receiver(post_migrate)
+def add_prompt_global_limits(sender, **kwargs):
+    """
+    The `post_migrate` signal handler to add global limits corresponding to prompt app.
+    """
+
+    add_global_limits("prompt")

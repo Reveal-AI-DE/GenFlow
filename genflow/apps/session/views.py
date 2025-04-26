@@ -173,6 +173,13 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
             shutil.rmtree(instance.dirname)
         return super().perform_destroy(instance)
 
+    def get_file_limit_key(self) -> str:
+        """
+        Gets the key for the file limit.
+        """
+
+        return "MAX_FILES_PER_SESSION"
+
 
 @extend_schema(tags=["messages"])
 @extend_schema_view(

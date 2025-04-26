@@ -5,8 +5,10 @@
 import os
 from http.client import HTTPResponse
 from os import path as osp
+from pathlib import Path
 
 from django.conf import settings
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -19,6 +21,7 @@ from genflow.apps.assistant.tests.utils import (
 from genflow.apps.common.entities import FileEntity
 from genflow.apps.core.tests.utils import enable_provider
 from genflow.apps.prompt.tests.utils import PROVIDER_DATA
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import TeamRole
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
 
@@ -144,6 +147,46 @@ class AssistantCreateTestCase(AssistantTestCase):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
         group = self.regular_users[0]["teams"][0]["group"]
+
+        data = ASSISTANT_DATA.copy()
+        data["group_id"] = group.id
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+
+        response = self.create_assistant(user, data, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_assistant_user_user_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        group = self.regular_users[0]["teams"][0]["group"]
+
+        data = ASSISTANT_DATA.copy()
+        data["group_id"] = group.id
+        _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
+
+        response = self.create_assistant(user, data, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_assistant_user_user_another_team_check_global_limit(self):
+        override_limit(
+            key="ASSISTANT",
+            value=1,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+
+        # create assistant to reach limit
+        data = ASSISTANT_DATA.copy()
+        del data["related_model"]
+        create_dummy_assistant(team=team, owner=user, data=data)
+
+        team = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[1]["user"]
+        group = self.regular_users[1]["teams"][0]["group"]
 
         data = ASSISTANT_DATA.copy()
         data["group_id"] = group.id
@@ -443,7 +486,22 @@ class AssistantUploadAvatarTestCase(AssistantTestCase):
         response = self.upload_avatar(another_user, self.assistant.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @override_settings(GF_LIMITS={"MAX_AVATAR_SIZE": 0, "AVATAR_SUPPORTED_TYPES": ["image/png"]})
+    def test_upload_avatar_user_check_size(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_avatar(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(GF_LIMITS={"MAX_AVATAR_SIZE": 1, "AVATAR_SUPPORTED_TYPES": []})
+    def test_upload_avatar_user_check_type(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_avatar(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
 class AssistantListFilesTestCase(AssistantTestCase):
     @classmethod
     def setUpClass(cls):
@@ -451,6 +509,13 @@ class AssistantListFilesTestCase(AssistantTestCase):
         cls.create_assistants()
         # create file
         cls.create_files(2)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        for file in cls.files:
+            if osp.exists(file.path):
+                os.remove(file.path)
 
     def check_data(self, response):
         self.assertEqual(response.data["count"], 2)
@@ -503,6 +568,7 @@ class AssistantListFilesTestCase(AssistantTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
 class AssistantUploadFileTestCase(AssistantTestCase):
     @classmethod
     def setUpClass(cls):
@@ -511,13 +577,14 @@ class AssistantUploadFileTestCase(AssistantTestCase):
         cls.file = FileEntity(id=f"test_file.txt", path=cls.assistant.dirname)
         cls.file.path = osp.join(cls.assistant.dirname, cls.file.id)
         # create file
-        cls.path = osp.join(settings.BASE_DIR, cls.file.id)
+        cls.path = osp.join(settings.ASSISTANTS_ROOT, cls.file.id)
         with open(cls.path, "w") as f:
             f.write("fake content")
 
     def check_data(self, response):
         self.assertEqual(response.data["id"], self.file.id)
         self.assertEqual(response.data["path"], self.file.path)
+        os.remove(self.file.path)
 
     def upload_file(self, user, assistant_id, team_id=None) -> HTTPResponse:
         url = (
@@ -566,7 +633,34 @@ class AssistantUploadFileTestCase(AssistantTestCase):
         response = self.upload_file(another_user, self.assistant.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_upload_file_user_check_files_global_limit(self):
+        override_limit(
+            key="MAX_FILES_PER_ASSISTANT",
+            value=0,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    @override_settings(GF_LIMITS={"MAX_FILE_SIZE": 0, "FILE_SUPPORTED_TYPES": ["text/plain"]})
+    def test_upload_file_user_check_size(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @override_settings(
+        GF_LIMITS={"MAX_FILES_PER_ASSISTANT": 2, "MAX_FILE_SIZE": 1, "FILE_SUPPORTED_TYPES": []}
+    )
+    def test_upload_file_user_check_type(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.upload_file(user, self.assistant.id, team_id=team.id)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+@override_settings(BASE_DIR=str(Path(__file__).parents[4]))
 class AssistantDeleteFileTestCase(AssistantTestCase):
     @classmethod
     def setUpClass(cls):

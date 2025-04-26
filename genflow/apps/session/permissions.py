@@ -5,10 +5,12 @@
 from django.conf import settings
 
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
+from genflow.apps.restriction.mixin import LimitMixin
+from genflow.apps.session.models import Session, SessionMessage
 from genflow.apps.team.models import TeamRole
 
 
-class SessionPermission(GenFLowBasePermission):
+class SessionPermission(GenFLowBasePermission, LimitMixin):
     """
     Handles the permissions for session-related actions.
     """
@@ -61,6 +63,23 @@ class SessionPermission(GenFLowBasePermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of session owned by the user.
+        """
+
+        return Session.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of session owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Session.objects.filter(team_id=self.team_id).count()
+
     def check_access(self) -> bool:
         """
         Checks if the user has access based on their group name and team role.
@@ -73,6 +92,14 @@ class SessionPermission(GenFLowBasePermission):
         # admin users have full control
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
+
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="SESSION",
+        ):
+            return False
 
         is_team_owner = self.team_role and self.team_role == TeamRole.OWNER.value
 
@@ -149,6 +176,23 @@ class SessionMessagePermission(GenFLowBasePermission):
                 permissions.append(self)
 
         return permissions
+
+    def get_user_usage(self) -> int:
+        """
+        Get the number of messages per session owned by the user.
+        """
+        # TODO: add session id
+        return SessionMessage.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of messages per session owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+        # TODO: add session id
+        return SessionMessage.objects.filter(team_id=self.team_id).count()
 
     def check_access(self) -> bool:
         """

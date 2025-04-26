@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
     useRecordContext, useDataProvider,
-    useRedirect, useTranslate,
+    useRedirect, useTranslate, useNotify,
 } from 'react-admin';
 
 import {
@@ -20,13 +20,15 @@ type AssistantCardActionsProps = object;
 
 const AssistantCardActions: FC<AssistantCardActionsProps> = () => {
     const assistant = useRecordContext<Assistant>();
-    if (!assistant) {
-        return null;
-    }
 
     const dataProvider = useDataProvider();
     const redirect = useRedirect();
     const translate = useTranslate();
+    const notify = useNotify();
+
+    if (!assistant) {
+        return null;
+    }
 
     const OnUseClick = (): void => {
         if (assistant.assistant_status !== AssistantStatus.PUBLISHED) {
@@ -41,7 +43,11 @@ const AssistantCardActions: FC<AssistantCardActionsProps> = () => {
         dataProvider.create('sessions', { data }).then((response) => {
             const { data: session } = response;
             redirect('show', 'sessions', session.id);
-        });
+        }).catch(() => notify(
+            'ra.notification.http_error',
+            {
+                type: 'error',
+            }));
     };
 
     return (

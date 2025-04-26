@@ -4,6 +4,7 @@
 
 from typing import cast
 
+from django.conf import settings
 from django.db.models.query import QuerySet
 from drf_spectacular.utils import (
     OpenApiParameter,
@@ -385,5 +386,20 @@ class EntityBaseViewSet(viewsets.ModelViewSet):
 
         entity: CommonEntity = self.get_object()
         entity.avatar = request.FILES.get("avatar", None)
+        if entity.avatar:
+            # check size
+            if entity.avatar.file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_AVATAR_SIZE"]:
+                return Response(
+                    data={
+                        "message": f"File size exceeds the limit of {settings.GF_LIMITS['MAX_AVATAR_SIZE']} MB."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # check type
+            if entity.avatar.file.content_type not in settings.GF_LIMITS["AVATAR_SUPPORTED_TYPES"]:
+                return Response(
+                    data={"message": "Unsupported file type."}, status=status.HTTP_400_BAD_REQUEST
+                )
+
         entity.save()
         return Response(status=status.HTTP_200_OK)

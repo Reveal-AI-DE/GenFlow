@@ -6,7 +6,8 @@ import React, { FC,useMemo, useContext } from 'react';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import {
-    useRecordContext, useTranslate, useRefresh,
+    useRecordContext, useTranslate,
+    useRefresh, useNotify,
 } from 'react-admin';
 import {
     UPLOADER_EVENTS, Batch,
@@ -23,12 +24,9 @@ type AssistantFilesUploadProps = object;
 
 const AssistantFileUpload: FC<AssistantFilesUploadProps> = () => {
     const assistant = useRecordContext<Assistant>()
-    if (!assistant) {
-        return null;
-    }
-
     const translate = useTranslate();
     const refresh = useRefresh();
+    const notify = useNotify();
     const { setRemainingFiles } = useContext<AssistantContextInterface>(AssistantContext);
 
     const listeners = useMemo(() => ({
@@ -41,6 +39,19 @@ const AssistantFileUpload: FC<AssistantFilesUploadProps> = () => {
                     setRemainingFiles((prevItemCount) => (prevItemCount - 1));
                     refresh();
                     break;
+                case FILE_STATES.ERROR: {
+                    const message = item.uploadResponse?.data?.message;
+                    if (Array.isArray(message)) {
+                        notify(message[0], { type: 'error' });
+                    } else if (typeof message === 'string') {
+                        notify(message, { type: 'error' });
+                    } else {
+                        notify('ra.notification.http_error', { type: 'error' });
+                    }
+                    setRemainingFiles((prevItemCount) => (prevItemCount - 1));
+                    refresh();
+                    break;
+                }
                 case FILE_STATES.ABORTED:
                     setRemainingFiles((prevItemCount) => (prevItemCount - 1));
                     break;
@@ -49,6 +60,10 @@ const AssistantFileUpload: FC<AssistantFilesUploadProps> = () => {
             }
         },
     }), []);
+
+    if (!assistant) {
+        return null;
+    }
 
     const destination = createUploadyDestination('assistants', assistant.id);
 

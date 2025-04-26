@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     "genflow.apps.team",
     "genflow.apps.iam",
+    "genflow.apps.restriction",
     "genflow.apps.core",
     "genflow.apps.prompt",
     "genflow.apps.assistant",
@@ -162,7 +163,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "dj_pagination.middleware.PaginationMiddleware",
-    "genflow.apps.team.middleware.ContextMiddleware",
+    "genflow.apps.team.middleware.IAMContextMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
 
@@ -306,6 +307,9 @@ os.makedirs(DATA_ROOT, exist_ok=True)
 ASSISTANTS_ROOT = os.path.join(DATA_ROOT, "assistants")
 os.makedirs(ASSISTANTS_ROOT, exist_ok=True)
 
+SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
+os.makedirs(SESSIONS_ROOT, exist_ok=True)
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
@@ -323,9 +327,6 @@ os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 
 ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
 os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
-
-SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
-os.makedirs(SESSIONS_ROOT, exist_ok=True)
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
@@ -381,4 +382,27 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
     "SCHEMA_PATH_PREFIX": "/api",
     "SCHEMA_PATH_PREFIX_TRIM": False,
+}
+
+GF_LIMITS = {
+    "PROMPT_GROUP": 10,
+    "PROMPT": 5,
+    "ASSISTANT_GROUP": 10,
+    "ASSISTANT": 5,
+    "MAX_FILES_PER_ASSISTANT": 2,  # 2 files
+    "SESSION": 10,
+    "MAX_FILES_PER_SESSION": 1,  # 1 file
+    "MESSAGE": 100,
+    "MAX_FILE_SIZE": 2,  # 2MB
+    "FILE_SUPPORTED_TYPES": [
+        "application/pdf",
+        "text/html",
+        "text/plain",
+    ],
+    "MAX_AVATAR_SIZE": 1,  # 1MB
+    "AVATAR_SUPPORTED_TYPES": [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+    ],
 }
