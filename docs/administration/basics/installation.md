@@ -57,13 +57,11 @@ guide does not cover proxy setup, as it is an advanced topic.
 - Create new folder in your home directory, and create new file with the installation commands:
 
   ```shell
-  mkdir ~/genflow
-  cd ~/genflow
-  echo \
-    "
-    " > ~/genflow/install.sh
-  chmod u+x ~/genflow/install.sh
-  ~/genflow/install.sh
+  mkdir GenFlow
+  cd GenFlow
+  curl -o setup.sh https://raw.githubusercontent.com/Reveal-AI-DE/GenFlow/develop/docs/administration/basics/setup.sh
+  chmod u+x setup.sh
+  ./setup.sh
   ```
 
 - Create a super user to use the admin panel:

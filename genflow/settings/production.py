@@ -21,7 +21,7 @@ DATABASES = {
     }
 }
 
-if "GF_EMAIL_HOST_PASSWORD" in os.environ:
+if "GF_EMAIL_HOST_PASSWORD" in os.environ and os.getenv("GF_EMAIL_HOST_PASSWORD").strip():
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = os.getenv("GF_EMAIL_HOST", "smtp.ionos.de")
     EMAIL_PORT = int(os.getenv("GF_EMAIL_PORT", 587))
