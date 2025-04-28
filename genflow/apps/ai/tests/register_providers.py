@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from genflow.apps.ai.providers.registry import register_ai_provider, register_model_collection
 from genflow.apps.ai.tests.utils import (

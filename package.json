@@ -89,7 +89,8 @@
         "url": "git+https://github.com/Reveal-AI-DE/GenFlow.git"
     },
     "author": "Reveal AI",
-    "license": "MIT",
+    "license": "Apache 2.0 License Extended",
+    "licenseUrl": "https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md",
     "bugs": {
         "url": "https://github.com/Reveal-AI-DE/GenFlow/issues"
     },

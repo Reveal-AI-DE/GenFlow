@@ -2,7 +2,7 @@
 
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 # This is a wrapper script for running backend services. It waits for services
 # the backend depends on to start before executing the backend itself.
