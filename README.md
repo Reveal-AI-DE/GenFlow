@@ -51,7 +51,7 @@ Comprehensive documentation is available at [GenFlow Documentation](docs/documen
 
 ## Roadmap 🛣️
 
-Here are the planned enhancements and upcoming features for GenFlow [Roadmap](docs/roadmap.md)
+Here are the planned enhancements and upcoming features for [GenFlow Roadmap](docs/roadmap.md)
 #### Currently in development:
 
 - [ ] **Amazon Bedrock Integration**
@@ -67,18 +67,18 @@ Here are the planned enhancements and upcoming features for GenFlow [Roadmap](do
 
 ## Contributing 🤝
 
-We welcome contributions! Please see [Contributing](docs/contributing/contributing.md) for guidelines.
+We welcome contributions! Please see [GenFlow Contributing Guide](docs/contributing/contributing.md) for guidelines.
 
 ## License 📄
 
-This project is licensed under the Custom Apache License - see the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the Apache 2.0 License Extended - see the [GenFlow LICENSE](LICENSE.md) file for details.
 
 ## Contact 📬
 
 For support or inquiries:
 
 - **Email**: [info@revealai.de](mailto:info@revealai.de)
-- [![LinkedIn](linkedin-img)](linkedin-url)
+- [![LinkedIn][linkedin-img]][linkedin-url]
 - **Address**: Darm Street 37, 64287 Darmstadt, Germany
 
 <!-- Badges -->
