@@ -22,7 +22,7 @@
         "*.css": "tailwindcss"
     },
     "licenser.license": "Custom",
-    "licenser.customHeader": "Copyright (C) @YEAR@ Reveal AI\n\nSPDX-License-Identifier: MIT",
+    "licenser.customHeader": "Copyright (C) @YEAR@ Reveal AI\n\nLicensed under the Apache License, Version 2.0 with Additional Commercial Terms.",
     "files.trimTrailingWhitespace": true,
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv/",
     "python.testing.pytestArgs": [

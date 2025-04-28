@@ -9,8 +9,8 @@ info:
     url: https://github.com/Reveal-AI-DE/GenFlow
     email: support@revealai.de
   license:
-    name: MIT License
-    url: https://en.wikipedia.org/wiki/MIT_License
+    name: Apache 2.0 License Extended
+    url: https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md
 paths:
   /api/assistant/groups:
     get:

@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 WS_400_BAD_REQUEST = 400
 WS_401_UNAUTHORIZED = 401

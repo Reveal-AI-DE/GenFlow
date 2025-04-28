@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from asgiref.sync import sync_to_async
 from channels.testing import WebsocketCommunicator

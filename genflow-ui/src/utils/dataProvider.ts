@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 export const ResourceURL = (path: string | undefined, base = process.env.REACT_APP_BACKEND_API_BASE_URL): string => {
     if (path === undefined) return '';

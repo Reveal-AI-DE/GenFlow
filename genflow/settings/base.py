@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 """
 Django settings for genflow project.
@@ -346,8 +346,8 @@ SPECTACULAR_SETTINGS = {
         "email": "support@revealai.de",
     },
     "LICENSE": {
-        "name": "MIT License",
-        "url": "https://en.wikipedia.org/wiki/MIT_License",
+        "name": "Apache 2.0 License Extended",
+        "url": "https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md",
     },
     "SERVE_PUBLIC": True,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
