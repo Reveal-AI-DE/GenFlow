@@ -10,7 +10,7 @@ info:
     email: support@revealai.de
   license:
     name: Apache 2.0 License Extended
-    url: https://en.wikipedia.org/wiki/MIT_License
+    url: https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md
 paths:
   /api/assistant/groups:
     get:
