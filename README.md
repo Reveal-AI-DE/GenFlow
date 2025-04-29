@@ -5,6 +5,9 @@
 # GenFlow
 
 [![CI][ci-img]][ci-url]
+[![Coverage Status][coverage-img]][coverage-url]
+![Endpoint Badge][server-pulls-url]
+![Endpoint Badge][ui-pulls-url]
 [![LinkedIn][linkedin-img]][linkedin-url]
 
 
@@ -85,5 +88,11 @@ For support or inquiries:
 
 [ci-img]: https://github.com/Reveal-AI-DE/GenFlow/actions/workflows/main.yml/badge.svg?branch=develop
 [ci-url]: https://github.com/Reveal-AI-DE/GenFlow/actions
+[coverage-img]: https://codecov.io/gh/Reveal-AI-DE/GenFlow/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/Reveal-AI-DE/GenFlow
+[server-pulls-url]: https://img.shields.io/endpoint?url=https%3A%2F%2Fmwopc2qsfd.execute-api.eu-central-1.amazonaws.com%2Fdefault%2Ferc-pull-counter%3Frepo%3Dgenflow%2Fserver%26alias%3Dz5d7y3x3&style=flat-square&label=server%20pulls
+
+[ui-pulls-url]: https://img.shields.io/endpoint?url=https%3A%2F%2Fmwopc2qsfd.execute-api.eu-central-1.amazonaws.com%2Fdefault%2Ferc-pull-counter%3Frepo%3Dgenflow%2Fui%26alias%3Dz5d7y3x3&style=flat-square&label=UI%20pulls
+
 [linkedin-img]: https://img.shields.io/badge/LinkedIn-Follow-blue?logo=linkedin
 [linkedin-url]: https://www.linkedin.com/company/76154575/
