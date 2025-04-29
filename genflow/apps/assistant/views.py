@@ -77,7 +77,7 @@ class AssistantGroupViewSet(EntityGroupViewSetMixin):
         summary="Upload a assistant avatar",
         description="Upload a new avatar image for the assistant",
         responses={
-            "200": AssistantReadSerializer,
+            "200": OpenApiResponse(description="Avatar uploaded successfully"),
         },
     ),
     list_files=extend_schema(

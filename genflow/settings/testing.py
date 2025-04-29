@@ -10,6 +10,9 @@ from .development import *  # noqa: F401, F403
 _temp_dir = tempfile.TemporaryDirectory(dir=BASE_DIR, suffix="genflow")
 BASE_DIR = _temp_dir.name
 
+CONFIG_ROOT = os.path.join(BASE_DIR, "config")
+MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_ROOT, exist_ok=True)
 
@@ -23,13 +26,13 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# providers media
 PROVIDERS_URL = "/media/providers"
 PROVIDERS_ROOT = os.path.join(MEDIA_ROOT, "providers")
 os.makedirs(PROVIDERS_ROOT, exist_ok=True)
 
-CONFIG_ROOT = os.path.join(BASE_DIR, "config")
-MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+USERS_MEDIA_URL = "/media/users"
+USERS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "users")
+os.makedirs(USERS_MEDIA_ROOT, exist_ok=True)
 
 PROMPTS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "prompts")
 os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)

@@ -4,7 +4,6 @@
 
 from typing import cast
 
-from django.conf import settings
 from django.db.models.query import QuerySet
 from drf_spectacular.utils import (
     OpenApiParameter,
@@ -20,6 +19,7 @@ from rest_framework.response import Response
 
 import genflow.apps.core.permissions as perms
 from genflow.apps.ai.base.entities.shared import ModelType
+from genflow.apps.common.file_utils import check_avatar
 from genflow.apps.core.config.entities import ModelWithProviderEntity
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
 from genflow.apps.core.models import AboutSystem, CommonEntity, Provider
@@ -387,19 +387,9 @@ class EntityBaseViewSet(viewsets.ModelViewSet):
         entity: CommonEntity = self.get_object()
         entity.avatar = request.FILES.get("avatar", None)
         if entity.avatar:
-            # check size
-            if entity.avatar.file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_AVATAR_SIZE"]:
-                return Response(
-                    data={
-                        "message": f"File size exceeds the limit of {settings.GF_LIMITS['MAX_AVATAR_SIZE']} MB."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            # check type
-            if entity.avatar.file.content_type not in settings.GF_LIMITS["AVATAR_SUPPORTED_TYPES"]:
-                return Response(
-                    data={"message": "Unsupported file type."}, status=status.HTTP_400_BAD_REQUEST
-                )
+            error = check_avatar(entity.avatar.file)
+            if error is not None:
+                return Response(data={"message": error}, status=status.HTTP_400_BAD_REQUEST)
 
         entity.save()
         return Response(status=status.HTTP_200_OK)

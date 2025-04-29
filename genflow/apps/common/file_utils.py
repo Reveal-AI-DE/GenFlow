@@ -6,6 +6,7 @@ import os
 from os import path as osp
 
 from defusedxml import ElementTree as ET
+from django.conf import settings
 from PIL import Image
 
 from genflow.apps.common.entities import FileEntity
@@ -97,3 +98,13 @@ def get_files(folder: str) -> list[FileEntity]:
     files = [file for file in os.listdir(folder) if osp.isfile(osp.join(folder, file))]
 
     return [FileEntity(id=file, path=osp.join(folder, file)) for file in files]
+
+
+def check_avatar(file) -> str:
+    # check size
+    if file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_AVATAR_SIZE"]:
+        return f"File size exceeds the limit of {settings.GF_LIMITS['MAX_AVATAR_SIZE']} MB."
+    # check type
+    if file.content_type not in settings.GF_LIMITS["AVATAR_SUPPORTED_TYPES"]:
+        return "Unsupported file type."
+    return None

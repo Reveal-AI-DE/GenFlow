@@ -552,11 +552,7 @@ paths:
       - basicAuth: []
       responses:
         '200':
-          content:
-            application/vnd.genflow+json:
-              schema:
-                $ref: '#/components/schemas/AssistantRead'
-          description: ''
+          description: Avatar uploaded successfully
   /api/assistants/{id}/upload_file:
     post:
       operationId: assistants_upload_file_create
@@ -1712,11 +1708,7 @@ paths:
       - basicAuth: []
       responses:
         '200':
-          content:
-            application/vnd.genflow+json:
-              schema:
-                $ref: '#/components/schemas/PromptRead'
-          description: ''
+          description: Avatar uploaded successfully
   /api/providers:
     get:
       operationId: providers_list
@@ -2540,6 +2532,35 @@ paths:
       responses:
         '204':
           description: The team has been deleted
+  /api/users/{id}/upload_avatar:
+    post:
+      operationId: users_upload_avatar_create
+      description: Upload a new avatar image for the user
+      summary: Upload a user avatar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: Avatar uploaded successfully
   /api/users/check:
     post:
       operationId: users_check_create
@@ -3146,6 +3167,10 @@ components:
     PasswordChangeRequest:
       type: object
       properties:
+        old_password:
+          type: string
+          minLength: 1
+          maxLength: 128
         new_password1:
           type: string
           minLength: 1
@@ -3157,6 +3182,7 @@ components:
       required:
       - new_password1
       - new_password2
+      - old_password
     PasswordResetConfirmRequest:
       type: object
       description: Serializer for confirming a password reset attempt.
@@ -3850,6 +3876,13 @@ components:
           type: array
           items:
             type: string
+        avatar:
+          type: string
+          nullable: true
+          description: |-
+            Dynamically generates the avatar URL based on the user's id.
+            If the avatar file does not exist, return a default avatar URL.
+          readOnly: true
         is_staff:
           type: boolean
           title: Staff status
@@ -3886,6 +3919,57 @@ components:
           type: string
           format: email
           minLength: 1
+    UserRequest:
+      type: object
+      description: |-
+        Serializer for the User model tha returns a serialized representation
+        of the User model with the all fields and their associated groups.
+
+        Attributes:
+            groups (SlugRelatedField): A field that represents the user's groups using the
+                group's name as the slug field. It allows multiple groups to be associated
+                with a user.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        groups:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+      required:
+      - groups
+      - username
   securitySchemes:
     basicAuth:
       type: http
