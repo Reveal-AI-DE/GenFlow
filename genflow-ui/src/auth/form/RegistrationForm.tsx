@@ -11,6 +11,7 @@ import {
     useDataProvider, Form, Validator,
 } from 'react-admin';
 
+import { RegistrationFormData } from '@/types';
 import { PasswordInputWithStrengthBar } from '@/common/input';
 import RegistrationFormActions from '@/auth/form/RegistrationFormActions';
 
@@ -21,13 +22,6 @@ export const RegistrationFormClasses = {
     button: `${PREFIX}-button`,
     icon: `${PREFIX}-icon`,
     passwordStrength: `${PREFIX}-password-strength`,
-};
-
-export interface RegistrationFormData {
-    username: string;
-    email: string
-    password1: string;
-    password2: string;
 };
 
 const StyledForm = styled(Form<FormData>, {

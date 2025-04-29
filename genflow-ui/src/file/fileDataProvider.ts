@@ -4,8 +4,7 @@
 
 import { DataProvider } from 'react-admin';
 
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '@/auth/authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 import { GetFilesParams, DeleteFileParams, DeleteFilesParams } from '@/types';
 
 export default <DataProvider> {

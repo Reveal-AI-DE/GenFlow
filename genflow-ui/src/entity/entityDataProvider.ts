@@ -8,9 +8,8 @@ import {
 } from 'react-admin';
 
 import { CommonEntity } from '@/types';
-import { ResourceURL } from '@/utils';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 import defaultDataProvider from '@/dataProvider/defaultDataProvider';
-import { fetchJsonWithAuthToken } from '@/auth/authProvider';
 
 export default <DataProvider> {
     create: async (resource: string, params: CreateParams) => {

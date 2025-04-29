@@ -10,6 +10,18 @@ export interface Identity extends UserIdentity {
 };
 
 export interface UserDataProvider extends DataProvider {
-    self: () => Promise<any>;
     check: () => Promise<boolean>;
+};
+
+export interface RegistrationFormData {
+    username: string;
+    email: string
+    password1: string;
+    password2: string;
+};
+
+export interface ChangePasswordFormData {
+    old_password: string;
+    new_password1: string
+    new_password2: string;
 };

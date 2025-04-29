@@ -21,10 +21,3 @@ export const useColsForWidth = (): number => {
 export const times = (nbChildren: number, fn: (key: number) => any): any => (
     Array.from({ length: nbChildren }, (_, key) => fn(key))
 );
-
-export const getCsrfToken = (): string | null => {
-    const csrfCookie = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('csrftoken='));
-    return csrfCookie ? csrfCookie.split('=')[1] : null;
-};

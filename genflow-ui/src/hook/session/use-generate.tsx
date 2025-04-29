@@ -10,7 +10,7 @@ import {
     ChatResponseType,
     SessionMessage,
 } from '@/types';
-import { createOptions } from '@/auth/authProvider';
+import { createFetchOptions } from '@/utils';
 
 type GenerateHook = (
     url: string,
@@ -28,21 +28,22 @@ const useGenerate = (): GenerateHook => {
     ): Promise<void> => new Promise((resolve, reject) => {
         let fullText = '';
 
-        const options = createOptions(url);
-        if (!options.user || !options.headers) {
+        const options = createFetchOptions(url);
+        const { user, headers } = options;
+        if (!user || !user.token || !headers) {
             reject(new Error('Not authenticated'));
             return;
         }
-        const teamHeader = options.headers.get('X-Team');
-        if (!teamHeader) {
+        const teamId = (headers as Headers).get('X-Team');
+        if (!teamId) {
             reject(new Error('X-Team header is missing'));
             return;
         }
 
         const webSocket = new WebSocket(url, [
             'json',
-            options.user.token.replace('Token ', ''),
-            teamHeader,
+            user.token.replace('Token ', ''),
+            teamId,
         ]);
 
         webSocket.onerror = (error) => {

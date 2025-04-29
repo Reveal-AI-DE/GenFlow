@@ -11,7 +11,7 @@ import {
     Button, useTranslate, useNotify,
 } from 'react-admin';
 
-import { authProvider } from '@/auth';
+import { userRegister } from '@/user';
 
 type RegistrationFormActionsProps = object;
 
@@ -39,7 +39,7 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
     const onSubmit = async (data: any): Promise<void> => {
         setLoading(true);
         try {
-            const resp = await authProvider.register(data);
+            const resp = await userRegister(data);
             reset();
             if (resp.email_verification_required) {
                 navigate('/auth/verification-sent');

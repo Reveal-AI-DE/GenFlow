@@ -9,8 +9,7 @@ import {
 } from 'react-admin';
 
 import { MetaParams } from '@/types';
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '../auth/authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 
 const getPaginationQuery = (pagination: PaginationPayload): object => ({
     page: pagination.page,
