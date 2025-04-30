@@ -4,7 +4,7 @@
 
 import React, { FC, ReactNode } from 'react';
 import Skeleton from '@mui/material/Skeleton';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import {
     useListContext, ListNoResults,

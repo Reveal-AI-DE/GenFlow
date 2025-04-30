@@ -4,10 +4,10 @@
 
 import React, { FC } from 'react';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import AddIcon from '@mui/icons-material/Add';
 import Skeleton from '@mui/material/Skeleton';
-import styled from '@mui/material/styles/styled';
+import { styled } from '@mui/material/styles';
 import { useWatch } from 'react-hook-form'
 import {
     Form, SelectInput, SaveButton, CreateBase,

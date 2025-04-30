@@ -149,7 +149,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         >
             {
                 loading ? (
-                    <Loading />
+                    <Loading timeout={100} />
                 ) : (
                     children
                 )
