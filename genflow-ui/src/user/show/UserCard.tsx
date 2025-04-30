@@ -8,7 +8,10 @@ import CardHeader, { CardHeaderProps } from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
+import Badge from '@mui/material/Badge';
 import { useGetIdentity, DateField, SimpleShowLayout } from 'react-admin';
+
+import { UploadAvatarButton } from '@/user/form/button';
 
 interface UserCardProps {
     actions?: CardHeaderProps['action'];
@@ -22,24 +25,26 @@ const UserCard: FC<UserCardProps> = ({
         return null;
     }
 
-    let avatar = currentUser.avatar ? currentUser.avatar : undefined;
-    if (!avatar) {
-        if (currentUser.fullName && currentUser.fullName !== '') {
-            avatar = currentUser.fullName[0].toUpperCase();
-        } else {
-            avatar = currentUser.email[0].toUpperCase();
-        }
-    }
-
     return (
         <Card>
             <CardHeader
                 avatar={(
-                    <Avatar
-                        src={currentUser.avatar ? currentUser.avatar : undefined}
+                    <Badge
+                        overlap='rectangular'
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        badgeContent={(
+                            <UploadAvatarButton />
+                        )}
                     >
-                        {avatar}
-                    </Avatar>
+                        <Avatar
+                            src={currentUser.avatar ? currentUser.avatar : undefined}
+                            alt={currentUser.fullName || currentUser.email}
+                            sx={{
+                                width: 128,
+                                height: 128
+                            }}
+                        />
+                    </Badge>
                 )}
                 title={(
                     <>

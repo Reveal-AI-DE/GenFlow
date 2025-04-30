@@ -190,6 +190,7 @@ const enUS: TranslationMessages = {
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
+        crop: 'Crop Image',
     },
     message: {
         item_updated: '%{name} updated',
@@ -262,6 +263,8 @@ const enUS: TranslationMessages = {
         google_login: 'Login with Google',
         use_prompt: 'Use Prompt',
         change_password: 'Change Password',
+        upload_avatar: 'Upload Avatar',
+        crop: 'Crop',
     },
     validation: {
         not_available: 'Not available',

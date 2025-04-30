@@ -9,13 +9,10 @@ import { ChangePasswordButton } from '@/user/form/button';
 
 type AccountActionProps = object;
 
-const AccountActions: FC<AccountActionProps> = () => {
-    console.log('AccountActions');
-    return (
-        <Stack>
-            <ChangePasswordButton />
-        </Stack>
-    );
-};
+const AccountActions: FC<AccountActionProps> = () => (
+    <Stack>
+        <ChangePasswordButton />
+    </Stack>
+);
 
 export default AccountActions;

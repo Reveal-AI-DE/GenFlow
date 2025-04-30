@@ -65,6 +65,7 @@ from genflow.apps.iam import serializers
     ),
 )
 class UserViewSet(viewsets.GenericViewSet):
+    queryset = get_user_model().objects.all()
     serializer_class = None
 
     def get_serializer_class(self):
@@ -108,14 +109,15 @@ class UserViewSet(viewsets.GenericViewSet):
         """
 
         user = self.get_object()
-        uploaded_file = request.FILES.get("avatar", None)
+        uploaded_file = request.FILES.get("file", None)
         if uploaded_file:
             error = check_avatar(uploaded_file)
             if error is not None:
                 return Response(data={"message": error}, status=status.HTTP_400_BAD_REQUEST)
 
         full_path = osp.join(settings.USERS_MEDIA_ROOT, str(user.id), "avatar.png")
-        fs.save(full_path, uploaded_file)
+        rel_path = osp.relpath(full_path, settings.BASE_DIR)
+        fs.save(rel_path, uploaded_file)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["POST"], serializer_class=serializers.UserCheckSerializer)

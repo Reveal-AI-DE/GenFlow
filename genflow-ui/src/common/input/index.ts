@@ -7,6 +7,7 @@ import ColorInput from '@/common/input/ColorInput';
 import ConfigurableInput, { ConfigurableInputProps } from '@/common/input/ConfigurableInput';
 import ExpandableTextInput from '@/common/input/ExpandableTextInput';
 import ImageInput from '@/common/input/ImageInput';
+import CropDialog from '@/common/input/CropDialog';
 import PasswordInputWithStrengthBar, { validatePassword, matchPassword } from '@/common/input/PasswordInputWithStrengthBar';
 import SliderInput from '@/common/input/SliderInput';
 import TextareaAutosize from '@/common/input/TextareaAutosize';
@@ -17,6 +18,7 @@ export {
     ConfigurableInput,
     ExpandableTextInput,
     ImageInput,
+    CropDialog,
     PasswordInputWithStrengthBar, validatePassword, matchPassword,
     SliderInput,
     TextareaAutosize,

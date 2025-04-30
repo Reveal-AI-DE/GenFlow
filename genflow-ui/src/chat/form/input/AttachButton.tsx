@@ -35,7 +35,6 @@ const AttachButton: FC<AttachButtonProps> = ({
 
     // using ref so onButtonClick can stay memoized
     const uploadOptionsRef = useRef<UploadOptions>();
-    // TODO: control allowed meta data
     uploadOptionsRef.current = {
         ...props,
         autoUpload: false,

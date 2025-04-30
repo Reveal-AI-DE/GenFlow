@@ -227,6 +227,7 @@ const deDE: TranslationMessages = {
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
+        crop: 'Bild zuschneiden',
     },
     message: {
         item_updated: '%{name} aktualisiert',
@@ -298,6 +299,8 @@ const deDE: TranslationMessages = {
         google_login: 'Mit Google anmelden',
         use_prompt: 'Prompt verwenden',
         change_password: 'Passwort ändern',
+        upload_avatar: 'Avatar hochladen',
+        crop: 'Zuschneiden',
     },
     validation: {
         not_available: 'Nicht verfügbar',

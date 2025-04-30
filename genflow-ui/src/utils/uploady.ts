@@ -10,8 +10,9 @@ import { ResourceURL, createFetchOptions } from '@/utils/dataProvider';
 export const createUploadyDestination = (
     resource: string,
     recordId: Identifier,
+    action?: string,
 ): Destination | null => {
-    const url = ResourceURL(`${resource}/${recordId}/upload_file`);
+    const url = ResourceURL(`${resource}/${recordId}/${action || 'upload_file'}`);
 
     const options = createFetchOptions(url);
     if (!options.user || !options.user.token || !options.headers) {

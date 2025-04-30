@@ -7,7 +7,7 @@ import {
 } from 'react-admin';
 
 import { getLoggedInUser } from '@/user';
-import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
+import { ResourceURL, MediaURL, fetchJsonWithAuthToken } from '@/utils';
 
 const authProvider: AuthProvider = {
     login: async ({ email, username, password }) => {
@@ -45,7 +45,11 @@ const authProvider: AuthProvider = {
         let userObjString = localStorage.getItem('RaStoreGenFlow.identity');
         userObjString = userObjString === null ? '' : userObjString;
         if (userObjString) {
-            return JSON.parse(userObjString);
+            const user = JSON.parse(userObjString);
+            if (user.avatar) {
+                user.avatar = MediaURL(user.avatar);
+            }
+            return user;
         }
         const user = await getLoggedInUser();
         localStorage.setItem('RaStoreGenFlow.identity', JSON.stringify(user));
