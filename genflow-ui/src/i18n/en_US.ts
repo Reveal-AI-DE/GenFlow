@@ -15,6 +15,9 @@ const enUS: TranslationMessages = {
                 email: 'Email',
                 password1: 'Password',
                 password2: 'Confirm Password',
+                old_password: 'Current Password',
+                new_password1: 'New Password',
+                new_password2: 'Confirm New Password',
                 first_name: 'First Name',
                 last_name: 'Last Name',
                 status: 'Status',
@@ -166,6 +169,7 @@ const enUS: TranslationMessages = {
         session_info: 'Session Info',
         ask: 'Ask anything!',
         new: 'New Chat',
+        account: 'Account',
         chat: {
             title: 'Chat',
             actions: 'Chat Actions',
@@ -224,6 +228,7 @@ const enUS: TranslationMessages = {
         verification_sent: 'Verification Email Sent',
         verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
         image_not_supported: 'Unsupported image format or file size exceeds the 1MB limit. Please upload a supported image under 1MB.',
+        change_password_success: 'Password changed successfully, Please login again.',
     },
     action: {
         test: 'Test',
@@ -256,6 +261,7 @@ const enUS: TranslationMessages = {
         login_username: 'Use Username',
         google_login: 'Login with Google',
         use_prompt: 'Use Prompt',
+        change_password: 'Change Password',
     },
     validation: {
         not_available: 'Not available',

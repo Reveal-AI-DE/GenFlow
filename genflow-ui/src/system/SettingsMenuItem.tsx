@@ -11,6 +11,7 @@ import { TeamRole } from '@/types';
 import { MenuItemWithDialog, TabsController, TabItems } from '@/common';
 import { ProviderList } from '@/provider';
 import { MembershipList } from '@/team/membership';
+import { Account } from '@/user';
 
 const SettingsMenuItem: FC = () => {
     const translate = useTranslate();
@@ -32,6 +33,10 @@ const SettingsMenuItem: FC = () => {
             </RecordContextProvider>
         );
     }
+
+    tabItems[translate('label.account')] = (
+        <Account key='account' />
+    );
 
     return (
         <MenuItemWithDialog

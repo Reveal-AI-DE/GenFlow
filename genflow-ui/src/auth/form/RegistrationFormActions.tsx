@@ -4,29 +4,22 @@
 
 import React, { FC, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import {
-    Button, useTranslate, useNotify,
+    useTranslate, useNotify,
 } from 'react-admin';
 
 import { userRegister } from '@/user';
+import { ButtonWithLoadingIndicator } from '@/common';
 
 type RegistrationFormActionsProps = object;
 
-const StyledButton = styled(Button, {
+const StyledButton = styled(ButtonWithLoadingIndicator, {
     name: 'GFRegistrationForm',
     slot: 'button',
 })(({ theme }) => ({
     marginTop: theme.spacing(2),
-}));
-
-const StyledCircularProgress = styled(CircularProgress, {
-    name: 'GFRegistrationForm',
-    slot: 'loading',
-})(({ theme }) => ({
-    margin: theme.spacing(0.3),
 }));
 
 const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
@@ -64,19 +57,10 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
             variant='contained'
             type='button'
             onClick={handleClick}
-            disabled={loading}
+            loading={loading}
             fullWidth
         >
-            {
-                loading ? (
-                    <StyledCircularProgress
-                        size={19}
-                        thickness={3}
-                    />
-                ) : (
-                    translate('action.sign_up')
-                )
-            }
+            {translate('action.sign_up')}
         </StyledButton>
     );
 };

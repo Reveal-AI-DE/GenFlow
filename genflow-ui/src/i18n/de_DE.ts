@@ -48,6 +48,9 @@ const deDE: TranslationMessages = {
                 email: 'E-Mail',
                 password1: 'Passwort',
                 password2: 'Passwort bestätigen',
+                old_password: 'Aktuelles Passwort',
+                new_password1: 'Neues Passwort',
+                new_password2: 'Neues Passwort bestätigen',
                 first_name: 'Vorname',
                 last_name: 'Nachname',
                 status: 'Status',
@@ -199,6 +202,7 @@ const deDE: TranslationMessages = {
         session_info: 'Session Info',
         ask: 'Alles fragen!',
         new: 'Neuer Chat',
+        account: 'Konto',
         chat: {
             title: 'Chat',
             actions: 'Chat-Aktionen',
@@ -265,6 +269,7 @@ const deDE: TranslationMessages = {
         verification_sent: 'Bestätigungs-E-Mail gesendet',
         verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
         image_not_supported: 'Nicht unterstütztes Bildformat oder Dateigröße überschreitet das Limit von 1 MB. Bitte laden Sie ein unterstütztes Bild mit weniger als 1 MB hoch.',
+        change_password_success: 'Passwort erfolgreich geändert. Bitte melden Sie sich erneut an.',
     },
     action: {
         test: 'Test',
@@ -292,6 +297,7 @@ const deDE: TranslationMessages = {
         login_username: 'Benutzername verwenden',
         google_login: 'Mit Google anmelden',
         use_prompt: 'Prompt verwenden',
+        change_password: 'Passwort ändern',
     },
     validation: {
         not_available: 'Nicht verfügbar',

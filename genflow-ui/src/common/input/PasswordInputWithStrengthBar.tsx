@@ -5,8 +5,46 @@
 import React, { FC, useState } from 'react';
 import zxcvbn from 'zxcvbn';
 import {
-    PasswordInput, PasswordInputProps, LinearProgress, LinearProgressProps,
+    PasswordInput, PasswordInputProps, LinearProgress,
+    LinearProgressProps, ValidationErrorMessage
 } from 'react-admin';
+
+export const validatePassword = (value: string, username: string, email: string):
+    ValidationErrorMessage
+    | null
+    | undefined
+    | Promise<ValidationErrorMessage | null | undefined> => {
+    if (!value) {
+        return 'ra.validation.required';
+    }
+    // Rule 1: At least 8 characters
+    if (value.length < 8) {
+        return { message: 'validation.password.min', args: { number: 8 } };
+    }
+    // Rule 2: Not entirely numeric
+    if (/^\d+$/.test(value)) {
+        return 'validation.password.numeric';
+    }
+    // Rule 3: Not too similar to personal information
+    if (username && value.toLowerCase().includes(username.toLowerCase())) {
+        return 'validation.password.personal';
+    }
+    if (email && value.toLowerCase().includes(email.toLowerCase())) {
+        return 'validation.password.personal';
+    }
+    return undefined;
+};
+
+export const matchPassword = (value: string, password: string):
+    ValidationErrorMessage
+    | null
+    | undefined
+    | Promise<ValidationErrorMessage | null | undefined> => {
+    if (value.length !== password.length || value !== password) {
+        return 'The two passwords must match';
+    }
+    return undefined;
+};
 
 interface PasswordInputWithStrengthBarProps extends PasswordInputProps {
     linearProgressClasses?: LinearProgressProps['classes'];
