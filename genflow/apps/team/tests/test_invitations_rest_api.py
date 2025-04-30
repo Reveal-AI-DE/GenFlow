@@ -8,6 +8,7 @@ from rest_framework.test import APIClient, APITestCase
 from genflow.apps.team.models import Invitation, TeamRole
 from genflow.apps.team.serializers import InvitationReadSerializer
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class InvitationAPITestCase(APITestCase):
@@ -167,6 +168,42 @@ class InvitationCreateAPITestCase(APITestCase):
                             user["user"], data, team_membership["team"].id
                         )
                         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_invitation_user_check_global_limit(self):
+        override_limit(
+            key="MAX_INVITATION_PER_TEAM",
+            value=0,
+        )
+        user = self.regular_users[0]["user"]
+        team_membership = self.regular_users[0]["teams"][0]
+        email = f'new_user_{team_membership["team"].id}@example.com'
+        data = {
+            "email": email,
+            "role": TeamRole.MEMBER,
+        }
+        response = self.create_invitation(user, data, team_membership["team"].id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_invitation_user_check_under_global_limit(self):
+        override_limit(
+            key="MAX_INVITATION_PER_TEAM",
+            value=2,
+        )
+        user = self.regular_users[0]["user"]
+        team_membership = self.regular_users[0]["teams"][0]
+        email = f'new_user_{team_membership["team"].id}@example.com'
+        data = {
+            "email": email,
+            "role": TeamRole.MEMBER,
+        }
+        response = self.create_invitation(user, data, team_membership["team"].id)
+        if team_membership["membership"].is_active and team_membership[
+            "membership"
+        ].role in [TeamRole.OWNER.value, TeamRole.ADMIN.value]:
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            self.assertEqual(response.data["user"]["email"], email)
+        else:
+            self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class InvitationUpdateAPITestCase(InvitationAPITestCase):

@@ -399,6 +399,8 @@ GF_LIMITS = {
     "MAX_FILES_PER_ASSISTANT": 2,  # 2 files
     "SESSION": 10,
     "MAX_FILES_PER_SESSION": 1,  # 1 file
+    "TEAM": 2,
+    "MAX_INVITATION_PER_TEAM": 10,
     "MESSAGE": 100,
     "MAX_FILE_SIZE": 2,  # 2MB
     "FILE_SUPPORTED_TYPES": [

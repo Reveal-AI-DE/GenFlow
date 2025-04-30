@@ -8,6 +8,7 @@ from rest_framework.test import APIClient, APITestCase
 from genflow.apps.team.models import Team, TeamRole
 from genflow.apps.team.serializers import TeamReadSerializer
 from genflow.apps.team.tests.utils import USERS, ForceLogin, create_dummy_users
+from genflow.apps.restriction.tests.utils import override_limit
 
 
 class TeamAPITestCase(APITestCase):
@@ -71,6 +72,27 @@ class TeamCreateAPITestCase(TeamAPITestCase):
             for team in user["teams"]:
                 response = self.create_team(self.regular_users[0]["user"], team)
                 self.check_response(response, status.HTTP_201_CREATED, data=team)
+
+    def test_create_team_user_check_global_limit(self):
+        override_limit(
+            key="TEAM",
+            value=0,
+        )
+        user = self.regular_users[0]["user"]
+        team = USERS["users"][0]['teams'][0]
+        response = self.create_team(user, team)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_create_team_user_check_under_global_limit(self):
+        override_limit(
+            key="TEAM",
+            value=2,
+        )
+
+        user = self.regular_users[1]["user"]
+        team = USERS["users"][1]['teams'][0]
+        response = self.create_team(user, team)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class TeamRetrieveAPITestCase(TeamAPITestCase):

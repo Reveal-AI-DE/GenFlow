@@ -4,7 +4,19 @@
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_migrate
+from django.dispatch import receiver
+
+from genflow.apps.restriction.signals import add_global_limits
+
+# post_migrate is different from other signals
+@receiver(post_migrate)
+def add_team_global_limits(sender, **kwargs):
+    """
+    The `post_migrate` signal handler to add global limits corresponding to team app.
+    """
+
+    add_global_limits("team")
 
 
 def create_default_team(sender, instance, created, **kwargs):
