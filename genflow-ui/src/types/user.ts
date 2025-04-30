@@ -23,10 +23,20 @@ export interface RegistrationFormData {
     password2: string;
 };
 
-export interface ChangePasswordFormData extends FieldValues {
-    username: string;
-    email: string;
-    old_password: string;
-    new_password1: string
+interface BasePasswordFormData extends FieldValues {
+    new_password1: string;
     new_password2: string;
+};
+
+export interface ChangePasswordFormData extends BasePasswordFormData {
+    old_password: string;
+};
+
+export interface PasswordResetConfirmFormData extends BasePasswordFormData {
+    uid: string
+    token: string;
+};
+
+export interface PasswordResetFormData {
+    email: string,
 };

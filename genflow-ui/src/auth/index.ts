@@ -4,10 +4,14 @@
 
 import authProvider from '@/auth/authProvider';
 import Login from '@/auth/Login';
+import PasswordReset from '@/auth/PasswordReset';
+import PasswordResetConfirm from '@/auth/PasswordResetConfirm';
 import Signup from '@/auth/Signup';
 
 export {
     authProvider,
     Login,
+    PasswordReset,
+    PasswordResetConfirm,
     Signup,
 };

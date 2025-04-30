@@ -4,8 +4,12 @@
 
 import LoginWithEmailForm from '@/auth/form/LoginWithEmailForm';
 import RegistrationForm from '@/auth/form/RegistrationForm';
+import PasswordResetConfirmForm from '@/auth/form/PasswordResetConfirmForm';
+import PasswordResetForm from '@/auth/form/PasswordResetForm';
 
 export {
     LoginWithEmailForm,
-    RegistrationForm
+    RegistrationForm,
+    PasswordResetConfirmForm,
+    PasswordResetForm,
 };

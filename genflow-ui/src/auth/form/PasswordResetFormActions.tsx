@@ -4,36 +4,30 @@
 
 import React, { FC, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useNavigate } from 'react-router';
 import {
     useTranslate, useNotify,
 } from 'react-admin';
 
-import { userRegister } from '@/user';
+import { passwordReset } from '@/user';
 import { ButtonWithLoadingIndicator } from '@/common';
 
-type RegistrationFormActionsProps = object;
+type PasswordResetActionsProps = object;
 
-const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
+const PasswordResetActions: FC<PasswordResetActionsProps> = () => {
     const [loading, setLoading] = useState(false);
     const translate = useTranslate();
     const { handleSubmit, reset } = useFormContext();
     const notify = useNotify();
-    const navigate = useNavigate();
 
     const onSubmit = async (data: any): Promise<void> => {
         setLoading(true);
         try {
-            const resp = await userRegister(data);
+            await passwordReset(data);
             reset();
-            if (resp.email_verification_required) {
-                navigate('/auth/verification-sent');
-            } else {
-                notify('message.register_success', { type: 'success' });
-            }
+            notify('message.check_email', { type: 'success' });
         } catch (error) {
             console.error(error);
-            notify('message.register_error', { type: 'warning' });
+            notify('ra.notification.http_error', { type: 'warning' });
         } finally {
             setLoading(false);
         }
@@ -52,9 +46,9 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
             loading={loading}
             fullWidth
         >
-            {translate('action.sign_up')}
+            {translate('action.password_reset_request')}
         </ButtonWithLoadingIndicator>
     );
 };
 
-export default RegistrationFormActions;
+export default PasswordResetActions;

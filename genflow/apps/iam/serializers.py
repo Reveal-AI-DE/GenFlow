@@ -10,6 +10,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
 from allauth.account.utils import setup_user_email
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import PasswordResetSerializer
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, User
@@ -18,6 +19,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from genflow.apps.common.file_utils import is_image
+from genflow.apps.iam.forms import ResetPasswordFormEx
 
 
 class BasicUserSerializer(serializers.ModelSerializer):
@@ -198,6 +200,20 @@ class RegisterSerializerEx(RegisterSerializer):
             if email.verified:
                 return None
         return user
+
+
+class PasswordResetSerializerEx(PasswordResetSerializer):
+    @property
+    def password_reset_form_class(self):
+        return ResetPasswordFormEx
+
+    def get_email_options(self):
+        domain = None
+        if hasattr(settings, "UI_HOST") and settings.UI_HOST:
+            domain = settings.UI_HOST
+            if hasattr(settings, "UI_PORT") and settings.UI_PORT:
+                domain += ":{}".format(settings.UI_PORT)
+        return {"domain_override": domain}
 
 
 class UserCheckSerializer(serializers.Serializer):

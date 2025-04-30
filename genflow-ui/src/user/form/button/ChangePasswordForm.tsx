@@ -9,7 +9,10 @@ import {
 } from 'react-admin';
 
 import { ChangePasswordFormData } from '@/types';
-import { PasswordInputWithStrengthBar, validatePassword, matchPassword } from '@/common';
+import {
+    PasswordInputWithStrengthBar,
+    validatePassword, matchPassword,
+} from '@/common';
 
 type ChangePasswordFormProps = object;
 

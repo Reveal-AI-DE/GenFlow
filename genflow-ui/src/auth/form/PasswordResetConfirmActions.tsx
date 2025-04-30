@@ -2,38 +2,50 @@
 //
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import {
     useTranslate, useNotify,
 } from 'react-admin';
 
-import { userRegister } from '@/user';
+import { passwordResetConfirm } from '@/user';
 import { ButtonWithLoadingIndicator } from '@/common';
 
-type RegistrationFormActionsProps = object;
+type PasswordResetConfirmActionsProps = object;
 
-const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
+const PasswordResetConfirmActions: FC<PasswordResetConfirmActionsProps> = () => {
     const [loading, setLoading] = useState(false);
     const translate = useTranslate();
     const { handleSubmit, reset } = useFormContext();
     const notify = useNotify();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Extract uid and token from the URL
+    const searchParams = new URLSearchParams(location.search);
+    const uid = searchParams.get('uid');
+    const token = searchParams.get('token');
+
+    // Check for uid and token on first render
+    useEffect(() => {
+        if (!uid || !token) {
+            notify('message.incorrect_reset_link', { type: 'error' });
+            navigate('/login');
+        }
+    }, [uid, token, notify, navigate]);
 
     const onSubmit = async (data: any): Promise<void> => {
         setLoading(true);
         try {
-            const resp = await userRegister(data);
+            const payload = { ...data, uid, token };
+            await passwordResetConfirm(payload);
             reset();
-            if (resp.email_verification_required) {
-                navigate('/auth/verification-sent');
-            } else {
-                notify('message.register_success', { type: 'success' });
-            }
+            notify('message.password_reset_success', { type: 'success' });
+            navigate('/login');
         } catch (error) {
             console.error(error);
-            notify('message.register_error', { type: 'warning' });
+            notify('ra.notification.http_error', { type: 'warning' });
         } finally {
             setLoading(false);
         }
@@ -52,9 +64,9 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
             loading={loading}
             fullWidth
         >
-            {translate('action.sign_up')}
+            {translate('action.password_reset')}
         </ButtonWithLoadingIndicator>
     );
 };
 
-export default RegistrationFormActions;
+export default PasswordResetConfirmActions;

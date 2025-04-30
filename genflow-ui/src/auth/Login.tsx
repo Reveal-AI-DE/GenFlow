@@ -5,6 +5,7 @@
 import React, { FC, useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
 import {
     Login as RaLogin, LoginProps, LoginForm
 } from 'react-admin';
@@ -12,7 +13,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import { LoginWithEmailForm } from '@/auth/form';
 import {
-    GoogleLoginButton, SignupButton , LoginMethodSwitchButton,
+    GoogleLoginButton, PasswordResetButton, SignupButton , LoginMethodSwitchButton,
 } from '@/auth/button';
 import { LoginBackground } from '@/assets';
 
@@ -82,6 +83,8 @@ const Login: FC<LoginProps> = (props) => {
             {renderLoginForm()}
             <Footer>
                 <SignupButton />
+                <Divider />
+                <PasswordResetButton />
             </Footer>
         </RaLogin>
     );

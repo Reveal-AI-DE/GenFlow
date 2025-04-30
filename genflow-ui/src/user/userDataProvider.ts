@@ -4,7 +4,10 @@
 
 import { UserIdentity } from 'react-admin';
 
-import { UserDataProvider, RegistrationFormData, ChangePasswordFormData } from '@/types';
+import {
+    UserDataProvider, RegistrationFormData,
+    ChangePasswordFormData, PasswordResetConfirmFormData,
+} from '@/types';
 import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 
 export const userRegister = async (params: RegistrationFormData): Promise<UserIdentity> => {
@@ -18,6 +21,24 @@ export const userRegister = async (params: RegistrationFormData): Promise<UserId
 
 export const changePassword = async (params: ChangePasswordFormData): Promise<UserIdentity> => {
     const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/change`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const passwordResetConfirm = async (params: PasswordResetConfirmFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/reset/confirm`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const passwordReset = async (params: PasswordResetConfirmFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/reset`);
     const { json } = await fetchJsonWithAuthToken(url, {
         method: 'POST',
         body: JSON.stringify(params),

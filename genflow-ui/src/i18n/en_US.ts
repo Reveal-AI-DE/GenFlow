@@ -230,6 +230,9 @@ const enUS: TranslationMessages = {
         verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
         image_not_supported: 'Unsupported image format or file size exceeds the 1MB limit. Please upload a supported image under 1MB.',
         change_password_success: 'Password changed successfully, Please login again.',
+        password_reset_success: 'Password reset successfully, Please login.',
+        incorrect_reset_link: 'The reset link is incorrect or has expired. Please check your email for the correct link or request a new password reset email.',
+        check_email: 'Please check your email for further instructions.',
     },
     action: {
         test: 'Test',
@@ -265,6 +268,9 @@ const enUS: TranslationMessages = {
         change_password: 'Change Password',
         upload_avatar: 'Upload Avatar',
         crop: 'Crop',
+        password_reset_request: 'Request Password Reset',
+        password_reset: 'Reset Password',
+        forget_password: 'Forgot Password?',
     },
     validation: {
         not_available: 'Not available',

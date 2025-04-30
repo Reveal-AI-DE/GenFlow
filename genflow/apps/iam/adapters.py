@@ -5,19 +5,26 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.contrib.sites.shortcuts import get_current_site
 
 
 class DefaultAccountAdapterEx(DefaultAccountAdapter):
     def respond_email_verification_sent(self, request, user):
         return HttpResponseRedirect(settings.ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL)
 
-    def render_mail(self, template_prefix, email, context, headers=None):
+    def send_confirmation_mail(self, request, emailconfirmation, signup):
+        current_site = get_current_site(request)
         protocol = "https" if self.request.is_secure() else "http"
-        site = context["current_site"]
-        context["current_site_url"] = f"{protocol}://{site.domain}"
-        return super().render_mail(
-            template_prefix,
-            email,
-            context,
-            headers=headers,
-        )
+        activate_url = self.get_email_confirmation_url(request, emailconfirmation)
+        ctx = {
+            "user": emailconfirmation.email_address.user,
+            "activate_url": activate_url,
+            "current_site": current_site,
+            "key": emailconfirmation.key,
+            "current_site_url": f"{protocol}://{current_site.domain}",
+        }
+        if signup:
+            email_template = "account/email/email_confirmation_signup"
+        else:
+            email_template = "account/email/email_confirmation"
+        self.send_mail(email_template, emailconfirmation.email_address.email, ctx)

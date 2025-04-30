@@ -271,6 +271,10 @@ const deDE: TranslationMessages = {
         verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
         image_not_supported: 'Nicht unterstütztes Bildformat oder Dateigröße überschreitet das Limit von 1 MB. Bitte laden Sie ein unterstütztes Bild mit weniger als 1 MB hoch.',
         change_password_success: 'Passwort erfolgreich geändert. Bitte melden Sie sich erneut an.',
+        password_reset_success: 'Passwort erfolgreich zurückgesetzt. Bitte melden Sie sich an.',
+        incorrect_reset_link: 'Der Zurücksetzungslink ist ungültig oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Passwort-Zurücksetzungs-E-Mail an.',
+        check_email: 'Bitte überprüfen Sie Ihre E-Mails für weitere Anweisungen.',
+
     },
     action: {
         test: 'Test',
@@ -301,6 +305,9 @@ const deDE: TranslationMessages = {
         change_password: 'Passwort ändern',
         upload_avatar: 'Avatar hochladen',
         crop: 'Zuschneiden',
+        password_reset_request: 'Passwort-Zurücksetzung anfordern',
+        password_reset: 'Passwort zurücksetzen',
+        forget_password: 'Passwort vergessen?',
     },
     validation: {
         not_available: 'Nicht verfügbar',
