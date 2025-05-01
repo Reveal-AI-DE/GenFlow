@@ -14,8 +14,11 @@ import {
     useItemFinalizeListener, FILE_STATES,
     useItemProgressListener, BatchItem,
 } from '@rpldy/uploady';
-import { useTranslate } from 'react-admin';
+import {
+    useTranslate, useDataProvider, useRecordContext, useNotify
+} from 'react-admin';
 
+import { Session } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
 import { truncateText } from '@/utils';
 import { WithTooltip, CircularProgress } from '@/common';
@@ -54,6 +57,9 @@ const Attachment: FC<AttachmentProps> = () => {
         attachedFile,
         setAttachedFile,
     } = useContext<SessionContextInterface>(SessionContext);
+    const dataProvider = useDataProvider();
+    const notify = useNotify();
+    const session = useRecordContext<Session>();
 
     const attachedFileId = attachedFile?.id || undefined;
 
@@ -69,7 +75,7 @@ const Attachment: FC<AttachmentProps> = () => {
         }
     }, attachedFileId);
 
-    if (!attachedFile || !attachedFile.id) {
+    if (!attachedFile || !attachedFile.id || !session) {
         return null;
     }
 
@@ -80,7 +86,17 @@ const Attachment: FC<AttachmentProps> = () => {
 
     const handleRemoveAttachment = (): void => {
         if (attachedFile) {
-            setAttachedFile(undefined);
+            dataProvider.delete('files', {
+                id: session.id,
+                meta: {
+                    resource: 'sessions',
+                    fileId: attachedFile.file.name,
+                },
+            }).then(() => setAttachedFile(undefined))
+                .catch(() => notify(
+                    translate('ra.notification.http_error'),
+                    { type: 'error' }
+                ));
         }
     }
 

@@ -2,10 +2,11 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_migrate, post_delete
 from django.dispatch import receiver
 
 from genflow.apps.restriction.signals import add_global_limits
+from genflow.apps.prompt.models import Prompt
 
 
 # post_migrate is different from other signals
@@ -16,3 +17,7 @@ def add_prompt_global_limits(sender, **kwargs):
     """
 
     add_global_limits("prompt")
+
+@receiver(post_delete, sender=Prompt)
+def delete_key_on_prompt_delete(sender, instance, **kwargs):
+    instance.remove_media_dir()
