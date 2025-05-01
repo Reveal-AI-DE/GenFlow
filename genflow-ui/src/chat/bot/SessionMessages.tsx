@@ -5,7 +5,7 @@
 import React, { FC, Fragment, useContext } from 'react';
 
 import { SessionContext, SessionContextInterface } from '@/context';
-import { Message } from '@/message';
+import { Message, MessageSkeleton } from '@/message';
 
 type SessionMessagesProps = object;
 
@@ -26,16 +26,22 @@ const SessionMessages: FC<SessionMessagesProps> = () => {
                         owner: sessionMessage.owner,
                     }}
                 />
-                <Message
-                    key={`${index}-bot`}
-                    isLast={index === array.length - 1}
-                    message={{
-                        id: sessionMessage.id,
-                        content: sessionMessage.answer,
-                        role: 'assistant',
-                        references: sessionMessage.references,
-                    }}
-                />
+                {
+                    sessionMessage.answer ? (
+                        <Message
+                            key={`${index}-bot`}
+                            isLast={index === array.length - 1}
+                            message={{
+                                id: sessionMessage.id,
+                                content: sessionMessage.answer,
+                                role: 'assistant',
+                                references: sessionMessage.references,
+                            }}
+                        />
+                    ) : (
+                        <MessageSkeleton isAssistant isLast />
+                    )
+                }
             </Fragment>
         ));
 };
