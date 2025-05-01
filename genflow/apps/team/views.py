@@ -2,8 +2,11 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+import shutil
+from os import path as osp
 from typing import cast
 
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.crypto import get_random_string
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
@@ -101,6 +104,16 @@ class TeamViewSet(viewsets.ModelViewSet):
 
         extra_kwargs = {"owner": self.request.user}
         serializer.save(**extra_kwargs)
+
+    def perform_destroy(self, instance: models.Team):
+        """
+        Deletes a Team instance and removes its associated directories if it exists.
+        """
+
+        key_dir = osp.join(settings.BASE_DIR, "keys", "teams", str(instance.id))
+        if osp.exists(key_dir):
+            shutil.rmtree(key_dir)
+        return super().perform_destroy(instance)
 
 
 @extend_schema(tags=["memberships"])

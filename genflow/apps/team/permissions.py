@@ -7,8 +7,7 @@ from django.db.models import Q
 
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
 from genflow.apps.restriction.mixin import LimitMixin
-from genflow.apps.team.models import Team, Invitation
-from genflow.apps.team.models import TeamRole
+from genflow.apps.team.models import Invitation, Team, TeamRole
 
 
 class TeamPermission(GenFLowBasePermission, LimitMixin):
@@ -271,9 +270,7 @@ class InvitationPermission(GenFLowBasePermission, LimitMixin):
         Get the number of teams owned by the user.
         """
 
-        return Invitation.objects.filter(
-            owner_id=self.user_id
-        ).count()
+        return Invitation.objects.filter(owner_id=self.user_id).count()
 
     def get_team_usage(self) -> int:
         """
@@ -283,9 +280,7 @@ class InvitationPermission(GenFLowBasePermission, LimitMixin):
         if self.team_id is None:
             return 0
 
-        return Invitation.objects.filter(
-            membership__team_id=self.team_id
-        ).count()
+        return Invitation.objects.filter(membership__team_id=self.team_id).count()
 
     def check_access(self) -> bool:
         """

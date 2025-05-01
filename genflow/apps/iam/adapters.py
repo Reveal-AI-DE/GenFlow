@@ -4,8 +4,8 @@
 
 from allauth.account.adapter import DefaultAccountAdapter
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponseRedirect
 
 
 class DefaultAccountAdapterEx(DefaultAccountAdapter):

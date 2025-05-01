@@ -6,14 +6,15 @@ from allauth.account.adapter import get_adapter
 from allauth.account.forms import default_token_generator
 from allauth.account.utils import user_pk_to_url_str
 from dj_rest_auth.forms import AllAuthPasswordResetForm
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.conf import settings
 
 UserModel = get_user_model()
 
 
 class ResetPasswordFormEx(AllAuthPasswordResetForm):
+    # pylint: disable=too-many-positional-arguments
     def save(
         self,
         request=None,
@@ -39,7 +40,9 @@ class ResetPasswordFormEx(AllAuthPasswordResetForm):
             protocol = "https" if use_https else "http"
             uid = user_pk_to_url_str(user)
             token = token_generator.make_token(user)
-            reset_url = f"{protocol}://{domain}{settings.RESET_PASSWORD_URL}?uid={uid}&token={token}"
+            reset_url = (
+                f"{protocol}://{domain}{settings.RESET_PASSWORD_URL}?uid={uid}&token={token}"
+            )
             context = {
                 "reset_url": reset_url,
                 "user": user,

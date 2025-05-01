@@ -5,10 +5,10 @@
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.team.models import Invitation, TeamRole
 from genflow.apps.team.serializers import InvitationReadSerializer
 from genflow.apps.team.tests.utils import ForceLogin, create_dummy_users
-from genflow.apps.restriction.tests.utils import override_limit
 
 
 class InvitationAPITestCase(APITestCase):
@@ -197,9 +197,10 @@ class InvitationCreateAPITestCase(APITestCase):
             "role": TeamRole.MEMBER,
         }
         response = self.create_invitation(user, data, team_membership["team"].id)
-        if team_membership["membership"].is_active and team_membership[
-            "membership"
-        ].role in [TeamRole.OWNER.value, TeamRole.ADMIN.value]:
+        if team_membership["membership"].is_active and team_membership["membership"].role in [
+            TeamRole.OWNER.value,
+            TeamRole.ADMIN.value,
+        ]:
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data["user"]["email"], email)
         else:

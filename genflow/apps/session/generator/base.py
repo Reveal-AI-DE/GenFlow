@@ -168,10 +168,17 @@ class BaseGenerator:
         if not stream:
             return response
         else:
-            return self._handle_model_response_stream(response=response, callback=callback)
+            if callback is not None:
+                return self._handle_model_response_stream_with_callback(
+                    response=response, callback=callback
+                )
+            else:
+                return self._handle_model_response_stream(response=response)
 
-    def _handle_model_response_stream(
-        self, response: Union[Result, Generator], callback: Callable
+    def _handle_model_response_stream_with_callback(
+        self,
+        response: Union[Result, Generator],
+        callback: Callable,
     ) -> Result:
         """
         Processes the model response in a streaming manner, invoking the callback for each chunk
@@ -199,5 +206,37 @@ class BaseGenerator:
             usage = Usage.empty_usage()
 
         return Result(
+            model=model, messages=messages, message=AssistantMessage(content=text), usage=usage
+        )
+
+    def _handle_model_response_stream(
+        self, response: Union[Result, Generator]
+    ) -> Union[Result, Generator]:
+        """
+        Processes the model response in a streaming manner, yielding each chunk
+            of the response. Returns the final result containing the model, messages, and usage details.
+        """
+
+        model = None
+        messages = []
+        text = ""
+        usage = None
+        for result in response:
+            yield result.delta.message.content
+
+            text += result.delta.message.content
+
+            if not model:
+                model = result.model
+
+            if not messages:
+                messages = result.messages
+
+            if result.delta.usage:
+                usage = result.delta.usage
+        if not usage:
+            usage = Usage.empty_usage()
+
+        yield Result(
             model=model, messages=messages, message=AssistantMessage(content=text), usage=usage
         )

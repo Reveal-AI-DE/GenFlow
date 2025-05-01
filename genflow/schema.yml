@@ -690,10 +690,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordResetRequest'
+              $ref: '#/components/schemas/PasswordResetSerializerExRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordResetRequest'
+              $ref: '#/components/schemas/PasswordResetSerializerExRequest'
         required: true
       security:
       - tokenAuth: []
@@ -2316,6 +2316,40 @@ paths:
       responses:
         '204':
           description: File was removed
+  /api/sessions/{id}/generate:
+    post:
+      operationId: sessions_generate_create
+      description: Generate a message from the LLM AI model.
+      summary: Generate a message
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GenerateRequestRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+          description: ''
   /api/sessions/{id}/upload_file:
     post:
       operationId: sessions_upload_file_create
@@ -2541,7 +2575,8 @@ paths:
       - in: path
         name: id
         schema:
-          type: string
+          type: integer
+        description: A unique integer value identifying this user.
         required: true
       tags:
       - users
@@ -2780,6 +2815,43 @@ components:
           maxLength: 150
       required:
       - username
+    ChatResponse:
+      description: |-
+        Represents a chat response with a specific type and associated data.
+
+        Attributes:
+            type (ChatMessageTypes): The type of the chat message.
+            data (str | Mapping[str, Any]): The content of the message, which can either be a string
+                or a mapping of key-value pairs containing additional information.
+      properties:
+        type:
+          $ref: '#/components/schemas/ChatResponseType'
+        data:
+          anyOf:
+          - type: string
+          - additionalProperties: true
+            type: object
+          title: Data
+      required:
+      - type
+      - data
+      title: ChatResponse
+      type: object
+    ChatResponseType:
+      description: |-
+        Defines the types of chat response
+        that can be generated in the application.
+
+        Attributes:
+            CHUNK (str): Represents a chunk of a larger message.
+            MESSAGE (str): Represents a complete message.
+            ERROR (str): Represents an error message.
+      enum:
+      - chunk
+      - message
+      - error
+      title: ChatResponseType
+      type: string
     ContextSourceEnum:
       enum:
       - files
@@ -2857,6 +2929,21 @@ components:
         path:
           type: string
           readOnly: true
+    GenerateRequestRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+        files:
+          type: array
+          items: {}
+        parameters: {}
+        stream:
+          type: boolean
+          default: true
+      required:
+      - query
     InvitationRead:
       type: object
       description: |-
@@ -3206,7 +3293,7 @@ components:
       - new_password2
       - token
       - uid
-    PasswordResetRequest:
+    PasswordResetSerializerExRequest:
       type: object
       description: Serializer for requesting a password reset e-mail.
       properties:

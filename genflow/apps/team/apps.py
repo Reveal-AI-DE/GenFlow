@@ -14,9 +14,7 @@ class TeamConfig(AppConfig):
         from genflow.apps.restriction.registry import register_limit
 
         # Register limits for the team app
-        register_limit(
-            "team", "TEAM", "Max teams", default=settings.GF_LIMITS.get("TEAM", None)
-        )
+        register_limit("team", "TEAM", "Max teams", default=settings.GF_LIMITS.get("TEAM", None))
         register_limit(
             "team",
             "MAX_INVITATION_PER_TEAM",

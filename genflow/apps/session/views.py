@@ -4,8 +4,9 @@
 
 import shutil
 from os import path as osp
-from typing import cast
+from typing import Generator, Union, cast
 
+from django.http import StreamingHttpResponse
 from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiResponse,
@@ -14,16 +15,23 @@ from drf_spectacular.utils import (
     extend_schema_view,
 )
 from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
+from genflow.apps.ai.llm.entities import Result
 from genflow.apps.core.mixin import FileManagementMixin
+from genflow.apps.core.models import Provider
 from genflow.apps.core.serializers import FileEntitySerializer
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.session import permissions as perms
+from genflow.apps.session.generator.chat import ChatGenerator
+from genflow.apps.session.generator.entities import ChatResponse, ChatResponseType, GenerateRequest
 from genflow.apps.session.models import Session, SessionMessage
 from genflow.apps.session.serializers import (
+    GenerateRequestSerializer,
     SessionMessageReadSerializer,
+    SessionMessageWriteSerializer,
     SessionReadSerializer,
     SessionWriteSerializer,
 )
@@ -108,6 +116,14 @@ from genflow.apps.team.middleware import HttpRequestWithIamContext
         description="Delete a specific file associated with the entity",
         responses={204: OpenApiResponse(description="File was removed")},
     ),
+    generate=extend_schema(
+        summary="Generate a message",
+        description="Generate a message from the LLM AI model.",
+        request=GenerateRequestSerializer,
+        responses={
+            200: ChatResponse,
+        },
+    ),
 )
 class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
     """
@@ -125,8 +141,22 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
 
         if self.request.method in SAFE_METHODS:
             return SessionReadSerializer
+        elif self.action == "generate":
+            return GenerateRequestSerializer
         else:
             return SessionWriteSerializer
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+
+        context = super().get_serializer_context()
+        if self.action == "generate" and hasattr(self, "message_generator"):
+            context["llm_model_bundle"] = self.message_generator.generate_entity.llm_model_bundle
+            return context
+        else:
+            return context
 
     def get_queryset(self):
         """
@@ -180,6 +210,112 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
 
         return "MAX_FILES_PER_SESSION"
 
+    @action(detail=True, methods=["post"])
+    def generate(self, request, *args, **kwargs):
+        try:
+            request = cast(HttpRequestWithIamContext, request)
+            db_session = self.get_object()
+            # initialize provider queryset and generator
+            queryset = Provider.objects.filter(team=request.iam_context.team)
+            self.message_generator = ChatGenerator(queryset=queryset, db_session=db_session)
+
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            return self.perform_generate(request, serializer)
+        except Exception as e:
+            # Handle any exceptions that occur during the generation process
+            message = ChatResponse(
+                type=ChatResponseType.ERROR,
+                data={
+                    "message": str(e),
+                },
+            )
+            return Response(
+                message.model_dump(mode="json"),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def handle_final_result(
+        self, generate_request: GenerateRequest, model_config: dict, result: Result
+    ) -> SessionMessageWriteSerializer:
+        # create a SessionMessage instance
+        data = {
+            "query": generate_request.query,
+            "answer": result.message.content,
+            "usage": result.usage.model_dump_json(),
+            "session_id": self.message_generator.db_session.id,
+        }
+        if model_config is not None:
+            data["related_model"] = model_config
+
+        message_serializer = SessionMessageWriteSerializer(
+            data=data,
+            context=self.get_serializer_context(),
+        )
+        message_serializer.is_valid(raise_exception=True)
+        message_serializer.save(
+            owner=self.request.user,
+            team=self.request.iam_context.team,
+        )
+        return message_serializer
+
+    def handle_stream(self, generate_request: GenerateRequest, model_config: dict) -> Generator:
+        """
+        Handles the streaming of the generation process.
+        """
+        response: Union[Result, Generator] = self.message_generator.generate(
+            generate_request=generate_request
+        )
+
+        for chunk in response:
+            message = None
+            if isinstance(chunk, str):
+                message = ChatResponse(
+                    type=ChatResponseType.CHUNK,
+                    data=chunk,
+                )
+            elif isinstance(chunk, Result):
+                result = chunk
+                message_serializer = self.handle_final_result(
+                    generate_request=generate_request,
+                    model_config=model_config,
+                    result=result,
+                )
+                message = ChatResponse(
+                    type=ChatResponseType.MESSAGE,
+                    data=message_serializer.data,
+                )
+            yield f"{message.model_dump(mode="json")}\n\n"
+
+    def perform_generate(
+        self, request: HttpRequestWithIamContext, serializer: GenerateRequestSerializer
+    ) -> SessionMessage:
+        """
+        generate a message from the LLM AI model.
+        """
+
+        related_model_data = serializer.validated_data.pop("related_model", None)
+        generate_request = serializer.save(user=request.user)
+        if generate_request.stream:
+            return StreamingHttpResponse(
+                self.handle_stream(generate_request, model_config=related_model_data)
+            )
+        else:
+            result: Result = self.message_generator.generate(generate_request=generate_request)
+            message_serializer = self.handle_final_result(
+                generate_request=generate_request,
+                model_config=related_model_data,
+                result=result,
+            )
+            message = ChatResponse(
+                type=ChatResponseType.MESSAGE,
+                data=message_serializer.data,
+            )
+            return Response(
+                message.model_dump(mode="json"),
+                status=status.HTTP_200_OK,
+            )
+
 
 @extend_schema(tags=["messages"])
 @extend_schema_view(
@@ -220,6 +356,8 @@ class SessionMessageViewSet(
 
         if self.request.method in SAFE_METHODS:
             return SessionMessageReadSerializer
+        else:
+            return GenerateRequestSerializer
 
     def get_queryset(self):
         """

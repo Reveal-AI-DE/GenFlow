@@ -25,6 +25,7 @@ class SessionPermission(GenFLowBasePermission, LimitMixin):
         RETRIEVE = "retrieve"
         UPDATE = "update"
         DELETE = "delete"
+        GENERATE = "generate"
         LIST_FILES = "list_files"
         UPLOAD_FILE = "upload_file"
         DELETE_FILE = "delete_file"
@@ -43,6 +44,7 @@ class SessionPermission(GenFLowBasePermission, LimitMixin):
                 "retrieve": Scopes.RETRIEVE,
                 "destroy": Scopes.DELETE,
                 "partial_update": Scopes.UPDATE,
+                "generate": Scopes.GENERATE,
                 "list_files": Scopes.LIST_FILES,
                 "upload_file": Scopes.UPLOAD_FILE,
                 "delete_file": Scopes.DELETE_FILE,
@@ -58,7 +60,15 @@ class SessionPermission(GenFLowBasePermission, LimitMixin):
         permissions = []
         if view.basename == "session":
             for scope in cls.get_scopes(request, view, obj):
-                self = cls.create_base_perm(request, view, scope, iam_context, obj)
+                # special case for generate -> check access should be
+                # done in the session message permission with create scope
+                if scope == cls.Scopes.GENERATE:
+                    self = SessionMessagePermission.create_base_perm(
+                        request, view, cls.Scopes.CREATE, iam_context, obj
+                    )
+                    self.session_id = obj.id
+                else:
+                    self = cls.create_base_perm(request, view, scope, iam_context, obj)
                 permissions.append(self)
 
         return permissions
@@ -106,8 +116,8 @@ class SessionPermission(GenFLowBasePermission, LimitMixin):
         # team member can list sessions
         # team member can create a session
         # team member can retrieve a session
+        # team member can generate a message
         # team member can upload a file
-
         if (
             self.scope == self.Scopes.LIST
             or self.scope == self.Scopes.CREATE
@@ -138,7 +148,7 @@ class SessionPermission(GenFLowBasePermission, LimitMixin):
         return queryset
 
 
-class SessionMessagePermission(GenFLowBasePermission):
+class SessionMessagePermission(GenFLowBasePermission, LimitMixin):
     """
     Handles the permissions for session message-related actions.
     """
@@ -149,6 +159,7 @@ class SessionMessagePermission(GenFLowBasePermission):
         """
 
         LIST = "list"
+        CREATE = "create"
 
     @staticmethod
     def get_scopes(request, view, obj):
@@ -160,6 +171,7 @@ class SessionMessagePermission(GenFLowBasePermission):
         return [
             {
                 "list": Scopes.LIST,
+                "create": Scopes.CREATE,
             }.get(view.action, None)
         ]
 
@@ -181,7 +193,12 @@ class SessionMessagePermission(GenFLowBasePermission):
         """
         Get the number of messages per session owned by the user.
         """
-        # TODO: add session id
+
+        if hasattr(self, "session_id"):
+            return SessionMessage.objects.filter(
+                session_id=self.session_id, owner_id=self.user_id
+            ).count()
+
         return SessionMessage.objects.filter(owner_id=self.user_id).count()
 
     def get_team_usage(self) -> int:
@@ -191,7 +208,12 @@ class SessionMessagePermission(GenFLowBasePermission):
 
         if self.team_id is None:
             return 0
-        # TODO: add session id
+
+        if hasattr(self, "session_id"):
+            return SessionMessage.objects.filter(
+                session_id=self.session_id, owner_id=self.user_id
+            ).count()
+
         return SessionMessage.objects.filter(team_id=self.team_id).count()
 
     def check_access(self) -> bool:
@@ -207,8 +229,17 @@ class SessionMessagePermission(GenFLowBasePermission):
         if self.group_name == settings.IAM_ADMIN_ROLE:
             return True
 
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="MESSAGE",
+        ):
+            return False
+
         # team member can list session messages
-        if self.scope == self.Scopes.LIST:
+        # team member can create a session message
+        if self.scope == self.Scopes.LIST or self.scope == self.Scopes.CREATE:
             return self.team_role is not None
 
         return False
