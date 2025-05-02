@@ -16,6 +16,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- scriv-insert-here -->
 
+<a id='changelog-1.0.0'></a>
+## \[1.0.0\] - 2025-05-02
+
+### Added
+
+- User registration with email verification
+
+- Assistant support with UI enhancement.
+
+- Limits on user, team and global levels with file size and type checks
+
+- Password change/reset functionality.
+
+### Changed
+
+- Refactor different UI components
+
+- Message generation to fallback to HTTP when Websocket request is blocked.
+
 <a id='changelog-0.1.0'></a>
 ## \[0.1.0\] - 2025-04-16
 

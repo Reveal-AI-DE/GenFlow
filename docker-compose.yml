@@ -18,7 +18,7 @@ services:
 
   genflow_server:
     container_name: genflow_server
-    image: genflow/server:${GF_VERSION:-dev}
+    image: genflow/server:${GF_VERSION:-v1.0.0}
     restart: always
     depends_on:
       genflow_db:
@@ -48,7 +48,7 @@ services:
 
   genflow_ui:
     container_name: genflow_ui
-    image: genflow/ui:${GF_VERSION:-dev}
+    image: genflow/ui:${GF_VERSION:-v1.0.0}
     restart: always
     depends_on:
       - genflow_server
