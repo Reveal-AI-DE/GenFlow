@@ -13,8 +13,9 @@ from dj_rest_auth.views import (
 from django.conf import settings
 from django.urls import path, re_path
 from django.urls.conf import include
+from rest_framework.routers import DefaultRouter
 
-from genflow.apps.iam.views import ConfirmEmailViewEx, GoogleLogin, RegisterViewEx
+from genflow.apps.iam.views import ConfirmEmailViewEx, GoogleLogin, RegisterViewEx, UserViewSet
 
 BASIC_LOGIN_PATH_NAME = "rest_login"
 BASIC_REGISTER_PATH_NAME = "rest_register"
@@ -53,4 +54,10 @@ if settings.IAM_TYPE == "BASIC":
             path("google", GoogleLogin.as_view(), name="google_login"),
         ]
 
-urlpatterns = [path("auth/", include(urlpatterns))]
+router = DefaultRouter(trailing_slash=False)
+router.register("users", UserViewSet, basename="user")
+
+urlpatterns = [
+    path("auth/", include(urlpatterns)),
+    path("", include(router.urls)),
+]

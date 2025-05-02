@@ -5,23 +5,25 @@
 import { Destination } from '@rpldy/uploady';
 import { Identifier } from 'react-admin';
 
-import { ResourceURL } from '@/utils/dataProvider';
-import { createOptions } from '@/auth/authProvider';
+import { ResourceURL, createFetchOptions } from '@/utils/dataProvider';
 
 export const createUploadyDestination = (
     resource: string,
     recordId: Identifier,
+    action?: string,
 ): Destination | null => {
-    const url = ResourceURL(`${resource}/${recordId}/upload_file`);
+    const url = ResourceURL(`${resource}/${recordId}/${action || 'upload_file'}`);
 
-    const options = createOptions(url);
-    if (!options.user || !options.headers) {
+    const options = createFetchOptions(url);
+    if (!options.user || !options.user.token || !options.headers) {
         return null;
     }
 
-    options.headers.set('authorization', options.user.token);
+    const requestHeaders = options.headers as Headers;
+    requestHeaders.set('authorization', options.user.token);
+
     const headersRecord: Record<string, string> = {};
-    options.headers.forEach((value, key) => {
+    requestHeaders.forEach((value, key) => {
         headersRecord[key] = value;
     });
 

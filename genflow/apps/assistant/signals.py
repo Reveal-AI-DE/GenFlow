@@ -2,9 +2,10 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-from django.db.models.signals import post_migrate
+from django.db.models.signals import post_delete, post_migrate
 from django.dispatch import receiver
 
+from genflow.apps.assistant.models import Assistant
 from genflow.apps.restriction.signals import add_global_limits
 
 
@@ -16,3 +17,8 @@ def add_assistant_global_limits(sender, **kwargs):
     """
 
     add_global_limits("assistant")
+
+
+@receiver(post_delete, sender=Assistant)
+def delete_key_on_assistant_delete(sender, instance, **kwargs):
+    instance.remove_media_dir()

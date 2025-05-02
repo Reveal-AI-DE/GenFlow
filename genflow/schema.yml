@@ -552,11 +552,7 @@ paths:
       - basicAuth: []
       responses:
         '200':
-          content:
-            application/vnd.genflow+json:
-              schema:
-                $ref: '#/components/schemas/AssistantRead'
-          description: ''
+          description: Avatar uploaded successfully
   /api/assistants/{id}/upload_file:
     post:
       operationId: assistants_upload_file_create
@@ -694,10 +690,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PasswordResetRequest'
+              $ref: '#/components/schemas/PasswordResetSerializerExRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PasswordResetRequest'
+              $ref: '#/components/schemas/PasswordResetSerializerExRequest'
         required: true
       security:
       - tokenAuth: []
@@ -1712,11 +1708,7 @@ paths:
       - basicAuth: []
       responses:
         '200':
-          content:
-            application/vnd.genflow+json:
-              schema:
-                $ref: '#/components/schemas/PromptRead'
-          description: ''
+          description: Avatar uploaded successfully
   /api/providers:
     get:
       operationId: providers_list
@@ -2324,6 +2316,40 @@ paths:
       responses:
         '204':
           description: File was removed
+  /api/sessions/{id}/generate:
+    post:
+      operationId: sessions_generate_create
+      description: Generate a message from the LLM AI model.
+      summary: Generate a message
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this session.
+        required: true
+      tags:
+      - sessions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GenerateRequestRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/vnd.genflow+json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+          description: ''
   /api/sessions/{id}/upload_file:
     post:
       operationId: sessions_upload_file_create
@@ -2540,6 +2566,36 @@ paths:
       responses:
         '204':
           description: The team has been deleted
+  /api/users/{id}/upload_avatar:
+    post:
+      operationId: users_upload_avatar_create
+      description: Upload a new avatar image for the user
+      summary: Upload a user avatar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          description: Avatar uploaded successfully
   /api/users/check:
     post:
       operationId: users_check_create
@@ -2592,6 +2648,8 @@ components:
           $ref: '#/components/schemas/TranslationEntity'
         description:
           $ref: '#/components/schemas/TranslationEntity'
+        welcome:
+          $ref: '#/components/schemas/TranslationEntity'
         license:
           $ref: '#/components/schemas/TranslationEntity'
         version:
@@ -2600,6 +2658,7 @@ components:
       required:
       - name
       - description
+      - welcome
       - license
       - version
       title: AboutSystem
@@ -2759,6 +2818,43 @@ components:
           maxLength: 150
       required:
       - username
+    ChatResponse:
+      description: |-
+        Represents a chat response with a specific type and associated data.
+
+        Attributes:
+            type (ChatMessageTypes): The type of the chat message.
+            data (str | Mapping[str, Any]): The content of the message, which can either be a string
+                or a mapping of key-value pairs containing additional information.
+      properties:
+        type:
+          $ref: '#/components/schemas/ChatResponseType'
+        data:
+          anyOf:
+          - type: string
+          - additionalProperties: true
+            type: object
+          title: Data
+      required:
+      - type
+      - data
+      title: ChatResponse
+      type: object
+    ChatResponseType:
+      description: |-
+        Defines the types of chat response
+        that can be generated in the application.
+
+        Attributes:
+            CHUNK (str): Represents a chunk of a larger message.
+            MESSAGE (str): Represents a complete message.
+            ERROR (str): Represents an error message.
+      enum:
+      - chunk
+      - message
+      - error
+      title: ChatResponseType
+      type: string
     ContextSourceEnum:
       enum:
       - files
@@ -2836,6 +2932,21 @@ components:
         path:
           type: string
           readOnly: true
+    GenerateRequestRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          minLength: 1
+        files:
+          type: array
+          items: {}
+        parameters: {}
+        stream:
+          type: boolean
+          default: true
+      required:
+      - query
     InvitationRead:
       type: object
       description: |-
@@ -3146,6 +3257,10 @@ components:
     PasswordChangeRequest:
       type: object
       properties:
+        old_password:
+          type: string
+          minLength: 1
+          maxLength: 128
         new_password1:
           type: string
           minLength: 1
@@ -3157,6 +3272,7 @@ components:
       required:
       - new_password1
       - new_password2
+      - old_password
     PasswordResetConfirmRequest:
       type: object
       description: Serializer for confirming a password reset attempt.
@@ -3180,7 +3296,7 @@ components:
       - new_password2
       - token
       - uid
-    PasswordResetRequest:
+    PasswordResetSerializerExRequest:
       type: object
       description: Serializer for requesting a password reset e-mail.
       properties:
@@ -3850,6 +3966,13 @@ components:
           type: array
           items:
             type: string
+        avatar:
+          type: string
+          nullable: true
+          description: |-
+            Dynamically generates the avatar URL based on the user's id.
+            If the avatar file does not exist, return a default avatar URL.
+          readOnly: true
         is_staff:
           type: boolean
           title: Staff status
@@ -3886,6 +4009,57 @@ components:
           type: string
           format: email
           minLength: 1
+    UserRequest:
+      type: object
+      description: |-
+        Serializer for the User model tha returns a serialized representation
+        of the User model with the all fields and their associated groups.
+
+        Attributes:
+            groups (SlugRelatedField): A field that represents the user's groups using the
+                group's name as the slug field. It allows multiple groups to be associated
+                with a user.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        groups:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        is_staff:
+          type: boolean
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+      required:
+      - groups
+      - username
   securitySchemes:
     basicAuth:
       type: http

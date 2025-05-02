@@ -151,6 +151,9 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "REGISTER_SERIALIZER": "genflow.apps.iam.serializers.RegisterSerializerEx",
+    "PASSWORD_RESET_SERIALIZER": "genflow.apps.iam.serializers.PasswordResetSerializerEx",
+    "OLD_PASSWORD_FIELD_ENABLED": True,
+    "LOGOUT_ON_PASSWORD_CHANGE": True,
 }
 
 MIDDLEWARE = [
@@ -227,6 +230,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/#/auth/email-confirmed"
 INCORRECT_EMAIL_CONFIRMATION_URL = "/#/auth/email-not-confirmed"
 ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = "/#/auth/verification-sent"
+RESET_PASSWORD_URL = "/#/auth/password-reset-confirm"  # nosec B105
 
 # change default allauth account adapter
 ACCOUNT_ADAPTER = "genflow.apps.iam.adapters.DefaultAccountAdapterEx"
@@ -301,6 +305,9 @@ STATIC_URL = "/statics/"
 STATIC_ROOT = os.path.join(BASE_DIR, "statics")
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
+CONFIG_ROOT = os.path.join(BASE_DIR, "config")
+MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_ROOT, exist_ok=True)
 
@@ -314,19 +321,56 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# providers media
 PROVIDERS_URL = "/media/providers"
 PROVIDERS_ROOT = os.path.join(MEDIA_ROOT, "providers")
 os.makedirs(PROVIDERS_ROOT, exist_ok=True)
 
-CONFIG_ROOT = os.path.join(BASE_DIR, "config")
-MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+USERS_MEDIA_URL = "/media/users"
+USERS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "users")
+os.makedirs(USERS_MEDIA_ROOT, exist_ok=True)
 
 PROMPTS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "prompts")
 os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 
 ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
 os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
+
+LOGS_ROOT = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_ROOT, exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {"format": "[%(asctime)s] %(levelname)s %(name)s: %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "filters": [],
+            "formatter": "standard",
+        },
+        "server_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "filename": os.path.join(BASE_DIR, "logs", "genflow_server.log"),
+            "formatter": "standard",
+            "maxBytes": 1024 * 1024 * 50,  # 50 MB
+            "backupCount": 5,
+        },
+    },
+    "root": {
+        "handlers": ["console", "server_file"],
+    },
+    "loggers": {
+        "genflow": {
+            "level": os.getenv("DJANGO_LOG_LEVEL", "DEBUG"),
+        },
+        "django": {
+            "level": "INFO",
+        },
+    },
+}
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
@@ -392,6 +436,8 @@ GF_LIMITS = {
     "MAX_FILES_PER_ASSISTANT": 2,  # 2 files
     "SESSION": 10,
     "MAX_FILES_PER_SESSION": 1,  # 1 file
+    "TEAM": 2,
+    "MAX_INVITATION_PER_TEAM": 10,
     "MESSAGE": 100,
     "MAX_FILE_SIZE": 2,  # 2MB
     "FILE_SUPPORTED_TYPES": [

@@ -7,6 +7,9 @@ from collections.abc import Mapping
 from genflow.apps.ai.base.ai_provider import AIProvider
 from genflow.apps.ai.base.entities.shared import ModelType
 from genflow.apps.ai.providers.registry import register_ai_provider
+from genflow.apps.common.log import ServerLogManager
+
+slogger = ServerLogManager(__name__)
 
 
 @register_ai_provider(name="openai")
@@ -37,7 +40,7 @@ class OpenAIProvider(AIProvider):
                 model="gpt-3.5-turbo", credentials=credentials
             )
         except Exception as ex:
-            # ToDo: logging
+            slogger.glob.error(f"Error validating credentials for OpenAI provider: {str(ex)}")
             raise ex
 
 

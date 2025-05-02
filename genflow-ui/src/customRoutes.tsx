@@ -6,7 +6,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import { Authenticated } from 'react-admin';
 
-import { Signup } from '@/auth';
+import { PasswordReset, PasswordResetConfirm, Signup } from '@/auth';
 import { Confirmed, IncorrectConfirmation, VerificationSent } from '@/auth/email';
 import { NewChat } from '@/chat';
 
@@ -28,6 +28,20 @@ const noLayoutCustomRoutes = [
         path='/signup'
         element={(
             <Signup />
+        )}
+    />,
+    <Route
+        key='password-reset'
+        path='/auth/password-reset'
+        element={(
+            <PasswordReset />
+        )}
+    />,
+    <Route
+        key='password-reset-confirm'
+        path='/auth/password-reset-confirm'
+        element={(
+            <PasswordResetConfirm />
         )}
     />,
     <Route

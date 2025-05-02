@@ -15,9 +15,12 @@ from pydantic import BaseModel
 from genflow.apps.ai import ai_provider_factory
 from genflow.apps.ai.base.entities.provider import AIProviderEntity
 from genflow.apps.common.entities import ConfigurationEntity, ConfigurationType, TranslationEntity
+from genflow.apps.common.log import ServerLogManager
 from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
 from genflow.apps.common.security.encryptor import decrypt_token, obfuscated_token
 from genflow.apps.core.config.entities import SystemConfiguration, UserProviderConfiguration
+
+slogger = ServerLogManager(__name__)
 
 
 class AboutSystem(BaseModel):
@@ -27,6 +30,7 @@ class AboutSystem(BaseModel):
 
     name: TranslationEntity
     description: TranslationEntity
+    welcome: TranslationEntity
     license: TranslationEntity
     version: str
 
@@ -140,8 +144,11 @@ class Provider(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
                         provider_credentials[variable] = decrypt_token(
                             str(self.team.id), provider_credentials.get(variable)
                         )
-                    except ValueError:
-                        pass
+                    except ValueError as e:
+                        slogger.glob.error(
+                            f"Error decrypting credentials for provider {self.provider_name}: {str(e)}"
+                        )
+                        raise e
 
             return UserProviderConfiguration(
                 provider_id=str(self.id), credentials=provider_credentials

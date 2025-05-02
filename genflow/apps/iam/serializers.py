@@ -2,6 +2,7 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+from os import path as osp
 from typing import Optional, Union
 
 from allauth.account import app_settings as allauth_settings
@@ -9,11 +10,100 @@ from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
 from allauth.account.utils import setup_user_email
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import PasswordResetSerializer
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
+
+from genflow.apps.common.file_utils import is_image
+from genflow.apps.iam.forms import ResetPasswordFormEx
+
+
+class BasicUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the User model tha returns a serialized representation
+    of the User model with the basic fields, and validates the presence of
+    unknown fields in the input data.
+    """
+
+    class Meta:
+        model = get_user_model()
+        # TODO: Adding 'url' cases exception => Could not resolve URL for hyperlinked relationship using view name 'user-detail'.
+        fields = ("id", "username", "email", "first_name", "last_name")
+        # default ordering by 'id' in descending order.
+        ordering = ["-id"]
+
+    def validate(self, data):
+        """
+        Checks for unknown fields in the input data and raises a ValidationError if any are found.
+        """
+
+        if hasattr(self, "initial_data"):
+            unknown_keys = set(self.initial_data.keys()) - set(self.fields.keys())
+            if unknown_keys:
+                if set(["is_staff", "is_superuser", "groups"]) & unknown_keys:
+                    message = (
+                        "You do not have permissions to access some of"
+                        + " these fields: {}".format(unknown_keys)
+                    )
+                else:
+                    message = "Got unknown fields: {}".format(unknown_keys)
+                raise serializers.ValidationError(message)
+        return data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the User model tha returns a serialized representation
+    of the User model with the all fields and their associated groups.
+
+    Attributes:
+        groups (SlugRelatedField): A field that represents the user's groups using the
+            group's name as the slug field. It allows multiple groups to be associated
+            with a user.
+    """
+
+    groups = serializers.SlugRelatedField(
+        many=True, slug_field="name", queryset=Group.objects.all()
+    )
+    avatar = serializers.SerializerMethodField()
+
+    def get_avatar(self, obj: Union[dict, User]) -> Optional[str]:
+        """
+        Dynamically generates the avatar URL based on the user's id.
+        If the avatar file does not exist, return a default avatar URL.
+        """
+
+        avatar_path = osp.join(settings.USERS_MEDIA_URL, str(obj.id), "avatar.png")
+        full_path = osp.join(settings.USERS_MEDIA_ROOT, str(obj.id), "avatar.png")
+
+        if osp.exists(full_path) and is_image(full_path):
+            return avatar_path
+        return None
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "groups",
+            "avatar",
+            "is_staff",
+            "is_superuser",
+            "is_active",
+            "last_login",
+            "date_joined",
+        )
+        read_only_fields = ("last_login", "date_joined")
+        write_only_fields = ("password",)
+        # default ordering by 'id' in descending order.
+        ordering = ["-id"]
 
 
 class RegisterSerializerEx(RegisterSerializer):
@@ -110,3 +200,22 @@ class RegisterSerializerEx(RegisterSerializer):
             if email.verified:
                 return None
         return user
+
+
+class PasswordResetSerializerEx(PasswordResetSerializer):
+    @property
+    def password_reset_form_class(self):
+        return ResetPasswordFormEx
+
+    def get_email_options(self):
+        domain = None
+        if hasattr(settings, "UI_HOST") and settings.UI_HOST:
+            domain = settings.UI_HOST
+            if hasattr(settings, "UI_PORT") and settings.UI_PORT:
+                domain += ":{}".format(settings.UI_PORT)
+        return {"domain_override": domain}
+
+
+class UserCheckSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)

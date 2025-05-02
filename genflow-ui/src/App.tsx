@@ -29,6 +29,7 @@ import { PromptGroupResourceProps, PromptResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
 import { SessionResourceProps } from '@/session';
+import { WorkflowResourceProps } from '@/workflow';
 
 // Custom routes
 import { layoutCustomRoutes, noLayoutCustomRoutes } from '@/customRoutes';
@@ -76,6 +77,9 @@ const App = (): JSX.Element => {
             />
             <Resource
                 {...AssistantResourceProps}
+            />
+            <Resource
+                {...WorkflowResourceProps}
             />
             <Resource
                 {...CollectionResourceProps}

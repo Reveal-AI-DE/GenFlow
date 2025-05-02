@@ -3,8 +3,7 @@
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { ModelDataProvider } from '@/types';
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '@/auth/authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 
 export default <ModelDataProvider> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

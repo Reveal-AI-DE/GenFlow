@@ -24,9 +24,11 @@ SESSION_DATA = {
 SESSION_MESSAGE_DATA = [
     {
         "query": "Test Message 1",
+        "answer": "Test Answer 1",
     },
     {
         "query": "Test Message 2",
+        "answer": "Test Answer 2",
     },
 ]
 

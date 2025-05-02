@@ -10,7 +10,9 @@ import AppBar from '@/layout/AppBar';
 import Menu from '@/layout/Menu';
 
 const Layout = (props: LayoutProps): JSX.Element => (
-    <GlobalState>
+    <GlobalState
+        disableTelemetry={process.env.REACT_APP_TELEMETRY_DISABLED === 'true'}
+    >
         <RALayout
             {...props}
             menu={Menu}

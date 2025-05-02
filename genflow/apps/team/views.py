@@ -2,111 +2,22 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+import shutil
+from os import path as osp
 from typing import cast
 
-from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.crypto import get_random_string
-from drf_spectacular.utils import (
-    OpenApiResponse,
-    PolymorphicProxySerializer,
-    extend_schema,
-    extend_schema_view,
-)
+from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import mixins, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, AllowAny
+from rest_framework.permissions import SAFE_METHODS
 from rest_framework.response import Response
 
 import genflow.apps.team.models as models
 import genflow.apps.team.permissions as perms
 import genflow.apps.team.serializers as serializers
 from genflow.apps.team.middleware import HttpRequestWithIamContext
-
-
-@extend_schema(tags=["users"])
-@extend_schema_view(
-    self=extend_schema(
-        summary="Get current user",
-        description="Retrieve the details of the currently authenticated user.",
-        responses={
-            "200": PolymorphicProxySerializer(
-                component_name="MetaUser",
-                serializers=[
-                    serializers.UserSerializer,
-                    serializers.BasicUserSerializer,
-                ],
-                resource_type_field_name=None,
-            ),
-        },
-    ),
-    check=extend_schema(
-        summary="Check user",
-        description="Check if a user exists by username",
-        request=serializers.UserCheckSerializer,
-        responses={
-            "200": OpenApiResponse(description="User exists"),
-            "204": OpenApiResponse(description="User not found"),
-        },
-    ),
-)
-class UserViewSet(viewsets.GenericViewSet):
-    serializer_class = None
-
-    def get_serializer_class(self):
-        # Early exit for drf-spectacular compatibility
-        if getattr(self, "swagger_fake_view", False):
-            return serializers.UserSerializer
-
-        user = self.request.user
-        is_self = int(self.kwargs.get("pk", 0)) == user.id or self.action == "self"
-        if user.is_staff:
-            return serializers.UserSerializer if not is_self else serializers.UserSerializer
-        else:
-            if is_self and self.request.method in SAFE_METHODS:
-                return serializers.UserSerializer
-            else:
-                return serializers.BasicUserSerializer
-
-    def get_permissions(self):
-        """
-        Customize permissions for specific actions.
-        """
-        if self.action == "check":
-            # Allow unauthenticated access to the 'check' action
-            return [AllowAny()]
-        return super().get_permissions()
-
-    @action(detail=False, methods=["GET"])
-    def self(self, request):
-        """
-        Method returns an instance of a user who is currently authorized
-        """
-
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(request.user, context={"request": request})
-        return Response(serializer.data)
-
-    @action(detail=False, methods=["POST"], serializer_class=serializers.UserCheckSerializer)
-    def check(self, request):
-        """
-        Method checks if a user exists by username, if not then check if user exists by email.
-        """
-
-        serializer = serializers.UserCheckSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        username = serializer.validated_data.get("username")
-        email = serializer.validated_data.get("email")
-
-        if username and get_user_model().objects.filter(username=username).exists():
-            return Response(status=status.HTTP_200_OK)
-
-        if email and get_user_model().objects.filter(email=email).exists():
-            return Response(status=status.HTTP_200_OK)
-
-        # If neither username nor email exists, return 204
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(tags=["teams"])
@@ -193,6 +104,16 @@ class TeamViewSet(viewsets.ModelViewSet):
 
         extra_kwargs = {"owner": self.request.user}
         serializer.save(**extra_kwargs)
+
+    def perform_destroy(self, instance: models.Team):
+        """
+        Deletes a Team instance and removes its associated directories if it exists.
+        """
+
+        key_dir = osp.join(settings.BASE_DIR, "keys", "teams", str(instance.id))
+        if osp.exists(key_dir):
+            shutil.rmtree(key_dir)
+        return super().perform_destroy(instance)
 
 
 @extend_schema(tags=["memberships"])

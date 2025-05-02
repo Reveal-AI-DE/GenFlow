@@ -37,3 +37,9 @@ export interface DeleteFilesMeta {
 export interface DeleteFilesParams extends DeleteManyParams {
     meta: DeleteFilesMeta;
 };
+
+export interface TransformedFile {
+    rawFile: File;
+    src: string;
+    title: string;
+};

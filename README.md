@@ -1,10 +1,18 @@
 <p align="center">
   <img src="/docs/img/demo.gif" alt="GenFlow Platform" width="100%" max-width="800px">
 </p>
+<p align="center">
+  <a href="https://demo.genflow.revealai.de/" style="display: inline-block; background-color: #007fd6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+    Try GenFlow Now
+  </a>
+</p>
 
 # GenFlow
 
 [![CI][ci-img]][ci-url]
+[![Coverage Status][coverage-img]][coverage-url]
+![Endpoint Badge][server-pulls-url]
+![Endpoint Badge][ui-pulls-url]
 [![LinkedIn][linkedin-img]][linkedin-url]
 
 
@@ -29,8 +37,8 @@ started with GenFlow and learn how to:
 - 📊 **View Usage Analytics** – Monitor assistant activity, prompt performance, and user engagement by
 clicking on session properties.
 
-Ready to explore GenFlow? Try the [Online Demo](https://genflow.revealai.de/) to see the platform in action (you will
-need an [API key from OpenAI](https://platform.openai.com/api-keys)).
+Ready to explore GenFlow? Try the [Online Demo](https://demo.genflow.revealai.de/) to see the platform in action
+(you will need an [API key from OpenAI](https://platform.openai.com/api-keys)).
 
 Prefer a self-hosted solution? Follow the [Self-hosted Installation Guide](docs/administration/basics/installation.md).
 We also offer enterprise support with premium features, training, and dedicated assistance with a 24-hour SLA.
@@ -73,6 +81,18 @@ We welcome contributions! Please see [GenFlow Contributing Guide](docs/contribut
 
 This project is licensed under the Apache 2.0 License Extended - see the [GenFlow LICENSE](LICENSE.md) file for details.
 
+## Telemetry Notice 📊
+
+GenFlow collects domain information using telemetry for analytics purposes. The only data
+sent to the telemetry server is the admin domain (e.g., `example.com`). No personal data is ever sent, and no
+cookies are included in the response. The GenFlow team uses these domains to track the usage of the platform.
+
+If you prefer to disable telemetry, you can do so by modifying the `genflow-ui/.env.production` file:
+
+```bash
+REACT_APP_TELEMETRY_DISABLED=true
+```
+
 ## Contact 📬
 
 For support or inquiries:
@@ -85,5 +105,11 @@ For support or inquiries:
 
 [ci-img]: https://github.com/Reveal-AI-DE/GenFlow/actions/workflows/main.yml/badge.svg?branch=develop
 [ci-url]: https://github.com/Reveal-AI-DE/GenFlow/actions
+[coverage-img]: https://codecov.io/gh/Reveal-AI-DE/GenFlow/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/Reveal-AI-DE/GenFlow
+[server-pulls-url]: https://img.shields.io/endpoint?url=https%3A%2F%2Fmwopc2qsfd.execute-api.eu-central-1.amazonaws.com%2Fdefault%2Ferc-pull-counter%3Frepo%3Dgenflow%2Fserver%26alias%3Dz5d7y3x3&style=flat-square&label=server%20pulls
+
+[ui-pulls-url]: https://img.shields.io/endpoint?url=https%3A%2F%2Fmwopc2qsfd.execute-api.eu-central-1.amazonaws.com%2Fdefault%2Ferc-pull-counter%3Frepo%3Dgenflow%2Fui%26alias%3Dz5d7y3x3&style=flat-square&label=UI%20pulls
+
 [linkedin-img]: https://img.shields.io/badge/LinkedIn-Follow-blue?logo=linkedin
 [linkedin-url]: https://www.linkedin.com/company/76154575/

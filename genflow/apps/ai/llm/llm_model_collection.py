@@ -14,6 +14,9 @@ from genflow.apps.ai.base.model_collection import ModelCollection
 from genflow.apps.ai.llm.entities import Result, Usage
 from genflow.apps.ai.llm.messages import Message
 from genflow.apps.common.entities import ConfigurationEntity
+from genflow.apps.common.log import ServerLogManager
+
+slogger = ServerLogManager(__name__)
 
 
 class LLMMode(Enum):
@@ -185,7 +188,7 @@ class LLMModelCollection(ModelCollection):
             # ToDo: support response format
             result = self._call(model, credentials, messages, parameters, stop, stream, user)
         except Exception as e:
-            # TODO: log error
+            slogger.glob.error(f"Error calling model {model}: {str(e)}")
             raise e
 
         return result

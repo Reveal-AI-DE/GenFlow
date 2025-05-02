@@ -11,6 +11,7 @@ import {
 
 export interface SessionContextInterface {
     generateURL: string | undefined,
+    fallbackGenerateURL: string | undefined,
 
     userInput: string,
     setUserInput: Dispatch<SetStateAction<string>>,
@@ -35,6 +36,7 @@ export interface SessionContextInterface {
 
 export const SessionContext = createContext<SessionContextInterface>({
     generateURL: undefined,
+    fallbackGenerateURL: undefined,
 
     userInput: '',
     setUserInput: () => {},

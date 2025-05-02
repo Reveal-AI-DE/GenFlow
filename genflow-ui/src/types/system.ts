@@ -10,6 +10,7 @@ export interface AboutSystem {
     name: TranslationEntity;
     description: TranslationEntity;
     license: TranslationEntity;
+    welcome: TranslationEntity;
     version: string;
 };
 

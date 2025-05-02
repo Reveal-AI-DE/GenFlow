@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { ShowBase, useTranslate, Identifier } from 'react-admin';
 
 import { Dialog, DialogProps } from '@/common';

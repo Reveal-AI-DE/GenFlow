@@ -12,7 +12,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import LazyObject
 from rest_framework.authtoken.models import Token
 
+from genflow.apps.common.log import ServerLogManager
 from genflow.apps.team.middleware import IAMContext as BaseIAMContext
+
+slogger = ServerLogManager(__name__)
 
 
 class IAMContext(BaseIAMContext):
@@ -81,8 +84,8 @@ def get_user(scope):
     try:
         user = Token.objects.get(key=token).user
 
-    except Exception:
-        # TODO: Log the exception
+    except Exception as e:
+        slogger.glob.error(f"Error retrieving user from token: {str(e)}")
         return AnonymousUser()
     if not user.is_active:
         return AnonymousUser()

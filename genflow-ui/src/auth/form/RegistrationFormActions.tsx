@@ -3,31 +3,16 @@
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import {
-    Button, useTranslate, useNotify,
+    useTranslate, useNotify,
 } from 'react-admin';
 
-import { authProvider } from '@/auth';
+import { userRegister } from '@/user';
+import { ButtonWithLoadingIndicator } from '@/common';
 
 type RegistrationFormActionsProps = object;
-
-const StyledButton = styled(Button, {
-    name: 'GFRegistrationForm',
-    slot: 'button',
-})(({ theme }) => ({
-    marginTop: theme.spacing(2),
-}));
-
-const StyledCircularProgress = styled(CircularProgress, {
-    name: 'GFRegistrationForm',
-    slot: 'loading',
-})(({ theme }) => ({
-    margin: theme.spacing(0.3),
-}));
 
 const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
     const [loading, setLoading] = useState(false);
@@ -39,7 +24,7 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
     const onSubmit = async (data: any): Promise<void> => {
         setLoading(true);
         try {
-            const resp = await authProvider.register(data);
+            const resp = await userRegister(data);
             reset();
             if (resp.email_verification_required) {
                 navigate('/auth/verification-sent');
@@ -60,24 +45,15 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
     };
 
     return (
-        <StyledButton
+        <ButtonWithLoadingIndicator
             variant='contained'
             type='button'
             onClick={handleClick}
-            disabled={loading}
+            loading={loading}
             fullWidth
         >
-            {
-                loading ? (
-                    <StyledCircularProgress
-                        size={19}
-                        thickness={3}
-                    />
-                ) : (
-                    translate('action.sign_up')
-                )
-            }
-        </StyledButton>
+            {translate('action.sign_up')}
+        </ButtonWithLoadingIndicator>
     );
 };
 

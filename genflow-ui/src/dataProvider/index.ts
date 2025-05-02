@@ -66,7 +66,6 @@ const dataProviderWrapper: DataProvider = {
     // system
     getAbout: createMethod('getAbout'),
     // users
-    self: createMethod('self'),
     check: createMethod('check'),
     // models
     getParameterConfig: createMethod('getParameterConfig'),

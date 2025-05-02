@@ -11,7 +11,8 @@ import {
     useDataProvider, Form, Validator,
 } from 'react-admin';
 
-import { PasswordInputWithStrengthBar } from '@/common/input';
+import { RegistrationFormData } from '@/types';
+import { PasswordInputWithStrengthBar, validatePassword, matchPassword } from '@/common';
 import RegistrationFormActions from '@/auth/form/RegistrationFormActions';
 
 const PREFIX = 'GFRegistrationForm';
@@ -21,13 +22,6 @@ export const RegistrationFormClasses = {
     button: `${PREFIX}-button`,
     icon: `${PREFIX}-icon`,
     passwordStrength: `${PREFIX}-password-strength`,
-};
-
-export interface RegistrationFormData {
-    username: string;
-    email: string
-    password1: string;
-    password2: string;
 };
 
 const StyledForm = styled(Form<FormData>, {
@@ -71,35 +65,13 @@ const RegistrationForm: FC<RegistrationFormProps> = () => {
             .then((result: boolean) => (result ? 'validation.not_available' : undefined))
     };
 
-    const validatePassword: Validator = (value: string, allValues: RegistrationFormData) => {
-        if (!value) {
-            return 'ra.validation.required';
-        }
-        // Rule 1: At least 8 characters
-        if (value.length < 8) {
-            return { message: 'validation.password.min', args: { number: 8 } };
-        }
-        // Rule 2: Not entirely numeric
-        if (/^\d+$/.test(value)) {
-            return 'validation.password.numeric';
-        }
-        // Rule 3: Not too similar to personal information
-        const { username, email: emailValue } = allValues;
-        if (username && value.toLowerCase().includes(username.toLowerCase())) {
-            return 'validation.password.personal';
-        }
-        if (emailValue && value.toLowerCase().includes(emailValue.toLowerCase())) {
-            return 'validation.password.personal';
-        }
-        return undefined;
-    };
+    const validatePassword1: Validator = (value: string, allValues: RegistrationFormData) => (
+        validatePassword(value, allValues.username, allValues.email)
+    );
 
-    const equalToPassword: Validator = (value: string, allValues: RegistrationFormData) => {
-        if (value !== allValues.password1) {
-            return 'The two passwords must match';
-        }
-        return undefined;
-    };
+    const equalToPassword: Validator = (value: string, allValues: RegistrationFormData) => (
+        matchPassword(value, allValues.password1)
+    );
 
     return (
         <StyledForm>
@@ -135,7 +107,7 @@ const RegistrationForm: FC<RegistrationFormProps> = () => {
                     source='password1'
                     label='resources.users.fields.password1'
                     variant='filled'
-                    validate={[required(), validatePassword]}
+                    validate={[required(), validatePassword1]}
                 />
                 <PasswordInput
                     source='password2'

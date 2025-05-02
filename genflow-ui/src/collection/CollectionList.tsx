@@ -2,14 +2,14 @@
 //
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-import React from 'react';
+import React, { FC } from 'react';
 
-const CollectionList: React.FC = () => {
-    React.useEffect(() => {
-        window.history.back();
-    }, []);
+import { UnderConstruction } from '@/common';
 
-    return null;
-};
+type CollectionListProps = object;
+
+const CollectionList: FC<CollectionListProps> = () => (
+    <UnderConstruction />
+);
 
 export default CollectionList;

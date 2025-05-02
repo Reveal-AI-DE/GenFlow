@@ -4,8 +4,7 @@
 
 import { DataProvider } from 'react-admin';
 
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '@/auth/authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 import { GetFilesParams, DeleteFileParams, DeleteFilesParams } from '@/types';
 
 export default <DataProvider> {
@@ -19,7 +18,7 @@ export default <DataProvider> {
     },
     delete: async (resource: string, params: DeleteFileParams) => {
         const url = ResourceURL(`/${params.meta.resource}/${params.id}/${resource}/${params.meta.fileId}`);
-        const { json } = await fetchJsonWithAuthToken(url);
+        const { json } = await fetchJsonWithAuthToken(url, { method: 'DELETE' });
         return { data: json };
     },
     deleteMany: (resource: string, params: DeleteFilesParams) => Promise.all(

@@ -7,81 +7,12 @@ from distutils.util import strtobool
 from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group, User
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
 from genflow.apps.common.security.rsa import generate_key_pair
+from genflow.apps.iam.serializers import BasicUserSerializer
 from genflow.apps.team import models as models
-
-
-class BasicUserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the User model tha returns a serialized representation
-    of the User model with the basic fields, and validates the presence of
-    unknown fields in the input data.
-    """
-
-    class Meta:
-        model = User
-        # TODO: Adding 'url' cases exception => Could not resolve URL for hyperlinked relationship using view name 'user-detail'.
-        fields = ("id", "username", "email", "first_name", "last_name")
-        # default ordering by 'id' in descending order.
-        ordering = ["-id"]
-
-    def validate(self, data):
-        """
-        Checks for unknown fields in the input data and raises a ValidationError if any are found.
-        """
-
-        if hasattr(self, "initial_data"):
-            unknown_keys = set(self.initial_data.keys()) - set(self.fields.keys())
-            if unknown_keys:
-                if set(["is_staff", "is_superuser", "groups"]) & unknown_keys:
-                    message = (
-                        "You do not have permissions to access some of"
-                        + " these fields: {}".format(unknown_keys)
-                    )
-                else:
-                    message = "Got unknown fields: {}".format(unknown_keys)
-                raise serializers.ValidationError(message)
-        return data
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the User model tha returns a serialized representation
-    of the User model with the all fields and their associated groups.
-
-    Attributes:
-        groups (SlugRelatedField): A field that represents the user's groups using the
-            group's name as the slug field. It allows multiple groups to be associated
-            with a user.
-    """
-
-    groups = serializers.SlugRelatedField(
-        many=True, slug_field="name", queryset=Group.objects.all()
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "groups",
-            "is_staff",
-            "is_superuser",
-            "is_active",
-            "last_login",
-            "date_joined",
-        )
-        read_only_fields = ("last_login", "date_joined")
-        write_only_fields = ("password",)
-        # default ordering by 'id' in descending order.
-        ordering = ["-id"]
 
 
 class TeamReadSerializer(serializers.ModelSerializer):
@@ -220,7 +151,7 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
             del membership_data["user"]
         except ObjectDoesNotExist:
             user_email = membership_data["user"]["email"]
-            user = User.objects.create_user(username=user_email, email=user_email)
+            user = get_user_model().objects.create_user(username=user_email, email=user_email)
             user.set_unusable_password()
             # User.objects.create_user(...) normalizes passed email and user.email can be different from original user_email
             email = EmailAddress.objects.create(
@@ -314,8 +245,3 @@ class MembershipWriteSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         serializer = MembershipReadSerializer(instance, context=self.context)
         return serializer.data
-
-
-class UserCheckSerializer(serializers.Serializer):
-    username = serializers.CharField(required=False)
-    email = serializers.EmailField(required=False)

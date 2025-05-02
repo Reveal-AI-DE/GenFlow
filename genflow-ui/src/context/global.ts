@@ -14,6 +14,7 @@ export interface GlobalContextInterface {
     currentMembership: Membership | undefined;
     currentTeam: Team | undefined;
     switchTeam: (team: Team, user: UserIdentity) => void;
+    showWelcome: boolean;
 };
 
 export const GlobalContext = createContext<GlobalContextInterface>({
@@ -21,4 +22,5 @@ export const GlobalContext = createContext<GlobalContextInterface>({
     currentMembership: undefined,
     currentTeam: undefined,
     switchTeam: () => {},
+    showWelcome: false,
 });

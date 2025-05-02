@@ -2,15 +2,61 @@
 //
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-import { UserDataProvider } from '@/types';
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken, getLoggedInUser } from '@/auth/authProvider';
+import { UserIdentity } from 'react-admin';
+
+import {
+    UserDataProvider, RegistrationFormData,
+    ChangePasswordFormData, PasswordResetConfirmFormData,
+} from '@/types';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
+
+export const userRegister = async (params: RegistrationFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/register`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const changePassword = async (params: ChangePasswordFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/change`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const passwordResetConfirm = async (params: PasswordResetConfirmFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/reset/confirm`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const passwordReset = async (params: PasswordResetConfirmFormData): Promise<UserIdentity> => {
+    const url = ResourceURL(`${process.env.REACT_APP_BACKEND_AUTH_URL}/password/reset`);
+    const { json } = await fetchJsonWithAuthToken(url, {
+        method: 'POST',
+        body: JSON.stringify(params),
+    });
+    return json;
+};
+
+export const getLoggedInUser = async (): Promise<UserIdentity> => {
+    const url = ResourceURL('/users/self');
+    const { json } = await fetchJsonWithAuthToken(url);
+
+    return {
+        ...json,
+        fullName: `${json.first_name} ${json.last_name}`,
+    };
+};
 
 export default <UserDataProvider> {
-    self: async () => {
-        const user = await getLoggedInUser();
-        return user;
-    },
     check: async (resource: string, params: any) => {
         const url = ResourceURL(`/${resource}/check`);
         const { status } = await fetchJsonWithAuthToken(url, {

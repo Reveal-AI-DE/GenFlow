@@ -76,7 +76,7 @@ class PromptGroupViewSet(EntityGroupViewSetMixin):
         summary="Upload a prompt avatar",
         description="Upload a new avatar image for the prompt",
         responses={
-            "200": PromptReadSerializer,
+            "200": OpenApiResponse(description="Avatar uploaded successfully"),
         },
     ),
 )

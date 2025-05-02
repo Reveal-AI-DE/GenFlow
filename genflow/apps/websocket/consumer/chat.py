@@ -10,13 +10,12 @@ from genflow.apps.ai.llm.entities import Result
 from genflow.apps.core.models import Provider
 from genflow.apps.restriction.models import Limit
 from genflow.apps.session.generator.chat import ChatGenerator
-from genflow.apps.session.generator.entities import GenerateRequest
+from genflow.apps.session.generator.entities import ChatResponse, ChatResponseType, GenerateRequest
 from genflow.apps.session.models import Session, SessionMessage
 from genflow.apps.session.serializers import GenerateRequestSerializer, SessionMessageReadSerializer
 from genflow.apps.websocket.auth_middleware import WebSocketRequest
 from genflow.apps.websocket.consumer import exception
 from genflow.apps.websocket.consumer.base import BaseConsumer
-from genflow.apps.websocket.messages import ChatResponse, ChatResponseType
 
 
 class ChatGenerateConsumer(BaseConsumer):

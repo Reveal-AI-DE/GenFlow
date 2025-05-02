@@ -32,6 +32,7 @@ export const SessionState: FC<SessionStateProps> = ({
     const notify = useNotify();
 
     const [generateURL, setGenerateURL] = useState<string | undefined>(undefined);
+    const [fallbackGenerateURL, setFallbackGenerateURL] = useState<string | undefined>(undefined);
 
     const [userInput, setUserInput] = useState<string>('');
     const [attachedFile, setAttachedFile] = useState<BatchItem | undefined>(undefined);
@@ -49,6 +50,7 @@ export const SessionState: FC<SessionStateProps> = ({
     useEffect(() => {
         if (session) {
             setGenerateURL(createGenerateURL(session));
+            setFallbackGenerateURL(createGenerateURL(session, process.env.REACT_APP_BACKEND_API_BASE_URL));
         }
     }, [session]);
 
@@ -126,6 +128,7 @@ export const SessionState: FC<SessionStateProps> = ({
 
     const contextValue = React.useMemo(() => ({
         generateURL,
+        fallbackGenerateURL,
 
         userInput,
         setUserInput,

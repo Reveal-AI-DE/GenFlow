@@ -30,6 +30,7 @@ const useChatHandler = (): ChatHandlerHook => {
         setSessionMessages,
         sessionMessages,
         generateURL,
+        fallbackGenerateURL,
     } = useContext<SessionContextInterface>(SessionContext);
 
     const handleFocusChatInput = (): void => {
@@ -51,9 +52,10 @@ const useChatHandler = (): ChatHandlerHook => {
         );
 
         // streaming
-        if (generateURL && generateRequest !== null) {
+        if (generateURL && fallbackGenerateURL && generateRequest !== null) {
             generate(
                 generateURL,
+                fallbackGenerateURL,
                 generateRequest,
                 tmpMessage,
                 setSessionMessages
