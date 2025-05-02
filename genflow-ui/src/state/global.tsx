@@ -20,9 +20,13 @@ import { WelcomeMessage } from '@/system';
 
 interface GlobalStateProps {
     children: ReactNode,
+    disableTelemetry?: boolean,
 };
 
-export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
+export const GlobalState: FC<GlobalStateProps> = ({
+    children,
+    disableTelemetry = false,
+}) => {
     const { authenticated } = useAuthenticated();
     const { data: currentUser, error: getIdentityError } = useGetIdentity();
 
@@ -148,6 +152,20 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
             setLoading(false);
         })();
     }, [currentUser]);
+
+    useEffect(() => {
+        if (
+            disableTelemetry ||
+            typeof window === 'undefined' ||
+            typeof window.location === 'undefined' ||
+            typeof Image === 'undefined'
+        ) {
+            return;
+        }
+        const img = new Image();
+        // eslint-disable-next-line max-len
+        img.src = `https://mwopc2qsfd.execute-api.eu-central-1.amazonaws.com/default/genflow-telemetry?domain=${window.location.hostname}`;
+    }, [disableTelemetry]);
 
     const contextValue = useMemo(() => ({
         aboutSystem,
