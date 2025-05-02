@@ -43,14 +43,22 @@ const AboutMenuItem: FC = () => {
                 },
                 dialogContent: (
                     <>
-                        <Typography variant='subtitle2'>
-                            {aboutSystem.description[locale] ?? aboutSystem.description.en_US}
-                        </Typography>
+                        <Typography
+                            variant='subtitle2'
+                            dangerouslySetInnerHTML={{
+                                __html: aboutSystem.description[locale] ?? aboutSystem.description.en_US,
+                            }}
+                        />
                         <br />
                         <Divider />
-                        <Typography variant='overline' display='block' sx={{ textAlign: 'right' }}>
-                            {aboutSystem.license[locale] ?? aboutSystem.license.en_US}
-                        </Typography>
+                        <Typography
+                            variant='overline'
+                            display='block'
+                            sx={{ textAlign: 'right'}}
+                            dangerouslySetInnerHTML={{
+                                __html: aboutSystem.license[locale] ?? aboutSystem.license.en_US,
+                            }}
+                        />
                     </>
                 ),
             }}

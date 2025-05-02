@@ -67,17 +67,32 @@ class SystemViewSet(viewsets.ViewSet):
 
         about = AboutSystem(
             name={
-                "en_US": "GenFlow Platform",
+                "en_US": "GenFlow",
             },
             version=genflow_version,
             description={
-                "en_US": "GenFlow is the next generation of digitalization in AI,  that helps you to develop your business uncase "
-                "while significantly reduce the time and costs needed.\n"
-                "The platform provides a comprehensive solution that supported you over the different model development and deployment phases.\n"
-                "Using GenFlow, domain experts can develop start-of-the-art models without a single line of code.",
+                "en_US": "<p>GenFlow is an open-source, low-code GenAI platform that empowers organizations to build "
+                    "and manage Generative AI assistants that automate routine writing tasks and enhance access to internal knowledge.</p>"
+                    "Designed for flexibility and collaboration, GenFlow enables teams to:"
+                    "<ul><li> Create and deploy custom AI assistants tailored to their workflows.</li>"
+                    "<li> Select and configure the language models best suited for their needs.</li>"
+                    "<li> Monitor usage patterns and performance through built-in analytics.</li>"
+                    "<li> Operate in a team-based environment where each team can maintain its own assistants and dedicated knowledge base.</li></ul>"
+                    "<p>Whether you're streamlining documentation, automating reports, or enabling internal support bots, "
+                    "GenFlow helps you harness the power of GenAI — faster, smarter, and with minimal coding.</p>",
+                "de_DE": "<p>GenFlow ist eine Open-Source-Plattform für Low-Code-Generative-KI, die Organisationen dabei unterstützt, "
+                    "Generative KI-Assistenten zu erstellen und zu verwalten, die Routineaufgaben automatisieren und den Zugriff auf internes Wissen verbessern.</p>"
+                    "GenFlow wurde für Flexibilität und Zusammenarbeit entwickelt und ermöglicht Teams:"
+                    "<ul><li> Individuelle KI-Assistenten zu erstellen und bereitzustellen, die auf ihre Arbeitsabläufe zugeschnitten sind.</li>"
+                    "<li> Die Sprachmodelle auszuwählen und zu konfigurieren, die am besten zu ihren Anforderungen passen.</li>"
+                    "<li> Nutzungsverhalten und Leistung durch integrierte Analysen zu überwachen.</li>"
+                    "<li> In einer teamorientierten Umgebung zu arbeiten, in der jedes Team seine eigenen Assistenten und dedizierten Wissensbasen verwalten kann.</li></ul>"
+                    "<p>Ob Sie Dokumentationen optimieren, Berichte automatisieren oder interne Support-Bots bereitstellen möchten, "
+                    "GenFlow hilft Ihnen, die Kraft der Generativen KI schneller, intelligenter und mit minimalem Programmieraufwand zu nutzen.</p>"
             },
             license={
-                "en_US": "This software uses LGPL license",
+                "en_US": "This project is licensed under <a href='https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md' target='_blank'>GenFlow LICENSE</a>.",
+                "de_DE": "Dieses Projekt ist lizenziert unter der <a href='https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md' target='_blank'>GenFlow-Lizenz</a>.",
             },
         )
         return Response(data=about.model_dump(mode="json"), status=status.HTTP_200_OK)
