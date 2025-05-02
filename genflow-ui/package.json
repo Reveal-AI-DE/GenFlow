@@ -1,6 +1,6 @@
 {
     "name": "genflow-ui",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "GenFlow single-page application",
     "main": "src/index.tsx",
     "proxy": "http://localhost:3000",
