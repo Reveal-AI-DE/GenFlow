@@ -27,6 +27,7 @@ class AboutSystem(BaseModel):
 
     name: TranslationEntity
     description: TranslationEntity
+    welcome: TranslationEntity
     license: TranslationEntity
     version: str
 

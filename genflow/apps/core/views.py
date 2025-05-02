@@ -72,27 +72,59 @@ class SystemViewSet(viewsets.ViewSet):
             version=genflow_version,
             description={
                 "en_US": "<p>GenFlow is an open-source, low-code GenAI platform that empowers organizations to build "
-                    "and manage Generative AI assistants that automate routine writing tasks and enhance access to internal knowledge.</p>"
-                    "Designed for flexibility and collaboration, GenFlow enables teams to:"
-                    "<ul><li> Create and deploy custom AI assistants tailored to their workflows.</li>"
-                    "<li> Select and configure the language models best suited for their needs.</li>"
-                    "<li> Monitor usage patterns and performance through built-in analytics.</li>"
-                    "<li> Operate in a team-based environment where each team can maintain its own assistants and dedicated knowledge base.</li></ul>"
-                    "<p>Whether you're streamlining documentation, automating reports, or enabling internal support bots, "
-                    "GenFlow helps you harness the power of GenAI — faster, smarter, and with minimal coding.</p>",
+                "and manage Generative AI assistants that automate routine writing tasks and enhance access to internal knowledge.</p>"
+                "Designed for flexibility and collaboration, GenFlow enables teams to:"
+                "<ul><li> Create and deploy custom AI assistants tailored to their workflows.</li>"
+                "<li> Select and configure the language models best suited for their needs.</li>"
+                "<li> Monitor usage patterns and performance through built-in analytics.</li>"
+                "<li> Operate in a team-based environment where each team can maintain its own assistants and dedicated knowledge base.</li></ul>"
+                "<p>Whether you're streamlining documentation, automating reports, or enabling internal support bots, "
+                "GenFlow helps you harness the power of GenAI — faster, smarter, and with minimal coding.</p>",
                 "de_DE": "<p>GenFlow ist eine Open-Source-Plattform für Low-Code-Generative-KI, die Organisationen dabei unterstützt, "
-                    "Generative KI-Assistenten zu erstellen und zu verwalten, die Routineaufgaben automatisieren und den Zugriff auf internes Wissen verbessern.</p>"
-                    "GenFlow wurde für Flexibilität und Zusammenarbeit entwickelt und ermöglicht Teams:"
-                    "<ul><li> Individuelle KI-Assistenten zu erstellen und bereitzustellen, die auf ihre Arbeitsabläufe zugeschnitten sind.</li>"
-                    "<li> Die Sprachmodelle auszuwählen und zu konfigurieren, die am besten zu ihren Anforderungen passen.</li>"
-                    "<li> Nutzungsverhalten und Leistung durch integrierte Analysen zu überwachen.</li>"
-                    "<li> In einer teamorientierten Umgebung zu arbeiten, in der jedes Team seine eigenen Assistenten und dedizierten Wissensbasen verwalten kann.</li></ul>"
-                    "<p>Ob Sie Dokumentationen optimieren, Berichte automatisieren oder interne Support-Bots bereitstellen möchten, "
-                    "GenFlow hilft Ihnen, die Kraft der Generativen KI schneller, intelligenter und mit minimalem Programmieraufwand zu nutzen.</p>"
+                "Generative KI-Assistenten zu erstellen und zu verwalten, die Routineaufgaben automatisieren und den Zugriff auf internes Wissen verbessern.</p>"
+                "GenFlow wurde für Flexibilität und Zusammenarbeit entwickelt und ermöglicht Teams:"
+                "<ul><li> Individuelle KI-Assistenten zu erstellen und bereitzustellen, die auf ihre Arbeitsabläufe zugeschnitten sind.</li>"
+                "<li> Die Sprachmodelle auszuwählen und zu konfigurieren, die am besten zu ihren Anforderungen passen.</li>"
+                "<li> Nutzungsverhalten und Leistung durch integrierte Analysen zu überwachen.</li>"
+                "<li> In einer teamorientierten Umgebung zu arbeiten, in der jedes Team seine eigenen Assistenten und dedizierten Wissensbasen verwalten kann.</li></ul>"
+                "<p>Ob Sie Dokumentationen optimieren, Berichte automatisieren oder interne Support-Bots bereitstellen möchten, "
+                "GenFlow hilft Ihnen, die Kraft der Generativen KI schneller, intelligenter und mit minimalem Programmieraufwand zu nutzen.</p>",
             },
             license={
                 "en_US": "This project is licensed under <a href='https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md' target='_blank'>GenFlow LICENSE</a>.",
                 "de_DE": "Dieses Projekt ist lizenziert unter der <a href='https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md' target='_blank'>GenFlow-Lizenz</a>.",
+            },
+            welcome={
+                "en_US": """
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <h1 style="text-align: center; color: #007fd6;">Welcome to GenFlow!</h1>
+                        <p style="text-align: center;">We are <strong>thrilled</strong> to have you on board! 🚀</p>
+                        <p>Watch our <a href="https://www.youtube.com/watch?v=tP5Ox9R0naA&t=10s&ab_channel=RevealAI" target="_blank" style="color: #007BFF; text-decoration: none;">📺 YouTube video</a> to get started with GenFlow and learn how to:</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li>🔧 <strong>Create an API Endpoint</strong> – Set up and configure a backend API for your GenAI integration.</li>
+                            <li>✍️ <strong>Create a Prompt</strong> – Design and test custom prompts for specific writing or Q&A tasks.</li>
+                            <li>🤖 <strong>Create an Assistant</strong> – Build a fully functional GenAI assistant powered by your prompt and knowledge base.</li>
+                            <li>📊 <strong>View Usage Analytics</strong> – Monitor assistant activity, prompt performance, and user engagement by clicking on session properties.</li>
+                        </ul>
+                        <p>💻 Prefer a self-hosted solution? Follow the <a href="https://github.com/Reveal-AI-DE/GenFlow/blob/develop/docs/administration/basics/installation.md" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Self-hosted Installation Guide</a>.</p>
+                        <p>💼 We also offer <strong>enterprise support</strong> with premium features, training, and dedicated assistance with a 24-hour SLA. <a href="https://revealai.de/contact/" target="_blank" style="color: #007BFF; text-decoration: none;">📩 Contact us</a> to learn more.</p>
+                    </div>
+                """,
+                "de_DE": """
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <h1 style="text-align: center; color: #007fd6;">Willkommen bei GenFlow!</h1>
+                        <p style="text-align: center;">Wir sind <strong>begeistert</strong>, Sie an Bord zu haben! 🚀</p>
+                        <p>Sehen Sie sich unser <a href="https://www.youtube.com/watch?v=tP5Ox9R0naA&t=10s&ab_channel=RevealAI" target="_blank" style="color: #007BFF; text-decoration: none;">📺 YouTube-Video</a> an, um zu erfahren, wie Sie mit GenFlow starten und Folgendes lernen können:</p>
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li>🔧 <strong>Erstellen eines API-Endpunkts</strong> – Richten Sie eine Backend-API für Ihre GenAI-Integration ein und konfigurieren Sie sie.</li>
+                            <li>✍️ <strong>Erstellen eines Prompts</strong> – Entwerfen und testen Sie benutzerdefinierte Prompts für spezifische Schreib- oder Q&A-Aufgaben.</li>
+                            <li>🤖 <strong>Erstellen eines Assistenten</strong> – Erstellen Sie einen voll funktionsfähigen GenAI-Assistenten, der von Ihrem Prompt und Ihrer Wissensdatenbank unterstützt wird.</li>
+                            <li>📊 <strong>Ansicht der Nutzungsanalysen</strong> – Überwachen Sie die Aktivitäten des Assistenten, die Leistung der Prompts und das Benutzerengagement, indem Sie auf Sitzungsdetails klicken.</li>
+                        </ul>
+                        <p>💻 Bevorzugen Sie eine selbst gehostete Lösung? Folgen Sie der <a href="https://github.com/Reveal-AI-DE/GenFlow/blob/develop/docs/administration/basics/installation.md" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Anleitung zur Selbstinstallation</a>.</p>
+                        <p>💼 Wir bieten auch <strong>Unterstützung für Unternehmen</strong> mit Premium-Funktionen, Schulungen und dedizierter Unterstützung mit einer SLA von 24 Stunden. <a href="https://revealai.de/contact/" target="_blank" style="color: #007BFF; text-decoration: none;">📩 Kontaktieren Sie uns</a>, um mehr zu erfahren.</p>
+                    </div>
+                """,
             },
         )
         return Response(data=about.model_dump(mode="json"), status=status.HTTP_200_OK)

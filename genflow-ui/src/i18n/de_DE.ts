@@ -228,6 +228,7 @@ const deDE: TranslationMessages = {
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
         crop: 'Bild zuschneiden',
+        welcome: 'Welcome',
     },
     message: {
         item_updated: '%{name} aktualisiert',
@@ -310,6 +311,7 @@ const deDE: TranslationMessages = {
         password_reset_request: 'Passwort-Zurücksetzung anfordern',
         password_reset: 'Passwort zurücksetzen',
         forget_password: 'Passwort vergessen?',
+        not_show_again: 'Nicht mehr anzeigen',
     },
     validation: {
         not_available: 'Nicht verfügbar',

@@ -191,6 +191,7 @@ const enUS: TranslationMessages = {
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
         crop: 'Crop Image',
+        welcome: 'Welcome',
     },
     message: {
         item_updated: '%{name} updated',
@@ -273,6 +274,7 @@ const enUS: TranslationMessages = {
         password_reset_request: 'Request Password Reset',
         password_reset: 'Reset Password',
         forget_password: 'Forgot Password?',
+        not_show_again: 'Do not show again',
     },
     validation: {
         not_available: 'Not available',

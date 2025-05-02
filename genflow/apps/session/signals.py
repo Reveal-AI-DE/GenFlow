@@ -2,12 +2,10 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-from os import path as osp
 import shutil
+from os import path as osp
 
-from django.conf import settings
-
-from django.db.models.signals import post_migrate, post_delete
+from django.db.models.signals import post_delete, post_migrate
 from django.dispatch import receiver
 
 from genflow.apps.restriction.signals import add_global_limits
@@ -22,6 +20,7 @@ def add_session_global_limits(sender, **kwargs):
     """
 
     add_global_limits("session")
+
 
 @receiver(post_delete, sender=Session)
 def delete_dir_on_session_delete(sender, instance, **kwargs):
