@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, {
     FC, useContext,
@@ -10,9 +10,9 @@ import SendIcon from '@mui/icons-material/Send';
 import StopIcon from '@mui/icons-material/Stop';
 import {
     useUploadyContext, useItemFinishListener,
-    BatchItem, FILE_STATES,
+    BatchItem, FILE_STATES, useItemErrorListener,
 } from '@rpldy/uploady';
-import { useTranslate } from 'react-admin';
+import { useTranslate, useNotify } from 'react-admin';
 
 import { SessionContext, SessionContextInterface } from '@/context';
 import { WithTooltip } from '@/common';
@@ -22,6 +22,7 @@ type SendButtonProps = object;
 
 const SendButton: FC<SendButtonProps> = () => {
     const translate = useTranslate();
+    const notify = useNotify();
 
     const {
         userInput,
@@ -66,6 +67,17 @@ const SendButton: FC<SendButtonProps> = () => {
             userInput,
             files
         );
+    }, attachedFile?.id);
+
+    useItemErrorListener((item: BatchItem) => {
+        const message = item.uploadResponse?.data?.message;
+        if (Array.isArray(message)) {
+            notify(message[0], { type: 'error' });
+        } else if (typeof message === 'string') {
+            notify(message, { type: 'error' });
+        } else {
+            notify('ra.notification.http_error', { type: 'error' });
+        }
     }, attachedFile?.id);
 
     return (

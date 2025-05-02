@@ -1,11 +1,11 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-export * from './button';
-export * from './form';
-export * from './field';
-export * from './input';
-export * from './layout';
-export * from './list';
-export * from './menu';
+export * from '@/common/button';
+export * from '@/common/form';
+export * from '@/common/field';
+export * from '@/common/input';
+export * from '@/common/layout';
+export * from '@/common/list';
+export * from '@/common/menu';

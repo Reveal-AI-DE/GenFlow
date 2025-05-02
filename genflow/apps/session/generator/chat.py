@@ -1,14 +1,15 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from django.db.models.query import QuerySet
 
 from genflow.apps.ai.llm.entities import Result
+from genflow.apps.assistant.models import Assistant, AssistantContextSource
 from genflow.apps.core.config.llm_model_bundle import LLMModelBundle
 from genflow.apps.core.config.provider_service import AIProviderConfigurationService
 from genflow.apps.core.models import Provider
-from genflow.apps.prompt.models import Prompt
+from genflow.apps.prompt.models import Prompt, PromptType
 from genflow.apps.session.generator.base import BaseGenerator
 from genflow.apps.session.generator.entities import GenerateEntity, GenerateRequest
 from genflow.apps.session.models import Session, SessionMode, SessionType
@@ -31,6 +32,8 @@ class ChatGenerator(BaseGenerator):
         related_model = db_session.related_model
         if db_session.session_type == SessionType.PROMPT.value:
             related_model = db_session.related_prompt.related_model
+        if db_session.session_type == SessionType.ASSISTANT.value:
+            related_model = db_session.related_assistant.related_model
 
         model_collection_bundle = AIProviderConfigurationService.get_model_collection_bundle(
             related_model.provider_name,
@@ -52,8 +55,14 @@ class ChatGenerator(BaseGenerator):
         if db_session.session_type == SessionType.PROMPT.value:
             prompt: Prompt = db_session.related_prompt
             prompt_entity = PromptTemplateEntity(
-                prompt_type=prompt.type,
+                prompt_type=prompt.prompt_type,
                 simple_prompt_template=prompt.pre_prompt,
+            )
+        if db_session.session_type == SessionType.ASSISTANT.value:
+            assistant: Assistant = db_session.related_assistant
+            prompt_entity = PromptTemplateEntity(
+                prompt_type=PromptType.SIMPLE.value,
+                simple_prompt_template=assistant.pre_prompt,
             )
 
         self.generate_entity = GenerateEntity(
@@ -70,13 +79,17 @@ class ChatGenerator(BaseGenerator):
         """
 
         query = generate_request.query
-        files = generate_request.files if generate_request.files is not None else []
+        files = generate_request.files
         stream = (
             generate_request.stream
             if generate_request.stream is not None
             else self.generate_entity.stream
         )
         use_memory = True if self.db_session.session_mode == SessionMode.CHAT.value else False
+
+        # load files content
+        if files is not None and len(files) > 0:
+            files = self.db_session.load_user_files(files)
 
         # Include: prompt template, query(optional), files(optional)
         # Not Include: memory
@@ -103,10 +116,20 @@ class ChatGenerator(BaseGenerator):
             self.db_session.name = f"{query[:17]}..." if len(query) > 20 else query
             self.db_session.save()
 
+        # get context
+        context = None
+        if self.db_session.session_type == SessionType.ASSISTANT.value:
+            assistant: Assistant = self.db_session.related_assistant
+            if assistant.context_source == AssistantContextSource.FILES.value:
+                context = assistant.get_files_context()
+            elif assistant.context_source == AssistantContextSource.COLLECTIONS.value:
+                context = ""
+
         input_messages, stop = self.organize_input_messages(
             prompt_template_entity=self.generate_entity.prompt_entity,
             files=files,
             query=query,
+            context=context,
             memory=use_memory,
         )
 

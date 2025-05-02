@@ -1,9 +1,9 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from genflow.utils.version import get_version
 
-VERSION = (0, 1, 0, "final", 0)
+VERSION = (1, 0, 0, "final", 0)
 
 __version__ = get_version(VERSION)

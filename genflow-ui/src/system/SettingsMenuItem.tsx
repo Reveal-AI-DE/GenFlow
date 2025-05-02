@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, useContext } from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -11,6 +11,7 @@ import { TeamRole } from '@/types';
 import { MenuItemWithDialog, TabsController, TabItems } from '@/common';
 import { ProviderList } from '@/provider';
 import { MembershipList } from '@/team/membership';
+import { Account } from '@/user';
 
 const SettingsMenuItem: FC = () => {
     const translate = useTranslate();
@@ -32,6 +33,10 @@ const SettingsMenuItem: FC = () => {
             </RecordContextProvider>
         );
     }
+
+    tabItems[translate('label.account')] = (
+        <Account key='account' />
+    );
 
     return (
         <MenuItemWithDialog

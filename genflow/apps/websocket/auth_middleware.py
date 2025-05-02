@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from typing import Optional
 from urllib.parse import parse_qs
@@ -12,10 +12,13 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.functional import LazyObject
 from rest_framework.authtoken.models import Token
 
-from genflow.apps.team.middleware import TeamContext
+from genflow.apps.common.log import ServerLogManager
+from genflow.apps.team.middleware import IAMContext as BaseIAMContext
+
+slogger = ServerLogManager(__name__)
 
 
-class TeamContextWithRole(TeamContext):
+class IAMContext(BaseIAMContext):
     team_role: Optional[str] = None
 
 
@@ -32,7 +35,7 @@ class WebSocketRequest:
         The parsed query string parameters from the WebSocket connection.
     headers : dict
         The headers associated with the WebSocket connection.
-    iam_context : TeamContextWithRole
+    iam_context : IAMContext
         The IAM context for the WebSocket connection, initialized to None.
     """
 
@@ -44,7 +47,7 @@ class WebSocketRequest:
         self.user = scope["user"]
         self.GET: dict = parse_qs(scope["query_string"].decode())
         self.headers: dict = {"X-Team": scope["subprotocols"][2]}
-        self.iam_context: TeamContextWithRole = None
+        self.iam_context: IAMContext = None
 
 
 class WebSocketRequestLazyObject(LazyObject):
@@ -81,8 +84,8 @@ def get_user(scope):
     try:
         user = Token.objects.get(key=token).user
 
-    except Exception:
-        # TODO: Log the exception
+    except Exception as e:
+        slogger.glob.error(f"Error retrieving user from token: {str(e)}")
         return AnonymousUser()
     if not user.is_active:
         return AnonymousUser()

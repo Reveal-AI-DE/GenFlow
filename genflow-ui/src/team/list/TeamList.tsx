@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, {
     FC, useCallback, useState, useEffect
@@ -11,6 +11,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import {
     Datagrid, DateField, List, TextField, RecordContextProvider,
     FunctionField, Identifier, RowClickFunction, useDataProvider,
+    useNotify,
 } from 'react-admin';
 import { matchPath, useLocation, useNavigate } from 'react-router';
 
@@ -48,13 +49,19 @@ const TeamList: FC<TeamListProps> = () => {
     const dataProvider = useDataProvider();
     const location = useLocation();
     const navigate = useNavigate();
+    const notify = useNotify();
     const match = matchPath('/teams/:id', location.pathname);
     const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
     useEffect(() => {
         const fetchTeam = async (): Promise<void> => {
-            const {data: team } = await dataProvider.getOne('teams', { id: match?.params.id });
-            setSelectedTeam(team);
+            dataProvider.getOne('teams', { id: match?.params.id })
+                .then(({ data: team }) => setSelectedTeam(team))
+                .catch(() => notify(
+                    'ra.notification.http_error',
+                    {
+                        type: 'error',
+                    }));
         }
         if (match && selectedTeam === null) {
             fetchTeam();

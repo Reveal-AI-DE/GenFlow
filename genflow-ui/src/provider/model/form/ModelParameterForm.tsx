@@ -1,10 +1,10 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, useEffect, useState } from 'react';
 import {
-    useDataProvider, Labeled,
+    useDataProvider, Labeled, useNotify,
 } from 'react-admin';
 import { useWatch } from 'react-hook-form';
 
@@ -23,6 +23,7 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
     const modelName = useWatch({ name: modelInputName });
     const [configs, setConfigs] = useState<ConfigurationEntity[]>([]);
     const dataProvider = useDataProvider();
+    const notify = useNotify();
 
     useEffect(() => {
         const fetchConfigurations = async (): Promise<void> => {
@@ -37,7 +38,11 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
                         name: inputName,
                     };
                 });
-            });
+            }).catch(() => notify(
+                'ra.notification.http_error',
+                {
+                    type: 'error',
+                }));
             setConfigs(convertedConfigurations);
         }
         if (modelName) {

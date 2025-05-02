@@ -1,13 +1,10 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from rest_framework import routers
 
-from genflow.apps.session.views import (
-    SessionMessageViewSet,
-    SessionViewSet,
-)
+from genflow.apps.session.views import SessionMessageViewSet, SessionViewSet
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register("sessions", SessionViewSet)

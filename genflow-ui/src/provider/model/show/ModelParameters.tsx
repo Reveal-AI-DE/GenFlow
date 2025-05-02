@@ -1,9 +1,9 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import { Labeled, TextField, useLocale } from 'react-admin';
 
@@ -25,6 +25,7 @@ const ModelParameters: FC<ModelParametersProps> = ({
         .filter((config) => !config.advanced);
     const advancedConfigs = parameterConfigs
         .filter((config) => config.advanced);
+
     const renderParameter = (config: ConfigurationEntity): JSX.Element => {
         const source = namePrefix ? `${namePrefix}.${config.name}` : ''
 
@@ -36,7 +37,7 @@ const ModelParameters: FC<ModelParametersProps> = ({
                 <TextField
                     source={source}
                     defaultValue={
-                        parameters ? parameters[config.name] as string : config.default as string
+                        parameters[config.name] ? parameters[config.name] as string : config.default as string
                     }
                 />
             </Labeled>

@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { Dispatch, SetStateAction, createContext } from 'react';
 import { BatchItem } from '@rpldy/uploady';
@@ -11,6 +11,7 @@ import {
 
 export interface SessionContextInterface {
     generateURL: string | undefined,
+    fallbackGenerateURL: string | undefined,
 
     userInput: string,
     setUserInput: Dispatch<SetStateAction<string>>,
@@ -29,10 +30,13 @@ export interface SessionContextInterface {
 
     isResponsiveLayout: boolean,
     floatActions: SessionFloatActionKey[],
+    promptSelection: boolean,
+    setPromptSelection: Dispatch<SetStateAction<boolean>>,
 };
 
 export const SessionContext = createContext<SessionContextInterface>({
     generateURL: undefined,
+    fallbackGenerateURL: undefined,
 
     userInput: '',
     setUserInput: () => {},
@@ -51,4 +55,6 @@ export const SessionContext = createContext<SessionContextInterface>({
 
     isResponsiveLayout: true,
     floatActions: [],
+    promptSelection: false,
+    setPromptSelection: () => {},
 });

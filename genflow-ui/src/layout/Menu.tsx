@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
 import MenuList from '@mui/material/MenuList';
@@ -9,9 +9,10 @@ import lodashGet from 'lodash/get';
 import clsx from 'clsx';
 import {
     MenuProps, useSidebarState, MenuClasses, ResourceMenuItems,
-    DRAWER_WIDTH, CLOSED_DRAWER_WIDTH,
+    DRAWER_WIDTH, CLOSED_DRAWER_WIDTH, useHasDashboard,
 } from 'react-admin';
 
+import { DashboardMenuItem } from '@/dashboard';
 import { ChatMenuItem } from '@/chat';
 
 const PREFIX = 'RaMenu';
@@ -42,6 +43,7 @@ const Root = styled(MenuList, {
 
 const Menu: FC<MenuProps> = (props: MenuProps) => {
     const { children, className, ...rest } = props;
+    const hasDashboard = useHasDashboard();
     const [open] = useSidebarState();
 
     return (
@@ -54,6 +56,7 @@ const Menu: FC<MenuProps> = (props: MenuProps) => {
             )}
             {...rest}
         >
+            {hasDashboard && !children && <DashboardMenuItem />}
             <ChatMenuItem />
             <ResourceMenuItems />
         </Root>

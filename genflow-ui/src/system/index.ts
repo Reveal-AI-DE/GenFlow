@@ -1,13 +1,15 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import AboutMenuItem from '@/system/AboutMenuItem';
 import SettingsMenuItem from '@/system/SettingsMenuItem';
 import systemDataProvider from '@/system/systemDataProvider';
+import WelcomeMessage from '@/system/WelcomeMessage';
 
 export {
     AboutMenuItem,
     SettingsMenuItem,
     systemDataProvider,
+    WelcomeMessage,
 }

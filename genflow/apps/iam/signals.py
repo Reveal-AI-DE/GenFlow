@@ -1,10 +1,13 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
+
+import shutil
+from os import path as osp
 
 from django.conf import settings
 from django.contrib.auth.models import Group, User
-from django.db.models.signals import post_migrate, post_save
+from django.db.models.signals import post_delete, post_migrate, post_save
 from django.dispatch import receiver
 
 
@@ -22,6 +25,13 @@ def create_groups(sender, **kwargs):
     # Create all groups which corresponds system roles
     for role in settings.IAM_ROLES:
         Group.objects.get_or_create(name=role)
+
+
+@receiver(post_delete, sender=User)
+def delete_key_on_user_delete(sender, instance, **kwargs):
+    media_dir = osp.join(settings.USERS_MEDIA_ROOT, str(instance.id))
+    if osp.exists(media_dir):
+        shutil.rmtree(media_dir)
 
 
 if settings.IAM_TYPE == "BASIC":

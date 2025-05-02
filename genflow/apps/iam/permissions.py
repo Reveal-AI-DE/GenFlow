@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from abc import ABCMeta, abstractmethod
 from enum import Enum
@@ -27,7 +27,8 @@ def get_team(request: HttpRequestWithIamContext, obj):
         Team or None
 
     Raises:
-        AttributeError: If the object does not have a 'team_id' attribute and is not listed in settings.OBJECTS_NOT_RELATED_WITH_TEAM.
+        AttributeError: If the object does not have a 'team_id' attribute
+        and is not listed in settings.OBJECTS_NOT_RELATED_WITH_TEAM.
     """
 
     if isinstance(obj, Team):

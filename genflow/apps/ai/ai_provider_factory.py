@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from collections.abc import Sequence
 from typing import Optional
@@ -8,6 +8,9 @@ from typing import Optional
 from genflow.apps.ai.base.ai_provider import AIProvider
 from genflow.apps.ai.base.entities.provider import AIProviderEntity
 from genflow.apps.ai.providers.registry import AI_PROVIDERS, AIProviderExtension
+from genflow.apps.common.log import ServerLogManager
+
+slogger = ServerLogManager(__name__)
 
 
 class AIProviderFactory:
@@ -68,8 +71,9 @@ class AIProviderFactory:
         # get the provider extension
         ai_provider_extension = ai_provider_extensions.get(provider_name)
         if not ai_provider_extension:
-            # TODO: fix Raising too general exception: Exception
-            raise Exception(f"Invalid AI provider: {provider_name}")
+            message = f"Invalid AI provider: {provider_name}"
+            slogger.glob.error(message)
+            raise Exception(message)
 
         # get the provider instance
         ai_provider_instance = ai_provider_extension.ai_provider_instance

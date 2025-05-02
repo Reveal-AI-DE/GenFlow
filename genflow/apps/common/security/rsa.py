@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import os
 from os import path as osp
@@ -76,7 +76,7 @@ def get_decrypt_decoding(team_id: str):
     key_file = osp.join(key_dir, "private.pem")
 
     try:
-        with open(key_file, "r") as f:
+        with open(key_file, "rb") as f:
             private_key = f.read()
     except FileNotFoundError:
         raise Exception("Private key not found, team_id: {team_id}".format(team_id=team_id))

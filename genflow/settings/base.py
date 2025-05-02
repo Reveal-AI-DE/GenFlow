@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 """
 Django settings for genflow project.
@@ -94,10 +94,13 @@ INSTALLED_APPS = [
     "allauth.account",
     "corsheaders",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "genflow.apps.team",
     "genflow.apps.iam",
+    "genflow.apps.restriction",
     "genflow.apps.core",
     "genflow.apps.prompt",
+    "genflow.apps.assistant",
     "genflow.apps.session",
 ]
 
@@ -148,6 +151,9 @@ REST_FRAMEWORK = {
 
 REST_AUTH = {
     "REGISTER_SERIALIZER": "genflow.apps.iam.serializers.RegisterSerializerEx",
+    "PASSWORD_RESET_SERIALIZER": "genflow.apps.iam.serializers.PasswordResetSerializerEx",
+    "OLD_PASSWORD_FIELD_ENABLED": True,
+    "LOGOUT_ON_PASSWORD_CHANGE": True,
 }
 
 MIDDLEWARE = [
@@ -160,7 +166,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "dj_pagination.middleware.PaginationMiddleware",
-    "genflow.apps.team.middleware.ContextMiddleware",
+    "genflow.apps.team.middleware.IAMContextMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
 
@@ -215,8 +221,38 @@ AUTHENTICATION_BACKENDS = [
 
 # https://github.com/pennersr/django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_REQUIRED = True
+
+# set UI url to redirect to after e-mail confirmation
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/#/auth/email-confirmed"
+INCORRECT_EMAIL_CONFIRMATION_URL = "/#/auth/email-not-confirmed"
+ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = "/#/auth/verification-sent"
+RESET_PASSWORD_URL = "/#/auth/password-reset-confirm"  # nosec B105
+
+# change default allauth account adapter
+ACCOUNT_ADAPTER = "genflow.apps.iam.adapters.DefaultAccountAdapterEx"
+
+# Social account settings
+SOCIALACCOUNT_PROVIDERS = {}
+if "GF_GOOGLE_CLIENT_ID" in os.environ and "GF_GOOGLE_CLIENT_SECRET" in os.environ:
+    SOCIALACCOUNT_PROVIDERS["google"] = {
+        "APP": {
+            "client_id": os.environ.get("GF_GOOGLE_CLIENT_ID", None),
+            "secret": os.environ.get("GF_GOOGLE_CLIENT_SECRET", None),
+            "key": "",
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "offline",
+        },
+    }
+
 
 # JavaScript and CSS compression
 # https://django-compressor.readthedocs.io
@@ -269,26 +305,72 @@ STATIC_URL = "/statics/"
 STATIC_ROOT = os.path.join(BASE_DIR, "statics")
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
+CONFIG_ROOT = os.path.join(BASE_DIR, "config")
+MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+
 DATA_ROOT = os.path.join(BASE_DIR, "data")
 os.makedirs(DATA_ROOT, exist_ok=True)
+
+ASSISTANTS_ROOT = os.path.join(DATA_ROOT, "assistants")
+os.makedirs(ASSISTANTS_ROOT, exist_ok=True)
+
+SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
+os.makedirs(SESSIONS_ROOT, exist_ok=True)
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(DATA_ROOT, "media")
 os.makedirs(MEDIA_ROOT, exist_ok=True)
 
-# providers media
 PROVIDERS_URL = "/media/providers"
 PROVIDERS_ROOT = os.path.join(MEDIA_ROOT, "providers")
 os.makedirs(PROVIDERS_ROOT, exist_ok=True)
 
-CONFIG_ROOT = os.path.join(BASE_DIR, "config")
-MODEL_CONFIG_ROOT = os.path.join(CONFIG_ROOT, "model")
+USERS_MEDIA_URL = "/media/users"
+USERS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "users")
+os.makedirs(USERS_MEDIA_ROOT, exist_ok=True)
 
 PROMPTS_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "prompts")
 os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 
-SESSIONS_ROOT = os.path.join(DATA_ROOT, "sessions")
-os.makedirs(SESSIONS_ROOT, exist_ok=True)
+ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
+os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
+
+LOGS_ROOT = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_ROOT, exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {"format": "[%(asctime)s] %(levelname)s %(name)s: %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "filters": [],
+            "formatter": "standard",
+        },
+        "server_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "filename": os.path.join(BASE_DIR, "logs", "genflow_server.log"),
+            "formatter": "standard",
+            "maxBytes": 1024 * 1024 * 50,  # 50 MB
+            "backupCount": 5,
+        },
+    },
+    "root": {
+        "handlers": ["console", "server_file"],
+    },
+    "loggers": {
+        "genflow": {
+            "level": os.getenv("DJANGO_LOG_LEVEL", "DEBUG"),
+        },
+        "django": {
+            "level": "INFO",
+        },
+    },
+}
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
@@ -308,8 +390,8 @@ SPECTACULAR_SETTINGS = {
         "email": "support@revealai.de",
     },
     "LICENSE": {
-        "name": "MIT License",
-        "url": "https://en.wikipedia.org/wiki/MIT_License",
+        "name": "Apache 2.0 License Extended",
+        "url": "https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md",
     },
     "SERVE_PUBLIC": True,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
@@ -336,7 +418,7 @@ SPECTACULAR_SETTINGS = {
     # Required for correct file upload type (bytes)
     "COMPONENT_SPLIT_REQUEST": True,
     "ENUM_NAME_OVERRIDES": {
-        # 'Status': 'genflow.apps.engine.models.StatusChoice',
+        "StatusEnum": "genflow.apps.assistant.models.AssistantStatus",
     },
     # Coercion of {pk} to {id} is controlled by SCHEMA_COERCE_PATH_PK. Additionally,
     # some libraries (e.g. drf-nested-routers) use '_pk' suffixed path variables.
@@ -344,4 +426,29 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_COERCE_PATH_PK_SUFFIX": True,
     "SCHEMA_PATH_PREFIX": "/api",
     "SCHEMA_PATH_PREFIX_TRIM": False,
+}
+
+GF_LIMITS = {
+    "PROMPT_GROUP": 10,
+    "PROMPT": 5,
+    "ASSISTANT_GROUP": 10,
+    "ASSISTANT": 5,
+    "MAX_FILES_PER_ASSISTANT": 2,  # 2 files
+    "SESSION": 10,
+    "MAX_FILES_PER_SESSION": 1,  # 1 file
+    "TEAM": 2,
+    "MAX_INVITATION_PER_TEAM": 10,
+    "MESSAGE": 100,
+    "MAX_FILE_SIZE": 2,  # 2MB
+    "FILE_SUPPORTED_TYPES": [
+        "application/pdf",
+        "text/html",
+        "text/plain",
+    ],
+    "MAX_AVATAR_SIZE": 1,  # 1MB
+    "AVATAR_SUPPORTED_TYPES": [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+    ],
 }

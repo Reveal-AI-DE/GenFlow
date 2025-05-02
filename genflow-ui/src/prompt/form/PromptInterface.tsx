@@ -1,17 +1,17 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, useState } from 'react';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import {
     Create, Edit, Form,
 } from 'react-admin';
 import { matchPath, useLocation } from 'react-router';
 
-import { ModelParameterForm } from '@/provider/model/form';
+import { ModelParameterForm } from '@/provider/model';
 
 import { PromptInfo } from '@/prompt/show';
 import { PromptTestSession} from '@/session/prompt';

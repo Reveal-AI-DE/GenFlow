@@ -27,6 +27,6 @@ If you're unsure about any of these, don't hesitate to ask. We're here to help! 
 
 ### License
 
-- [ ] I submit _my code changes_ under the same [MIT License](
-  https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE) that covers the project.
+- [ ] I submit _my code changes_ under the same [License](
+  https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md) that covers the project.
   Feel free to contact the maintainers if that's a concern.

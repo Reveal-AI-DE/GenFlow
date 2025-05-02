@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from decimal import Decimal
 from typing import Optional
@@ -59,6 +59,6 @@ class ResultChunkDelta(BaseModel):
 
 class ResultChunk(BaseModel):
     model: str
-    input_messages: list[Message]
+    messages: list[Message]
     system_fingerprint: Optional[str] = None
     delta: ResultChunkDelta

@@ -1,14 +1,12 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { SystemDataProvider } from '@/types';
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '@/authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 
 export default <SystemDataProvider> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getAbout: async (resource: string, params: any) => {
+    getAbout: async (resource: string) => {
         const url = ResourceURL(`/${resource}/about`);
         const { json } = await fetchJsonWithAuthToken(url);
         return {

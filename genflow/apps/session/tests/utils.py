@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from django.contrib.auth.models import User
 
@@ -24,9 +24,11 @@ SESSION_DATA = {
 SESSION_MESSAGE_DATA = [
     {
         "query": "Test Message 1",
+        "answer": "Test Answer 1",
     },
     {
         "query": "Test Message 2",
+        "answer": "Test Answer 2",
     },
 ]
 

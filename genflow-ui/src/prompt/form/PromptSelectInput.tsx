@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, useCallback } from 'react';
 import {
@@ -11,7 +11,8 @@ import {
 } from 'react-admin';
 
 import { AutocompleteInput } from '@/common';
-import { PromptField, PromptFieldSlot } from '@/prompt/show';
+import { EntityFieldSlot } from '@/entity';
+import { PromptField } from '@/prompt/show';
 
 interface PromptSelectInputProps extends Omit<ReferenceInputProps, 'reference'> {
     onChange?: AutocompleteInputProps['onChange'];
@@ -27,7 +28,7 @@ const PromptSelectInput: FC<PromptSelectInputProps> = ({
     const renderStartAdornment = useCallback((record: any) => (
         <RecordContextProvider key={record.id} value={record}>
             <PromptField
-                slots={[PromptFieldSlot.NAME]}
+                slots={[EntityFieldSlot.AVATAR]}
             />
         </RecordContextProvider>
     ), []);

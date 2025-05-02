@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from abc import ABC, abstractmethod
 from os import path as osp
@@ -10,7 +10,10 @@ from genflow.apps.ai.base.entities.model import ModelEntity
 from genflow.apps.ai.base.entities.provider import AIProviderEntity
 from genflow.apps.ai.base.entities.shared import ModelType
 from genflow.apps.ai.base.model_collection import ModelCollection
+from genflow.apps.common.log import ServerLogManager
 from genflow.apps.common.utils.yaml_utils import load_yaml_file
+
+slogger = ServerLogManager(__name__)
 
 
 class AIProvider(ABC):
@@ -51,14 +54,17 @@ class AIProvider(ABC):
             # read provider schema from yaml file
             yaml_data = load_yaml_file(file_path=yaml_path, ignore_error=False)
         except Exception as e:
-            # TODO: log error
-            raise Exception(f"Error loading provider schema for {provider_name}: {str(e)}")
+            message = f"Error loading provider schema for {provider_name}: {str(e)}"
+            slogger.glob.error(message)
+            raise Exception(message)
 
         try:
             # yaml_data to entity
             schema = AIProviderEntity(**yaml_data)
         except Exception as e:
-            raise Exception(f"Invalid provider schema for {provider_name}: {str(e)}")
+            message = f"Invalid provider schema for {provider_name}: {str(e)}"
+            slogger.glob.error(message)
+            raise Exception(message)
 
         # cache schema
         self.schema = schema

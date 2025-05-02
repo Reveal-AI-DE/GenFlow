@@ -1,15 +1,13 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
-import {
-    required, TextInput,
-    ArrayInput, SimpleFormIterator,
-} from 'react-admin';
+import { required, TextInput } from 'react-admin';
 
 import { ModelType } from '@/types';
 import { ExpandableTextInput, ImageInput } from '@/common';
+import { QuestionsInput } from '@/entity';
 import { ModelSelectInput } from '@/provider/model';
 import { GroupSelectInput } from '@/group';
 
@@ -28,7 +26,7 @@ const PromptSetupForm: FC<PromptSetupFormProps> = () => (
             }}
         />
         <GroupSelectInput
-            source='group_id'
+            source='group.id'
             reference='prompt-groups'
         />
         <TextInput
@@ -48,19 +46,7 @@ const PromptSetupForm: FC<PromptSetupFormProps> = () => (
             variant='outlined'
             validate={required()}
         />
-        <ArrayInput
-            source='suggested_questions'
-        >
-            <SimpleFormIterator
-                inline
-            >
-                <TextInput
-                    source='question'
-                    variant='outlined'
-                    validate={required()}
-                />
-            </SimpleFormIterator>
-        </ArrayInput>
+        <QuestionsInput source='suggested_questions' />
         <ModelSelectInput
             variant='outlined'
             validate={required()}

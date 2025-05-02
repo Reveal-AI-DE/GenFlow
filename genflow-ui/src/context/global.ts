@@ -1,25 +1,26 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { createContext } from 'react';
+import { UserIdentity } from 'react-admin';
 
 import {
-    AboutSystem, Identity, Team, Membership,
+    AboutSystem, Team, Membership,
 } from '@/types';
 
 export interface GlobalContextInterface {
     aboutSystem: AboutSystem | undefined;
     currentMembership: Membership | undefined;
     currentTeam: Team | undefined;
-    currentUser: Identity | undefined;
-    switchTeam: (user: Identity, team: Team) => void;
+    switchTeam: (team: Team, user: UserIdentity) => void;
+    showWelcome: boolean;
 };
 
 export const GlobalContext = createContext<GlobalContextInterface>({
     aboutSystem: undefined,
     currentMembership: undefined,
     currentTeam: undefined,
-    currentUser: undefined,
     switchTeam: () => {},
+    showWelcome: false,
 });

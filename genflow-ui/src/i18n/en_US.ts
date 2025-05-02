@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { TranslationMessages } from 'react-admin';
 import englishMessages from 'ra-language-english';
@@ -8,6 +8,23 @@ import englishMessages from 'ra-language-english';
 const enUS: TranslationMessages = {
     ...englishMessages,
     resources: {
+        users: {
+            name: 'User |||| Users',
+            fields: {
+                username: 'Username',
+                email: 'Email',
+                password1: 'Password',
+                password2: 'Confirm Password',
+                old_password: 'Current Password',
+                new_password1: 'New Password',
+                new_password2: 'Confirm New Password',
+                first_name: 'First Name',
+                last_name: 'Last Name',
+                status: 'Status',
+                created_date: 'Created At',
+                updated_date: 'Updated At',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -83,8 +100,8 @@ const enUS: TranslationMessages = {
             fields: {
                 name: 'Name',
                 description: 'Description',
-                type: 'Type',
-                status: 'Status',
+                prompt_type: 'Type',
+                prompt_status: 'Status',
                 pre_prompt: 'Prompt',
                 q: 'Search name and description',
                 group: {
@@ -104,27 +121,13 @@ const enUS: TranslationMessages = {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
         },
-        collections: {
-            name: 'Collection |||| Collections',
-            fields: {
-                name: 'Name',
-                description: 'Description',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Model',
-                    provider_name: 'Provider',
-                    model_name: 'Embedding Model',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
-        },
         assistants: {
             name: 'Assistant |||| Assistants',
             fields: {
                 name: 'Name',
                 description: 'Description',
                 pre_prompt: 'Prompt',
+                use_prompt_template: 'Prompt Template',
                 opening_statement: 'Starting Message',
                 suggested_questions: 'Suggested Questions',
                 status: 'Status',
@@ -137,9 +140,6 @@ const enUS: TranslationMessages = {
                     config: {
                         parameters: 'Model Parameters',
                     }
-                },
-                collection_config: {
-                    collection_id: 'Collection',
                 },
                 group: {
                     id: 'Group',
@@ -169,38 +169,29 @@ const enUS: TranslationMessages = {
         session_info: 'Session Info',
         ask: 'Ask anything!',
         new: 'New Chat',
+        account: 'Account',
         chat: {
             title: 'Chat',
             actions: 'Chat Actions',
             info: 'Session Info',
             usage: 'Session Usage',
-            input: {
-                use_prompt: 'Use Prompt',
-            },
             settings: {
                 btn_label: 'Chat Settings',
                 advanced: 'Advanced',
             },
         },
-        collection: {
-            interface: {
-                step1: 'Collection Setup',
-                step2: 'Vector Store Setup',
-                step3: 'Files Upload'
-            }
-        },
         assistant: {
-            interface: {
-                step1: 'Assistant Setup',
-                step2: 'Assistant Configuration',
-                step3: 'Context Source',
-                files: 'Uploaded Files',
-                no_files: 'No files uploaded'
-            },
+            step1: 'Setup',
+            step2: 'Intro',
+            step3: 'Context',
+            files: 'Uploaded Files',
+            no_files: 'No files uploaded'
         },
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
+        crop: 'Crop Image',
+        welcome: 'Welcome',
     },
     message: {
         item_updated: '%{name} updated',
@@ -229,6 +220,22 @@ const enUS: TranslationMessages = {
             start_test_content: 'to verify the prompt ...',
         },
         related_deleted: 'Related %{resource} was deleted',
+        register_success: 'User registered, please login to continue.',
+        register_error: 'User registration failed, please try again.',
+        no_teams: 'No teams available, please contact the administrator.',
+        confirmed: 'Confirmed',
+        email_confirmed: 'Your email has been confirmed. You can now log in.',
+        not_confirmed: 'Incorrect Confirmation',
+        email_not_confirmed: 'The confirmation link is incorrect or has expired. Please check your email for the correct link or request a new confirmation email.',
+        verification_sent: 'Verification Email Sent',
+        verification_email_sent: 'A verification email has been sent to your email address. Please check your inbox and follow the instructions to verify your account.',
+        image_not_supported: 'Unsupported image format or file size exceeds the 1MB limit. Please upload a supported image under 1MB.',
+        change_password_success: 'Password changed successfully, Please login again.',
+        password_reset_success: 'Password reset successfully, Please login.',
+        incorrect_reset_link: 'The reset link is incorrect or has expired. Please check your email for the correct link or request a new password reset email.',
+        check_email: 'Please check your email for further instructions.',
+        coming_soon: 'Coming Soon',
+        under_construction: 'This feature is under construction. Please check back later.',
     },
     action: {
         test: 'Test',
@@ -256,6 +263,26 @@ const enUS: TranslationMessages = {
         stop: 'Stop',
         scroll_top: 'Scroll to top',
         scroll_bottom: 'Scroll to bottom',
+        sign_up: 'Sign Up',
+        login_email: 'Use Email',
+        login_username: 'Use Username',
+        google_login: 'Login with Google',
+        use_prompt: 'Use Prompt',
+        change_password: 'Change Password',
+        upload_avatar: 'Upload Avatar',
+        crop: 'Crop',
+        password_reset_request: 'Request Password Reset',
+        password_reset: 'Reset Password',
+        forget_password: 'Forgot Password?',
+        not_show_again: 'Do not show again',
+    },
+    validation: {
+        not_available: 'Not available',
+        password: {
+            min: 'Password must contain at least %{number}% characters.',
+            numeric: 'Password cannot be entirely numeric.',
+            personal: 'Password cannot be too similar to your personal information.',
+        }
     }
 };
 

@@ -1,15 +1,26 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+from abc import ABCMeta, abstractmethod
+from os import path as osp
 from typing import cast
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework.response import Response
 
+from genflow.apps.common.file_utils import get_files
+from genflow.apps.common.storage import fs
 from genflow.apps.core.models import EntityGroup
-from genflow.apps.core.serializers import EntityGroupReadSerializer, EntityGroupWriteSerializer
+from genflow.apps.core.serializers import (
+    EntityGroupReadSerializer,
+    EntityGroupWriteSerializer,
+    FileEntitySerializer,
+)
+from genflow.apps.restriction.mixin import TeamLimitMixin
 from genflow.apps.team.middleware import HttpRequestWithIamContext
 
 
@@ -100,3 +111,99 @@ class EntityGroupViewSetMixin(viewsets.ModelViewSet):
             owner=self.request.user,
             team=request.iam_context.team,
         )
+
+
+class FileManagementMixin(TeamLimitMixin, metaclass=ABCMeta):
+    """
+    Mixin to add file management functionality to a viewset.
+    Provides endpoints for listing, uploading, and deleting files.
+    """
+
+    @abstractmethod
+    def get_file_limit_key(self) -> str:
+        """
+        Get the key for the file limit.
+        This should be overridden in subclasses to provide the correct key.
+        """
+        ...
+
+    def get_team_usage(self) -> int:
+        """
+        Get files count.
+        """
+
+        instance = self.get_object()
+        return len(get_files(instance.dirname))
+
+    def check_limit(self) -> bool:
+        """
+        Check if the limit has been reached.
+        """
+
+        request = cast(HttpRequestWithIamContext, self.request)
+        team = request.iam_context.team
+        key = self.get_file_limit_key()
+        if team is None:
+            return self.check_global_limit(key)
+        return self.check_team_limit(team, key)
+
+    @action(detail=True, methods=["get"], url_path="files")
+    def list_files(self, request, pk=None):
+        """
+        Lists all files associated with the entity.
+        """
+
+        instance = self.get_object()
+        if not hasattr(instance, "dirname"):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        files = get_files(instance.dirname)
+        serializer = FileEntitySerializer(files, many=True)
+        return Response(data={"results": serializer.data, "count": len(serializer.data)})
+
+    @action(detail=True, methods=["post"])
+    def upload_file(self, request, pk=None):
+        """
+        Uploads a new file and associates it with the entity.
+        """
+
+        instance = self.get_object()
+        if not hasattr(instance, "dirname"):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if self.check_limit():
+            return Response(
+                {"message": "File count limit exceeded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        uploaded_file = request.FILES.get("file", None)
+        serializer = FileEntitySerializer(
+            data={"dirname": instance.dirname, "uploaded_file": uploaded_file}
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["delete"], url_path="files/(?P<filename>[^/]+)")
+    def delete_file(self, request, pk=None, filename=None):
+        """
+        Deletes a specific file associated with the entity.
+        """
+
+        instance = self.get_object()
+        if not hasattr(instance, "dirname"):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if not filename:
+            return Response(
+                {"message": "Filename is required."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        file_path = osp.join(instance.dirname, filename)
+        if osp.exists(file_path):
+            fs.delete(file_path)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)

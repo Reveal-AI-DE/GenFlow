@@ -1,7 +1,8 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+from allauth.account import app_settings as allauth_settings
 from dj_rest_auth.views import (
     LoginView,
     LogoutView,
@@ -10,10 +11,11 @@ from dj_rest_auth.views import (
     PasswordResetView,
 )
 from django.conf import settings
-from django.urls import path
+from django.urls import path, re_path
 from django.urls.conf import include
+from rest_framework.routers import DefaultRouter
 
-from genflow.apps.iam.views import RegisterViewEx
+from genflow.apps.iam.views import ConfirmEmailViewEx, GoogleLogin, RegisterViewEx, UserViewSet
 
 BASIC_LOGIN_PATH_NAME = "rest_login"
 BASIC_REGISTER_PATH_NAME = "rest_register"
@@ -36,4 +38,26 @@ if settings.IAM_TYPE == "BASIC":
         path("password/change", PasswordChangeView.as_view(), name="rest_password_change"),
     ]
 
-urlpatterns = [path("auth/", include(urlpatterns))]
+    if allauth_settings.EMAIL_VERIFICATION != allauth_settings.EmailVerificationMethod.NONE:
+        # emails
+        urlpatterns += [
+            re_path(
+                r"^confirm-email/(?P<key>[-:\w]+)/$",
+                ConfirmEmailViewEx.as_view(),
+                name="account_confirm_email",
+            ),
+        ]
+
+    # add social auth urls
+    if "google" in settings.SOCIALACCOUNT_PROVIDERS:
+        urlpatterns += [
+            path("google", GoogleLogin.as_view(), name="google_login"),
+        ]
+
+router = DefaultRouter(trailing_slash=False)
+router.register("users", UserViewSet, basename="user")
+
+urlpatterns = [
+    path("auth/", include(urlpatterns)),
+    path("", include(router.urls)),
+]

@@ -18,12 +18,14 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "genflow.settings.development")
 django_asgi_app = get_asgi_application()
 
 from genflow.apps.websocket.auth_middleware import TokenAuthMiddlewareStack
-from genflow.apps.websocket.team_middleware import ContextMiddleware
+from genflow.apps.websocket.team_middleware import IAMContextMiddleware
 from genflow.apps.websocket.urls import websocket_urlpatterns
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": TokenAuthMiddlewareStack(ContextMiddleware(URLRouter(websocket_urlpatterns))),
+        "websocket": TokenAuthMiddlewareStack(
+            IAMContextMiddleware(URLRouter(websocket_urlpatterns))
+        ),
     }
 )

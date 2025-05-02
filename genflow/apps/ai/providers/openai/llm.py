@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from typing import Generator, Optional, Union, cast
 
@@ -21,6 +21,9 @@ from genflow.apps.ai.llm.messages import (
 )
 from genflow.apps.ai.providers.openai.client import OpenAIClient
 from genflow.apps.ai.providers.registry import register_model_collection
+from genflow.apps.common.log import ServerLogManager
+
+slogger = ServerLogManager(__name__)
 
 
 @register_model_collection(ai_provider="openai", model_type=ModelType.LLM.value)
@@ -58,7 +61,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
                     stream=False,
                 )
         except Exception as ex:
-            # TODO: log -> 'Error validating credentials for model {model}: {ex}'
+            slogger.glob.error("Error validating credentials for model {model}: {ex}")
             raise ex
 
     def get_tokens_count(
@@ -96,7 +99,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         try:
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
-            # TODO: log -> 'Warning: model not found. Using cl100k_base encoding.'
+            slogger.glob.warning("Warning: model not found. Using cl100k_base encoding.")
             model = "cl100k_base"
             encoding = tiktoken.get_encoding(model)
 
@@ -149,7 +152,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         try:
             encoding = tiktoken.encoding_for_model(model)
         except KeyError:
-            # TODO: log -> 'Warning: model not found. Using cl100k_base encoding.'
+            slogger.glob.warning("Warning: model not found. Using cl100k_base encoding.")
             encoding = tiktoken.get_encoding("cl100k_base")
 
         num_tokens = len(encoding.encode(text))
@@ -279,7 +282,7 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         if model.startswith("o1"):
             # system messages content should be converted to user messages
 
-            count = len(filter(lambda x: isinstance(x, SystemMessage), messages))
+            count = len(list(filter(lambda x: isinstance(x, SystemMessage), messages)))
             if count == 0:
                 return messages
 

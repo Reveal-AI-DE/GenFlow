@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { TranslationMessages } from 'react-admin';
 import { formalGermanMessages } from '@haleos/ra-language-german';
@@ -41,6 +41,23 @@ const updatedFormalGermanMessages = {
 const deDE: TranslationMessages = {
     ...updatedFormalGermanMessages,
     resources: {
+        users: {
+            name: 'Benutzer |||| Benutzer',
+            fields: {
+                username: 'Benutzername',
+                email: 'E-Mail',
+                password1: 'Passwort',
+                password2: 'Passwort bestätigen',
+                old_password: 'Aktuelles Passwort',
+                new_password1: 'Neues Passwort',
+                new_password2: 'Neues Passwort bestätigen',
+                first_name: 'Vorname',
+                last_name: 'Nachname',
+                status: 'Status',
+                created_date: 'Erstellt am',
+                updated_date: 'Aktualisiert am',
+            },
+        },
         sessions: {
             name: 'Session |||| Sessions',
             fields: {
@@ -116,8 +133,8 @@ const deDE: TranslationMessages = {
             fields: {
                 name: 'Name',
                 description: 'Beschreibung',
-                type: 'Type',
-                status: 'Status',
+                prompt_type: 'Type',
+                prompt_status: 'Status',
                 pre_prompt: 'Prompt',
                 q: 'Suche nach Name und Beschreibung',
                 group: {
@@ -137,27 +154,13 @@ const deDE: TranslationMessages = {
             name: 'Prompt Group |||| Prompt Groups',
             fields: {}
         },
-        collections: {
-            name: 'Kollection |||| Kollections',
-            fields: {
-                name: 'Name',
-                description: 'Beschreibung',
-                status: 'Status',
-                embedding_model: {
-                    label: 'Embedding Modell',
-                    provider_name: 'Anbieter',
-                    model_name: 'Embedding Modell',
-                },
-                chunk_config: 'Chunk Config',
-                info: 'Vector Store Info',
-            },
-        },
         assistants: {
             name: 'Assistent |||| Assistenten',
             fields: {
                 name: 'Name',
                 description: 'Beschreibung',
                 pre_prompt: 'Prompt',
+                use_prompt_template: 'Prompt Template',
                 opening_statement: 'Start-Nachricht',
                 suggested_questions: 'Vorgeschlagene Fragen',
                 status: 'Status',
@@ -199,17 +202,12 @@ const deDE: TranslationMessages = {
         session_info: 'Session Info',
         ask: 'Alles fragen!',
         new: 'Neuer Chat',
+        account: 'Konto',
         chat: {
             title: 'Chat',
             actions: 'Chat-Aktionen',
             info: 'Session Info',
             usage: 'Sitzung Verwendung',
-            input: {
-                send: 'Nachricht senden',
-                stop: 'stoppen',
-                use_prompt: 'Prompt verwenden',
-                placeholder: 'Alles fragen!'
-            },
             settings: {
                 btn_label: 'Chat-Einstellungen',
                 advanced: 'Erweiterte',
@@ -219,25 +217,18 @@ const deDE: TranslationMessages = {
                 bottom: 'Nach unten scrollen',
             }
         },
-        collection: {
-            interface: {
-                step1: 'Kollektion einrichten',
-                step2: 'Vector Store einrichten',
-                step3: 'Dateien hochladen'
-            }
-        },
         assistant: {
-            interface: {
-                step1: 'Assistent Einrichtung',
-                step2: 'Assistent Konfiguration',
-                step3: 'Dateien hochladen',
-                files: 'Hochgeladene Dateien',
-                no_files: 'Keine Dateien hochgeladen'
-            }
+            step1: 'Assistent Einrichtung',
+            step2: 'Assistent Konfiguration',
+            step3: 'Dateien hochladen',
+            files: 'Hochgeladene Dateien',
+            no_files: 'Keine Dateien hochgeladen'
         },
         invite: 'Invite Member',
         edit_member_dialog: 'Edit \'%{username}\' membership',
         edit_team: 'Edit \'%{name}\' Team',
+        crop: 'Bild zuschneiden',
+        welcome: 'Welcome',
     },
     message: {
         item_updated: '%{name} aktualisiert',
@@ -269,7 +260,24 @@ const deDE: TranslationMessages = {
             start_test_title: 'Start der Testsitzung',
             start_test_content: 'um die Prompt zu überprüfen ...',
         },
-        related_deleted: 'Verwandte %{resource} wurde gelöscht',
+        related_deleted: 'Verwandte %{resource} wurde gelöscht.',
+        register_success: 'Benutzer registriert, bitte melden Sie sich an, um fortzufahren.',
+        register_error: 'Benutzerregistrierung fehlgeschlagen, bitte versuchen Sie es erneut.',
+        no_teams: 'Keine Teams verfügbar, bitte wenden Sie sich an den Administrator.',
+        confirmed: 'Bestätigt',
+        email_confirmed: 'Ihre E-Mail wurde bestätigt. Sie können sich jetzt anmelden.',
+        not_confirmed: 'Falsche Bestätigung',
+        email_not_confirmed: 'Der Bestätigungslink ist falsch oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Bestätigungs-E-Mail an.',
+        verification_sent: 'Bestätigungs-E-Mail gesendet',
+        verification_email_sent: 'Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen, um Ihr Konto zu bestätigen.',
+        image_not_supported: 'Nicht unterstütztes Bildformat oder Dateigröße überschreitet das Limit von 1 MB. Bitte laden Sie ein unterstütztes Bild mit weniger als 1 MB hoch.',
+        change_password_success: 'Passwort erfolgreich geändert. Bitte melden Sie sich erneut an.',
+        password_reset_success: 'Passwort erfolgreich zurückgesetzt. Bitte melden Sie sich an.',
+        incorrect_reset_link: 'Der Zurücksetzungslink ist ungültig oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Passwort-Zurücksetzungs-E-Mail an.',
+        check_email: 'Bitte überprüfen Sie Ihre E-Mails für weitere Anweisungen.',
+        coming_soon: 'Demnächst verfügbar',
+        under_construction: 'Diese Funktion befindet sich im Aufbau. Bitte schauen Sie später noch einmal vorbei.',
+
     },
     action: {
         test: 'Test',
@@ -292,6 +300,26 @@ const deDE: TranslationMessages = {
         attach: 'Datei anhängen',
         send: 'Nachricht senden',
         stop: 'stoppen',
+        sign_up: 'Registrieren',
+        login_email: 'E-Mail verwenden',
+        login_username: 'Benutzername verwenden',
+        google_login: 'Mit Google anmelden',
+        use_prompt: 'Prompt verwenden',
+        change_password: 'Passwort ändern',
+        upload_avatar: 'Avatar hochladen',
+        crop: 'Zuschneiden',
+        password_reset_request: 'Passwort-Zurücksetzung anfordern',
+        password_reset: 'Passwort zurücksetzen',
+        forget_password: 'Passwort vergessen?',
+        not_show_again: 'Nicht mehr anzeigen',
+    },
+    validation: {
+        not_available: 'Nicht verfügbar',
+        password: {
+            min: 'Das Passwort muss mindestens %{number} Zeichen enthalten.',
+            numeric: 'Das Passwort darf nicht vollständig numerisch sein.',
+            personal: 'Das Passwort darf nicht zu ähnlich zu Ihren persönlichen Informationen sein.',
+        }
     }
 };
 

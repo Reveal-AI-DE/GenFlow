@@ -1,13 +1,13 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { useRef, useContext } from 'react'
 import { useRefresh, useNotify } from 'react-admin'
 
 import { FileEntity } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
-import { createTemporaryMessage, createGenerateRequest } from '@/utils';
+import { createTemporaryMessage, createGenerateRequest, truncateText } from '@/utils';
 import { useGenerate } from '@/hook';
 
 interface ChatHandlerHook {
@@ -30,6 +30,7 @@ const useChatHandler = (): ChatHandlerHook => {
         setSessionMessages,
         sessionMessages,
         generateURL,
+        fallbackGenerateURL,
     } = useContext<SessionContextInterface>(SessionContext);
 
     const handleFocusChatInput = (): void => {
@@ -40,49 +41,43 @@ const useChatHandler = (): ChatHandlerHook => {
         content: string,
         files: FileEntity[] = [],
     ): void => {
-        try {
-            setUserInput('');
-            setIsGenerating(true);
+        setUserInput('');
+        setIsGenerating(true);
 
-            const tmpMessage = createTemporaryMessage(content, sessionMessages, setSessionMessages, false);
-            const generateRequest = createGenerateRequest(
-                content,
-                files,
-                chatSetting,
-            );
+        const tmpMessage = createTemporaryMessage(content, sessionMessages, setSessionMessages, false);
+        const generateRequest = createGenerateRequest(
+            content,
+            files,
+            chatSetting,
+        );
 
-            // streaming
-            if (generateURL && generateRequest !== null) {
-                generate(
-                    generateURL,
-                    generateRequest,
-                    tmpMessage,
-                    setSessionMessages
-                ).then(() => {
-                    setIsGenerating(false);
-                    refresh();
-                }).catch((error) => {
-                    console.log(error);
-                    notify(
-                        error,
-                        {
-                            type: 'error',
-                        }
-                    );
-                    setUserInput(content);
-                    setIsGenerating(false);
-                    // remove the temporary message
-                    setSessionMessages((prev) => {
-                        const newMessages = [...prev];
-                        newMessages.pop();
-                        return newMessages;
-                    });
+        // streaming
+        if (generateURL && fallbackGenerateURL && generateRequest !== null) {
+            generate(
+                generateURL,
+                fallbackGenerateURL,
+                generateRequest,
+                tmpMessage,
+                setSessionMessages
+            ).then(() => {
+                setIsGenerating(false);
+                refresh();
+            }).catch((error) => {
+                notify(
+                    truncateText(error.message, 100, 'characters') || 'An error occurred while generating the response',
+                    {
+                        type: 'error',
+                    }
+                );
+                setUserInput(content);
+                setIsGenerating(false);
+                // remove the temporary message
+                setSessionMessages((prev) => {
+                    const newMessages = [...prev];
+                    newMessages.pop();
+                    return newMessages;
                 });
-            }
-        } catch (error) {
-            console.log(error);
-            setUserInput(content);
-            setIsGenerating(false);
+            });
         }
     };
 

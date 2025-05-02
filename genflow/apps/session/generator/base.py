@@ -1,8 +1,8 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-from typing import Callable, Generator, Optional, Union
+from typing import Callable, Generator, List, Optional, Union
 
 from genflow.apps.ai.base.entities.model import PropertyKey
 from genflow.apps.ai.llm.entities import Result, Usage
@@ -120,11 +120,11 @@ class BaseGenerator:
     def organize_input_messages(
         self,
         prompt_template_entity: PromptTemplateEntity,
-        files: Optional[str] = None,
         query: Optional[str] = None,
-        context: Optional[str] = None,
+        context: Optional[str | List[str]] = None,
+        files: Optional[str] = None,
         memory: bool = False,
-    ) -> tuple[list[Message], Optional[list[str]]]:
+    ) -> tuple[list[Message], Optional[List[str]]]:
         """
         Organizes input messages based on the provided prompt template, files, query,
             context, and memory. Returns the generated input messages and stop tokens.
@@ -143,9 +143,9 @@ class BaseGenerator:
             )
             input_messages, stop = prompt_transform.get_prompt(
                 prompt_template_entity=prompt_template_entity,
-                files=files or "",
-                query=query or "",
-                context=context or "",
+                context=context,
+                query=query,
+                files=files,
                 memory=memory,
             )
         else:
@@ -168,10 +168,17 @@ class BaseGenerator:
         if not stream:
             return response
         else:
-            return self._handle_model_response_stream(response=response, callback=callback)
+            if callback is not None:
+                return self._handle_model_response_stream_with_callback(
+                    response=response, callback=callback
+                )
+            else:
+                return self._handle_model_response_stream(response=response)
 
-    def _handle_model_response_stream(
-        self, response: Union[Result, Generator], callback: Callable
+    def _handle_model_response_stream_with_callback(
+        self,
+        response: Union[Result, Generator],
+        callback: Callable,
     ) -> Result:
         """
         Processes the model response in a streaming manner, invoking the callback for each chunk
@@ -191,7 +198,7 @@ class BaseGenerator:
                 model = result.model
 
             if not messages:
-                messages = result.prompt_messages
+                messages = result.messages
 
             if result.delta.usage:
                 usage = result.delta.usage
@@ -199,5 +206,37 @@ class BaseGenerator:
             usage = Usage.empty_usage()
 
         return Result(
+            model=model, messages=messages, message=AssistantMessage(content=text), usage=usage
+        )
+
+    def _handle_model_response_stream(
+        self, response: Union[Result, Generator]
+    ) -> Union[Result, Generator]:
+        """
+        Processes the model response in a streaming manner, yielding each chunk
+            of the response. Returns the final result containing the model, messages, and usage details.
+        """
+
+        model = None
+        messages = []
+        text = ""
+        usage = None
+        for result in response:
+            yield result.delta.message.content
+
+            text += result.delta.message.content
+
+            if not model:
+                model = result.model
+
+            if not messages:
+                messages = result.messages
+
+            if result.delta.usage:
+                usage = result.delta.usage
+        if not usage:
+            usage = Usage.empty_usage()
+
+        yield Result(
             model=model, messages=messages, message=AssistantMessage(content=text), usage=usage
         )

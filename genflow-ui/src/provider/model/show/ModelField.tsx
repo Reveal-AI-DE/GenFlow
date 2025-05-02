@@ -1,11 +1,11 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, Fragment } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import Chip from '@mui/material/Chip';
-import styled from '@mui/material/styles/styled';
+import { styled } from '@mui/material/styles';
 import { useLocale, useTranslate, useRecordContext } from 'react-admin';
 
 import { PropertyKey, ModelEntity } from '@/types';

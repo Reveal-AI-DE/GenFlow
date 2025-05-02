@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from http.client import HTTPResponse
 from urllib.parse import urlencode
@@ -10,6 +10,7 @@ from rest_framework.test import APIClient, APITestCase
 
 from genflow.apps.core.tests.utils import enable_provider
 from genflow.apps.prompt.tests.utils import PROVIDER_DATA
+from genflow.apps.restriction.tests.utils import override_limit
 from genflow.apps.session.tests.utils import (
     SESSION_DATA,
     SESSION_MESSAGE_DATA,
@@ -37,12 +38,12 @@ class SessionMessageTestCase(APITestCase):
         # llm session
         _ = enable_provider(team=team, owner=user, data=PROVIDER_DATA)
         session_data = SESSION_DATA.copy()
-        session = create_dummy_session(team=team, owner=user, data=session_data)
+        cls.session = create_dummy_session(team=team, owner=user, data=session_data)
         data = SESSION_MESSAGE_DATA.copy()
         cls.regular_users[0]["teams"][0]["messages"] = []
         for item in data:
             session_message = create_dummy_session_message(
-                team=team, owner=user, session=session, data=item
+                team=team, owner=user, session=cls.session, data=item
             )
             cls.regular_users[0]["teams"][0]["messages"].append(session_message)
 
@@ -76,9 +77,8 @@ class SessionMessageListTestCase(SessionMessageTestCase):
     def test_list_session_messages_admin(self):
         team = self.regular_users[0]["teams"][0]["team"]
         messages = self.regular_users[0]["teams"][0]["messages"]
-        session = messages[0].session
         response = self.list_session_messages(
-            self.admin_user, session_id=session.id, team_id=team.id
+            self.admin_user, session_id=self.session.id, team_id=team.id
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 2)
@@ -88,39 +88,123 @@ class SessionMessageListTestCase(SessionMessageTestCase):
     def test_list_session_messages_user(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
-        messages = self.regular_users[0]["teams"][0]["messages"]
-        session = messages[0].session
-        response = self.list_session_messages(user, session_id=session.id, team_id=team.id)
+        response = self.list_session_messages(user, session_id=self.session.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 2)
 
     def test_list_session_messages_user_member(self):
         team = self.regular_users[0]["teams"][0]["team"]
         user = self.regular_users[0]["user"]
-        messages = self.regular_users[0]["teams"][0]["messages"]
-        session = messages[0].session
         membership = self.regular_users[0]["teams"][0]["membership"]
         membership.role = TeamRole.MEMBER.value
         membership.save()
-        response = self.list_session_messages(user, session_id=session.id, team_id=team.id)
+        response = self.list_session_messages(user, session_id=self.session.id, team_id=team.id)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 2)
 
     def test_list_session_messages_user_another_team(self):
         team = self.regular_users[0]["teams"][0]["team"]
         another_user = self.regular_users[1]["user"]
-        messages = self.regular_users[0]["teams"][0]["messages"]
-        session = messages[0].session
-        response = self.list_session_messages(another_user, session_id=session.id, team_id=team.id)
+        response = self.list_session_messages(
+            another_user, session_id=self.session.id, team_id=team.id
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_list_session_messages_user_filtering(self):
         another_team = self.regular_users[1]["teams"][0]["team"]
         another_user = self.regular_users[1]["user"]
-        messages = self.regular_users[0]["teams"][0]["messages"]
-        session = messages[0].session
         response = self.list_session_messages(
-            another_user, session_id=session.id, team_id=another_team.id
+            another_user, session_id=self.session.id, team_id=another_team.id
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 0)
+
+
+class SessionMessageGenerateTestCase(SessionMessageTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.create_session_messages()
+        cls.generate_request = {
+            "query": "Test Message",
+            "stream": False,
+        }
+
+    def generate_message(self, user, session_id, data, team_id=None) -> HTTPResponse:
+        url = (
+            f"/api/sessions/{session_id}/generate?team={team_id}"
+            if team_id
+            else f"/api/sessions/{session_id}/generate"
+        )
+        with ForceLogin(user, self.client):
+            response = self.client.post(url, data, format="json")
+        return response
+
+    def test_generate_message_admin_no_team(self):
+        response = self.generate_message(
+            self.admin_user, session_id=self.session.id, data=self.generate_request
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_message_admin(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        response = self.generate_message(
+            self.admin_user, session_id=self.session.id, data=self.generate_request, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["answer"], "result")
+
+    def test_generate_message_user(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.generate_message(
+            user, session_id=self.session.id, data=self.generate_request, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["answer"], "result")
+
+    def test_generate_message_user_another_team(self):
+        another_user = self.regular_users[1]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.generate_message(
+            user, session_id=self.session.id, data=self.generate_request, team_id=another_user.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_message_user_team_member(self):
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        # llm session
+        membership = self.regular_users[0]["teams"][0]["membership"]
+        membership.role = TeamRole.MEMBER.value
+        membership.save()
+        response = self.generate_message(
+            user, session_id=self.session.id, data=self.generate_request, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["answer"], "result")
+
+    def test_generate_message_user_check_global_limit(self):
+        override_limit(
+            key="MESSAGE",
+            value=2,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.generate_message(
+            user, session_id=self.session.id, data=self.generate_request, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_generate_message_user_check_under_global_limit(self):
+        override_limit(
+            key="MESSAGE",
+            value=3,
+        )
+        team = self.regular_users[0]["teams"][0]["team"]
+        user = self.regular_users[0]["user"]
+        response = self.generate_message(
+            user, session_id=self.session.id, data=self.generate_request, team_id=team.id
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["data"]["answer"], "result")

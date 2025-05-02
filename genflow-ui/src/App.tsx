@@ -1,23 +1,26 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React from 'react';
-import { Route } from 'react-router';
 import {
-    Admin, useStore, localStorageStore, StoreContextProvider,
-    Resource, CustomRoutes, Authenticated,
+    Admin, useStore, localStorageStore,
+    StoreContextProvider, Resource, CustomRoutes,
 } from 'react-admin';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 import { dataProvider } from '@/dataProvider';
-import authProvider from '@/authProvider';
+import { authProvider, Login } from '@/auth';
 import englishMessages from '@/i18n/en_US';
 
 import { Layout } from '@/layout';
+import { Dashboard } from '@/dashboard';
 import { themes, Theme, ThemeName } from '@/themes';
 
 // Resources
+import { AssistantGroupResourceProps, AssistantResourceProps } from '@/assistant';
+import { CollectionResourceProps } from '@/collection';
+import { FileResourceProps } from '@/file';
 import { InvitationResourceProps } from '@/team/invitation';
 import { MembershipResourceProps } from '@/team/membership';
 import { MessageResourceProps } from '@/message';
@@ -26,9 +29,10 @@ import { PromptGroupResourceProps, PromptResourceProps } from '@/prompt';
 import { ProviderResourceProps } from '@/provider';
 import { TeamResourceProps } from '@/team';
 import { SessionResourceProps } from '@/session';
+import { WorkflowResourceProps } from '@/workflow';
 
-// Components
-import { NewChat } from '@/chat';
+// Custom routes
+import { layoutCustomRoutes, noLayoutCustomRoutes } from '@/customRoutes';
 
 const i18nProvider = polyglotI18nProvider(
     (locale: string) => {
@@ -58,13 +62,31 @@ const App = (): JSX.Element => {
             store={store}
             i18nProvider={i18nProvider}
             layout={Layout}
-            lightTheme={lightTheme}
+            theme={lightTheme}
             darkTheme={darkTheme}
             defaultTheme='light'
             dataProvider={dataProvider}
             authProvider={authProvider}
+            loginPage={Login}
+            dashboard={Dashboard}
+            requireAuth
             disableTelemetry
         >
+            <Resource
+                {...AssistantGroupResourceProps}
+            />
+            <Resource
+                {...AssistantResourceProps}
+            />
+            <Resource
+                {...WorkflowResourceProps}
+            />
+            <Resource
+                {...CollectionResourceProps}
+            />
+            <Resource
+                {...FileResourceProps}
+            />
             <Resource
                 {...InvitationResourceProps}
             />
@@ -87,20 +109,16 @@ const App = (): JSX.Element => {
                 {...ProviderResourceProps}
             />
             <Resource
-                {...TeamResourceProps}
-            />
-            <Resource
                 {...SessionResourceProps}
             />
+            <Resource
+                {...TeamResourceProps}
+            />
             <CustomRoutes>
-                <Route
-                    path='/new'
-                    element={(
-                        <Authenticated>
-                            <NewChat />
-                        </Authenticated>
-                    )}
-                />
+                {layoutCustomRoutes}
+            </CustomRoutes>
+            <CustomRoutes noLayout>
+                {noLayoutCustomRoutes}
             </CustomRoutes>
         </Admin>
     );

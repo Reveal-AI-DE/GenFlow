@@ -1,0 +1,7 @@
+# Copyright (C) 2025 Reveal AI
+#
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
+
+from django.core.files.storage import FileSystemStorage
+
+fs = FileSystemStorage(location="", allow_overwrite=True)

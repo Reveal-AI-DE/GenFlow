@@ -1,11 +1,13 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import pandas as pd
 from django.db import transaction
 from rest_framework import serializers
 
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.assistant.serializers import AssistantReadSerializer
 from genflow.apps.core.config.llm_model_bundle import LLMModelBundle
 from genflow.apps.core.serializers import (
     ProviderModelConfigReadSerializer,
@@ -13,6 +15,7 @@ from genflow.apps.core.serializers import (
 )
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.prompt.serializers import PromptReadSerializer
+from genflow.apps.session.generator.entities import GenerateRequest
 from genflow.apps.session.models import Session, SessionMessage, SessionType
 from genflow.apps.team.serializers import BasicUserSerializer
 
@@ -24,6 +27,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
 
     related_model = ProviderModelConfigReadSerializer(required=False)
     related_prompt = PromptReadSerializer(required=False)
+    related_assistant = AssistantReadSerializer(required=False)
     owner = BasicUserSerializer()
     usage = serializers.SerializerMethodField()
 
@@ -89,6 +93,7 @@ class SessionReadSerializer(serializers.ModelSerializer):
             "session_mode",
             "related_model",
             "related_prompt",
+            "related_assistant",
             "created_date",
             "updated_date",
             "owner",
@@ -106,11 +111,15 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         required=False,
         queryset=Prompt.objects.none(),  # Default to none
     )
+    related_assistant = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=Assistant.objects.none(),  # Default to none
+    )
 
     def __init__(self, *args, **kwargs):
         """
         Initializes the serializer and dynamically filters
-        the `related_prompt` queryset based on the IAM context in the request.
+        the `related_prompt` and `related_assistant` queryset based on the IAM context in the request.
         """
 
         super().__init__(*args, **kwargs)
@@ -118,8 +127,10 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "iam_context"):
             team = request.iam_context.team
             if team:
-                # Filter queryset based on the iam_context
+                # Filter querysets based on the iam_context
                 self.fields["related_prompt"].queryset = Prompt.objects.filter(team=team)
+                # Filter querysets based on the iam_context
+                self.fields["related_assistant"].queryset = Assistant.objects.filter(team=team)
 
     class Meta:
         """
@@ -127,7 +138,14 @@ class SessionWriteSerializer(serializers.ModelSerializer):
         """
 
         model = Session
-        fields = ("name", "session_type", "session_mode", "related_model", "related_prompt")
+        fields = (
+            "name",
+            "session_type",
+            "session_mode",
+            "related_model",
+            "related_prompt",
+            "related_assistant",
+        )
 
     def validate(self, data) -> dict:
         """
@@ -141,6 +159,8 @@ class SessionWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("related_model is required for LLM session")
         elif session_type == SessionType.PROMPT.value and "related_prompt" not in data:
             raise serializers.ValidationError("related_prompt is required for PROMPT session")
+        elif session_type == SessionType.ASSISTANT.value and "related_assistant" not in data:
+            raise serializers.ValidationError("related_assistant is required for ASSISTANT session")
         return data
 
     @transaction.atomic
@@ -226,7 +246,19 @@ class SessionMessageWriteSerializer(serializers.ModelSerializer):
     Serializer for writing SessionMessage data, to be used by post/patch actions.
     """
 
-    session = serializers.PrimaryKeyRelatedField(read_only=True)
+    session_id = serializers.PrimaryKeyRelatedField(
+        queryset=Session.objects.none(), source="session"  # Default to none
+    )
+    related_model = ProviderModelConfigWriteSerializer(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = self.context.get("request")
+        if request and hasattr(request, "iam_context"):
+            team = request.iam_context.team
+            if team:
+                # Filter queryset based on the iam_context
+                self.fields["session_id"].queryset = Session.objects.filter(team=team)
 
     class Meta:
         """
@@ -234,7 +266,27 @@ class SessionMessageWriteSerializer(serializers.ModelSerializer):
         """
 
         model = SessionMessage
-        fields = ("session", "query", "answer")
+        fields = ("session_id", "related_model", "query", "answer", "usage")
+
+    @transaction.atomic
+    def create(self, validated_data: dict) -> Session:
+        """
+        Creates a new Session message. Handles nested updates
+        of related models using the `ProviderModelConfigWriteSerializer`.
+        """
+
+        # update model config
+        session: Session = validated_data.get("session", None)
+        related_model_data = validated_data.pop("related_model", None)
+        if related_model_data:
+            # Updates ProviderModelConfig instance.
+            # Using serializer to call the update method of the related model.
+            related_model_serializer = ProviderModelConfigWriteSerializer(
+                instance=session.related_model, context=self.context
+            )
+            related_model_serializer.update(session.related_model, related_model_data)
+
+        return super().create(validated_data)
 
     def to_representation(self, instance):
         """
@@ -250,7 +302,7 @@ class GenerateRequestSerializer(serializers.Serializer):
     query = serializers.CharField()
     files = serializers.ListField(child=serializers.JSONField(), required=False)
     parameters = serializers.JSONField(required=False)
-    stream = serializers.BooleanField(default=False)
+    stream = serializers.BooleanField(default=True, required=False)
 
     def validate(self, data):
         parameters = data.get("parameters", None)
@@ -267,3 +319,17 @@ class GenerateRequestSerializer(serializers.Serializer):
             provider_model_serializer.is_valid(raise_exception=True)
             data["related_model"] = provider_model_serializer.data
         return data
+
+    def save(self, **kwargs) -> GenerateRequest:
+        """
+        Creates a GenerateRequest instance from the validated data.
+        """
+
+        user = kwargs.get("user", None)
+        callback = kwargs.get("callback", None)
+        if user is None:
+            raise serializers.ValidationError("User is required to create a GenerateRequest")
+        generate_request = GenerateRequest(**self.validated_data)
+        generate_request.user_id = str(user.id)
+        generate_request.callback = callback
+        return generate_request

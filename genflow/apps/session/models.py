@@ -1,14 +1,17 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from os import path as osp
 from typing import Any, Dict, List
 
 from django.conf import settings
 from django.db import models
+from llama_index.core import SimpleDirectoryReader
 
 from genflow.apps.ai.llm.entities import Usage
+from genflow.apps.assistant.models import Assistant
+from genflow.apps.common.entities import FileEntity
 from genflow.apps.common.models import TeamAssociatedModel, TimeAuditModel, UserOwnedModel
 from genflow.apps.core.models import ProviderModelConfig
 from genflow.apps.prompt.models import Prompt
@@ -30,6 +33,7 @@ class SessionType(models.TextChoices):
 
     LLM = "llm"
     PROMPT = "prompt"
+    ASSISTANT = "assistant"
 
 
 class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
@@ -39,7 +43,7 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     Attributes:
         name (str): The name of the session. This field is required and has a maximum length
             of 255 characters.
-        type (str): The type of the session, chosen from predefined `SessionType` choices.
+        session_type (str): The type of the session, chosen from predefined `SessionType` choices.
             Defaults to `SessionType.LLM`.
         mode (str): The mode of the session, chosen from predefined `SessionMode` choices.
             Defaults to `SessionMode.CHAT`.
@@ -58,15 +62,33 @@ class Session(TimeAuditModel, UserOwnedModel, TeamAssociatedModel):
     )
     related_model = models.OneToOneField(ProviderModelConfig, null=True, on_delete=models.SET_NULL)
     related_prompt = models.ForeignKey(Prompt, null=True, on_delete=models.SET_NULL)
+    related_assistant = models.ForeignKey(Assistant, null=True, on_delete=models.SET_NULL)
 
     @property
-    def dirname(self):
+    def dirname(self) -> str:
         """
         The relative directory path for the session, constructed using the session's ID and settings.
         """
 
         full_path = osp.join(settings.SESSIONS_ROOT, str(self.id))
         return osp.relpath(full_path, settings.BASE_DIR)
+
+    def load_user_files(self, user_files: list[FileEntity]) -> str:
+        """
+        Load user files.
+        """
+
+        content = ""
+        if osp.exists(self.dirname):
+            input_files = [
+                osp.join(settings.BASE_DIR, user_file.path)
+                for user_file in user_files
+                if osp.exists(osp.join(settings.BASE_DIR, user_file.path))
+            ]
+            if input_files:
+                documents = SimpleDirectoryReader(input_files=input_files).load_data()
+                content = " ".join([document.get_content() for document in documents])
+        return content
 
     def get_usage(self) -> List[Dict[str, Any]]:
         """

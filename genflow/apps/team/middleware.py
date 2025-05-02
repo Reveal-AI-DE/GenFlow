@@ -1,6 +1,6 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from typing import Optional
 
@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict
 from genflow.apps.team.models import Team
 
 
-class TeamContext(BaseModel):
+class IAMContext(BaseModel):
     """
     Represents the team context.
     """
@@ -29,10 +29,10 @@ class HttpRequestWithIamContext(HttpRequest):
     Represents an HTTP request with IAM context.
     """
 
-    iam_context: TeamContext
+    iam_context: IAMContext
 
 
-def get_team(request: HttpRequest) -> TeamContext:
+def get_team(request: HttpRequest) -> IAMContext:
     """
     Retrieves the team and privilege information for the given request.
 
@@ -68,12 +68,12 @@ def get_team(request: HttpRequest) -> TeamContext:
     except Team.DoesNotExist:
         raise BadRequest(f"{team_id} team does not exist.")
 
-    context = TeamContext(team=team, privilege=getattr(privilege, "name", None))
+    context = IAMContext(team=team, privilege=getattr(privilege, "name", None))
 
     return context
 
 
-class ContextMiddleware:
+class IAMContextMiddleware:
     """
     Middleware to attach team context to the request object.
 

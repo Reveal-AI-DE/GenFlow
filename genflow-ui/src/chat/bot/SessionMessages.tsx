@@ -1,16 +1,16 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-import React, { FC, Fragment } from 'react';
+import React, { FC, Fragment, useContext } from 'react';
 
-import { SessionContext } from '@/context';
-import { Message } from '@/message';
+import { SessionContext, SessionContextInterface } from '@/context';
+import { Message, MessageSkeleton } from '@/message';
 
 type SessionMessagesProps = object;
 
 const SessionMessages: FC<SessionMessagesProps> = () => {
-    const { sessionMessages } = React.useContext(SessionContext);
+    const { sessionMessages } = useContext<SessionContextInterface>(SessionContext);
 
     return sessionMessages
         .sort((a, b) => a.sequence - b.sequence)
@@ -26,16 +26,22 @@ const SessionMessages: FC<SessionMessagesProps> = () => {
                         owner: sessionMessage.owner,
                     }}
                 />
-                <Message
-                    key={`${index}-bot`}
-                    isLast={index === array.length - 1}
-                    message={{
-                        id: sessionMessage.id,
-                        content: sessionMessage.answer,
-                        role: 'assistant',
-                        references: sessionMessage.references,
-                    }}
-                />
+                {
+                    sessionMessage.answer ? (
+                        <Message
+                            key={`${index}-bot`}
+                            isLast={index === array.length - 1}
+                            message={{
+                                id: sessionMessage.id,
+                                content: sessionMessage.answer,
+                                role: 'assistant',
+                                references: sessionMessage.references,
+                            }}
+                        />
+                    ) : (
+                        <MessageSkeleton isAssistant isLast />
+                    )
+                }
             </Fragment>
         ));
 };

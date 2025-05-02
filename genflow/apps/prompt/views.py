@@ -1,22 +1,15 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
-
-import shutil
-from os import path as osp
-from typing import cast
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS
-from rest_framework.response import Response
 
 from genflow.apps.core.mixin import EntityGroupViewSetMixin
+from genflow.apps.core.views import EntityBaseViewSet
 from genflow.apps.prompt import permissions as perms
 from genflow.apps.prompt.models import Prompt
 from genflow.apps.prompt.serializers import PromptReadSerializer, PromptWriteSerializer
-from genflow.apps.team.middleware import HttpRequestWithIamContext
 
 
 @extend_schema(tags=["prompt-groups"])
@@ -83,21 +76,19 @@ class PromptGroupViewSet(EntityGroupViewSetMixin):
         summary="Upload a prompt avatar",
         description="Upload a new avatar image for the prompt",
         responses={
-            "200": PromptReadSerializer,
+            "200": OpenApiResponse(description="Avatar uploaded successfully"),
         },
     ),
 )
-class PromptViewSet(viewsets.ModelViewSet):
+class PromptViewSet(EntityBaseViewSet):
     """
     Provides CRUD operations and additional functionality
     for managing Prompt objects..
     """
 
     queryset = Prompt.objects.all().order_by("name")
-    search_fields = ["name", "description"]
-    filterset_fields = ["group__id", "type", "status", "is_pinned"]
-    ordering_fields = ["name", "type", "status", "group__name"]
-    iam_team_field = "team"
+    filterset_fields = EntityBaseViewSet.filterset_fields + ["prompt_type", "prompt_status"]
+    ordering_fields = EntityBaseViewSet.ordering_fields + ["prompt_type", "prompt_status"]
 
     def get_serializer_class(self):
         """
@@ -121,34 +112,3 @@ class PromptViewSet(viewsets.ModelViewSet):
             perm = perms.PromptPermission.create_scope_list(self.request)
             queryset = perm.filter(queryset)
         return queryset
-
-    def perform_create(self, serializer):
-        """
-        Saves a new Prompt instance, associating it with the current user and team.
-        """
-
-        request = cast(HttpRequestWithIamContext, self.request)
-        serializer.save(
-            owner=self.request.user,
-            team=request.iam_context.team,
-        )
-
-    def perform_destroy(self, instance: Prompt):
-        """
-        Deletes a Prompt instance and removes its associated media directory if it exists.
-        """
-
-        if osp.exists(instance.media_dir()):
-            shutil.rmtree(instance.media_dir())
-        return super().perform_destroy(instance)
-
-    @action(detail=True, methods=["post"])
-    def upload_avatar(self, request, pk=None):
-        """
-        A custom action to upload an avatar for a specific Prompt instance.
-        """
-
-        prompt: Prompt = self.get_object()
-        prompt.avatar = request.FILES.get("avatar", None)
-        prompt.save()
-        return Response(status=status.HTTP_200_OK)

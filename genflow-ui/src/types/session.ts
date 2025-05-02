@@ -1,16 +1,17 @@
 // Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { RaRecord } from 'react-admin'
 
-import { FileEntity } from '@/types/common';
+import { FileEntity } from '@/types/file';
 import { ModelConfigWithEntity, Parameters, ChatModelSetting } from '@/types/model';
 import { Prompt, ChatPromptSetting } from '@/types/prompt';
 
 export enum SessionType {
     LLM = 'llm',
     PROMPT = 'prompt',
+    ASSISTANT = 'assistant',
 };
 
 export enum SessionMode {
@@ -50,6 +51,7 @@ export interface GenerateRequest {
     query: string;
     files?: FileEntity[];
     parameters?: Parameters;
+    stream?: boolean;
 };
 
 export enum SessionFloatActionKey {

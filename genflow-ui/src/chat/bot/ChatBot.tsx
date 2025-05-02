@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, {
     FC, useContext, useEffect,
@@ -10,15 +10,16 @@ import Divider from '@mui/material/Divider';
 import { styled } from '@mui/material/styles';
 import { useRecordContext } from 'react-admin';
 
-import { SessionType } from '@/types';
+import { SessionType, Session } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
 import { useScroll } from '@/hook';
 import { ChatLayout } from '@/layout';
 import { MessageSkeleton } from '@/message';
-
 import { ChatScrollButtons, ChatActions} from '@/chat/bot/button';
 import SessionMessages from '@/chat/bot/SessionMessages';
 import ChatBotPlaceholder from '@/chat/bot/ChatBotPlaceholder';
+import { PromptStartingMessage } from '@/prompt';
+import { AssistantStartingMessage } from '@/assistant';
 
 const Root = styled(Box, {
     name: 'GFChatBot',
@@ -36,15 +37,23 @@ const Root = styled(Box, {
 type ChatBotProps = object;
 
 const ChatBot: FC<ChatBotProps> = () => {
-    const record = useRecordContext();
+    const session = useRecordContext<Session>();
 
-    if (!record) return null;
+    if (!session) return null;
 
     const renderPlaceholder = (): JSX.Element | null => {
-        switch(record.type) {
+        switch(session.session_type) {
             case SessionType.LLM:
                 return (
                     <ChatBotPlaceholder />
+                )
+            case SessionType.PROMPT:
+                return (
+                    <PromptStartingMessage />
+                )
+            case SessionType.ASSISTANT:
+                return (
+                    <AssistantStartingMessage />
                 )
             default:
                 return null;

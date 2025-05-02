@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -8,13 +8,12 @@ import PublishIcon from '@mui/icons-material/Publish';
 import UnpublishedIcon from '@mui/icons-material/Unpublished';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import {
-    TopToolbar, SaveButton, Button, useRedirect,
-    useDataProvider, CreateResult, useRecordContext,
+    TopToolbar, SaveButton, Button,
+    useRedirect, useRecordContext,
 } from 'react-admin';
 
 import {
-    PromptStatus, Prompt, SessionType,
-    SessionMode, Session,
+    PromptStatus, Prompt, PromptData,
 } from '@/types';
 import { CancelButton } from '@/common';
 
@@ -30,38 +29,33 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
     createMode,
 }) => {
     const redirect = useRedirect();
-    const dataProvider = useDataProvider();
     const prompt = useRecordContext<Prompt>();
 
-    const transformToPublish = (data: any): Prompt => ({
-        ...data,
-        status: data.status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
-    });
+    const transform = (values: Prompt): PromptData => {
+        const { group, related_model: relatedModel, ...rest } = values;
+        const { provider_name: providerName, model_name: modelName, config } = relatedModel;
+        return ({
+            group_id: group.id,
+            related_model: {
+                provider_name: providerName,
+                model_name: modelName,
+                config,
+            },
+            ...rest,
+        })
+    };
 
-    const createTestSession = async (data: Prompt): Promise<CreateResult<Session>> => (
-        dataProvider.create(
-            'sessions',
-            {
-                data: {
-                    name: `Testing - ${data.name}`,
-                    session_type: SessionType.PROMPT,
-                    session_mode: SessionMode.COMPLETION,
-                    related_prompt: data.id,
-                },
-                meta: {
-                    queryParams: {
-                        testing: true,
-                    },
-                },
-            })
-    );
+    const transformToPublish = (data: Prompt): PromptData => ({
+        ...transform(data),
+        prompt_status: data.prompt_status === PromptStatus.PUBLISHED ? PromptStatus.DRAFTED : PromptStatus.PUBLISHED,
+    });
 
     const renderPublishButton = (currentPrompt: Prompt | undefined): JSX.Element | null => (currentPrompt ? (
         <SaveButton
             type='button'
-            label={currentPrompt.status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
+            label={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? 'action.unpublish' : 'action.publish'}
             variant='outlined'
-            icon={currentPrompt.status === PromptStatus.PUBLISHED ? (
+            icon={currentPrompt.prompt_status === PromptStatus.PUBLISHED ? (
                 <UnpublishedIcon />
             ) : (
                 <PublishIcon />
@@ -78,18 +72,13 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
             mutationOptions={{
                 onSuccess: (data: Prompt) => {
                     setTesting(true);
-                    if (!data.related_test_session) {
-                        createTestSession(data).then(() => {
-                            redirect('edit', 'prompts', data.id, data);
-                        });
-                    } else {
-                        redirect('edit', 'prompts', data.id, data);
-                    }
+                    redirect('edit', 'prompts', data.id, data);
                 }
             }}
             icon={<BiotechIcon />}
             variant='outlined'
             alwaysEnable={!createMode}
+            transform={transform}
         />
     );
 
@@ -120,6 +109,7 @@ const PromptFormActions: FC<PromptFormActionsProps> = ({
                         label='action.draft'
                         variant='outlined'
                         icon={<SaveAsIcon />}
+                        transform={transform}
                     />
                 ) : (
                     renderPublishButton(prompt)

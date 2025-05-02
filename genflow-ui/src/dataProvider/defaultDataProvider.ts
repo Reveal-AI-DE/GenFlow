@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import queryString from 'query-string';
 
@@ -9,8 +9,7 @@ import {
 } from 'react-admin';
 
 import { MetaParams } from '@/types';
-import { ResourceURL } from '@/utils';
-import { fetchJsonWithAuthToken } from '../authProvider';
+import { ResourceURL, fetchJsonWithAuthToken } from '@/utils';
 
 const getPaginationQuery = (pagination: PaginationPayload): object => ({
     page: pagination.page,
@@ -130,6 +129,7 @@ export default <DataProvider>{
             method: 'POST',
             body: JSON.stringify(params.data),
         });
+
         return {
             data: { ...json },
         };

@@ -1,10 +1,10 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC, ReactNode } from 'react';
 import Skeleton from '@mui/material/Skeleton';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import {
     useListContext, ListNoResults,
@@ -20,7 +20,11 @@ const LoadingGridList: FC<LoadingGridListProps> = () => {
     const cols = useColsForWidth() * 8;
 
     return (
-        <Grid container columns={cols} spacing={2}>
+        <Grid
+            container
+            columns={cols}
+            spacing={2}
+        >
             {times(perPage, (key) => (
                 <Grid key={key} size={8}>
                     <Skeleton

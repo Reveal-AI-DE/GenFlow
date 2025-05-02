@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import ChatActions from '@/chat/bot/button/ChatActions';
 import ChatScrollButtons from '@/chat/bot/button/ChatScrollButtons';

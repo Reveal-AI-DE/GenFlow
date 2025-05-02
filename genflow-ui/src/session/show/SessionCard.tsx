@@ -1,6 +1,6 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import React, { FC } from 'react';
 import Card from '@mui/material/Card';
@@ -20,6 +20,7 @@ import { UserField } from '@/user';
 import { ModelConfigCard } from '@/provider/model';
 import { PromptInfo } from '@/prompt';
 import { SessionName } from '@/session/form';
+import { AssistantInfo } from '@/assistant';
 
 const StyledStack = styled(Stack, {
     name: 'GFSessionCardHeader',
@@ -123,12 +124,33 @@ const SessionCard: FC<SessionCardProps> = () => {
         )
     );
 
+    const renderRelatedAssistant = (): JSX.Element => (session.related_assistant ?
+        (
+            <ResourceContextProvider value='assistants'>
+                <RecordContextProvider value={session.related_assistant}>
+                    <AssistantInfo />
+                </RecordContextProvider>
+            </ResourceContextProvider>
+        ) : (
+            <span>
+                {translate(
+                    'message.related_deleted',
+                    {
+                        resource: translate('resources.assistants.name', {smart_count: 1})
+                    }
+                )}
+            </span>
+        )
+    );
+
     const renderRelatedInfo = (): JSX.Element | null => {
         switch (session.session_type) {
             case SessionType.LLM:
                 return renderRelatedModel();
             case SessionType.PROMPT:
                 return renderRelatedPrompt();
+            case SessionType.ASSISTANT:
+                return renderRelatedAssistant();
             default:
                 return null;
         }

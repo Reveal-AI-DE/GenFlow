@@ -1,15 +1,16 @@
-# Copyright (C) 2024 Reveal AI
+# Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 from django.conf import settings
 from django.db.models import Q
 
 from genflow.apps.iam.permissions import GenFLowBasePermission, StrEnum
-from genflow.apps.team.models import TeamRole
+from genflow.apps.restriction.mixin import LimitMixin
+from genflow.apps.team.models import Invitation, Team, TeamRole
 
 
-class TeamPermission(GenFLowBasePermission):
+class TeamPermission(GenFLowBasePermission, LimitMixin):
     """
     Handles the permissions for team-related actions.
     """
@@ -56,6 +57,23 @@ class TeamPermission(GenFLowBasePermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of teams owned by the user.
+        """
+
+        return Team.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of teams owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Team.objects.filter(team_id=self.team_id).count()
+
     def check_access(self) -> bool:
         """
         Check if the user has access based on their role and the scope.
@@ -63,6 +81,14 @@ class TeamPermission(GenFLowBasePermission):
 
         # admin users have full control
         # filter method will be used to filter queryset in list method
+
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="TEAM",
+        ):
+            return False
 
         # anyone can create a team for now
         if (
@@ -194,7 +220,7 @@ class MembershipPermission(GenFLowBasePermission):
             return queryset.filter(Q(team__owner_id=self.user_id)).distinct()
 
 
-class InvitationPermission(GenFLowBasePermission):
+class InvitationPermission(GenFLowBasePermission, LimitMixin):
     """
     Handles the permissions for invitation-related actions.
     """
@@ -239,6 +265,23 @@ class InvitationPermission(GenFLowBasePermission):
 
         return permissions
 
+    def get_user_usage(self) -> int:
+        """
+        Get the number of teams owned by the user.
+        """
+
+        return Invitation.objects.filter(owner_id=self.user_id).count()
+
+    def get_team_usage(self) -> int:
+        """
+        Get the number of teams owned by the team.
+        """
+
+        if self.team_id is None:
+            return 0
+
+        return Invitation.objects.filter(membership__team_id=self.team_id).count()
+
     def check_access(self) -> bool:
         """
         Check if the user has access based on their role and the scope.
@@ -252,6 +295,15 @@ class InvitationPermission(GenFLowBasePermission):
         # filter method will be used to filter queryset in list method
         if self.group_name == settings.IAM_ADMIN_ROLE or self.scope == self.Scopes.LIST:
             return True
+
+        # check limits
+        if self.scope == self.Scopes.CREATE and self.check_limit(
+            user_id=self.user_id,
+            team_id=self.team_id,
+            key="MAX_INVITATION_PER_TEAM",
+        ):
+            return False
+
         # team owner or admin can create an invitation
         # team owner or admin can change the invitation's data
         elif self.scope == self.Scopes.CREATE or self.scope == self.Scopes.UPDATE:

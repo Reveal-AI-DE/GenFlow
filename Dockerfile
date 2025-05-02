@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 ARG PIP_VERSION=24.0
 ARG BASE_IMAGE=ubuntu:24.04
@@ -84,7 +84,7 @@ RUN if [ "$CLAM_AV" = "yes" ]; then \
         apt-get update && \
         apt-get --no-install-recommends install -yq \
             clamav \
-            libclamunrar9 && \
+            libclamunrar11 && \
         sed -i "s/ReceiveTimeout 30/ReceiveTimeout 300/g" /etc/clamav/freshclam.conf && \
         freshclam && \
         chown -R ${USER}:${USER} /var/lib/clamav && \

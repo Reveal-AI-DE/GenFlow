@@ -1,6 +1,6 @@
 # Copyright (C) 2025 Reveal AI
 #
-# SPDX-License-Identifier: MIT
+# Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import decimal
 import os
@@ -16,7 +16,10 @@ from genflow.apps.ai.base.entities.model import (
     PricingDetails,
     PricingType,
 )
+from genflow.apps.common.log import ServerLogManager
 from genflow.apps.common.utils.yaml_utils import load_yaml_file
+
+slogger = ServerLogManager(__name__)
 
 
 class ModelCollection(ABC):
@@ -81,8 +84,9 @@ class ModelCollection(ABC):
                 # read yaml data from yaml file
                 yaml_data = load_yaml_file(file_path=schema_yaml_path, ignore_error=False)
             except Exception as e:
-                # TODO: log error
-                raise Exception(f"Failed to load model schema from {schema_yaml_path}: {str(e)}")
+                message = f"Failed to load model schema from {schema_yaml_path}: {str(e)}"
+                slogger.glob.error(message)
+                raise Exception(message)
 
             new_parameter_configs = []
             for parameter_config in yaml_data.get("parameter_configs", []):
@@ -115,10 +119,9 @@ class ModelCollection(ABC):
                 model_schema = ModelEntity(**yaml_data)
             except Exception as e:
                 model_schema_yaml_file_name = os.path.basename(schema_yaml_path).rstrip(".yaml")
-                # TODO: log error
-                raise Exception(
-                    f"Invalid model schema for {provider_name}.{model_type}.{model_schema_yaml_file_name}: {str(e)}"
-                )
+                message = f"Invalid model schema for {provider_name}.{model_type}.{model_schema_yaml_file_name}: {str(e)}"
+                slogger.glob.error(message)
+                raise Exception(message)
 
             # cache model schema
             schemas.append(model_schema)
@@ -204,10 +207,11 @@ class ModelCollection(ABC):
             # read yaml data from yaml file
             yaml_data = load_yaml_file(file_path=default_parameters_file_path, ignore_error=False)
         except Exception as e:
-            # TODO: log error
-            raise Exception(
+            message = (
                 f"Failed to load default parameters from {default_parameters_file_path}: {str(e)}"
             )
+            slogger.glob.error(message)
+            raise Exception(message)
 
         try:
             for parameter, parameter_config in yaml_data.items():
@@ -217,10 +221,9 @@ class ModelCollection(ABC):
                 ConfigurationEntity(name=parameter, **parameter_config)
                 default_parameter_configs[parameter] = parameter_config
         except Exception as e:
-            # TODO: log error
-            raise Exception(
-                f"Invalid default parameters in {default_parameters_file_path}: {str(e)}"
-            )
+            message = f"Invalid default parameters in {default_parameters_file_path}: {str(e)}"
+            slogger.glob.error(message)
+            raise Exception(message)
 
         # cache model schemas
         self.default_parameter_configs = default_parameter_configs
@@ -244,8 +247,9 @@ class ModelCollection(ABC):
         default_parameter_config = self.default_parameter_configs.get(name)
 
         if not default_parameter_config:
-            # TODO: log error
-            raise Exception(f"Invalid model parameter config name {name.value}")
+            message = f"Invalid default parameter config name {name.value}"
+            slogger.glob.error(message)
+            raise Exception(message)
 
         return default_parameter_config
 
@@ -272,5 +276,6 @@ class ModelCollection(ABC):
             ]
             return {name: index for index, name in enumerate(positions)}
         except Exception as e:
-            # TODO: log error
-            raise Exception(f"Failed to load models listing from {listing_file_path}: {str(e)}")
+            message = f"Failed to load models listing from {listing_file_path}: {str(e)}"
+            slogger.glob.error(message)
+            raise Exception(message)

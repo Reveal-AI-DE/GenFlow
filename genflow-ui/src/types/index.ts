@@ -1,8 +1,10 @@
-// Copyright (C) 2024 Reveal AI
+// Copyright (C) 2025 Reveal AI
 //
-// SPDX-License-Identifier: MIT
+// Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
+export * from '@/types/assistant';
 export * from '@/types/common';
+export * from '@/types/file';
 export * from '@/types/message';
 export * from '@/types/model';
 export * from '@/types/prompt';
