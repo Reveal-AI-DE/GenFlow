@@ -274,6 +274,8 @@ const deDE: TranslationMessages = {
         password_reset_success: 'Passwort erfolgreich zurückgesetzt. Bitte melden Sie sich an.',
         incorrect_reset_link: 'Der Zurücksetzungslink ist ungültig oder abgelaufen. Bitte überprüfen Sie Ihre E-Mails auf den richtigen Link oder fordern Sie eine neue Passwort-Zurücksetzungs-E-Mail an.',
         check_email: 'Bitte überprüfen Sie Ihre E-Mails für weitere Anweisungen.',
+        coming_soon: 'Demnächst verfügbar',
+        under_construction: 'Diese Funktion befindet sich im Aufbau. Bitte schauen Sie später noch einmal vorbei.',
 
     },
     action: {

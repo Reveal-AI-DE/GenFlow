@@ -6,10 +6,10 @@ import React, { FC } from 'react';
 
 import { UnderConstruction } from '@/common';
 
-type CollectionListProps = object;
+type WorkflowListProps = object;
 
-const CollectionList: FC<CollectionListProps> = () => (
+const WorkflowList: FC<WorkflowListProps> = () => (
     <UnderConstruction />
 );
 
-export default CollectionList;
+export default WorkflowList;

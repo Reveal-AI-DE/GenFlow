@@ -9,6 +9,7 @@ import Popover from '@/common/layout/Popover';
 import ResourceTotalCard from '@/common/layout/ResourceTotalCard';
 import PagePlaceholder from '@/common/layout/PagePlaceholder';
 import TabsController, { TabItems } from '@/common/layout/TabsController';
+import UnderConstruction from '@/common/layout/UnderConstruction';
 import WithTooltip from '@/common/layout/WithTooltip';
 
 export {
@@ -20,6 +21,7 @@ export {
     ResourceTotalCard,
     PagePlaceholder,
     TabsController,
+    UnderConstruction,
     WithTooltip,
 };
 

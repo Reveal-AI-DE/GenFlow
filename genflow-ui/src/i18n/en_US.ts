@@ -233,6 +233,8 @@ const enUS: TranslationMessages = {
         password_reset_success: 'Password reset successfully, Please login.',
         incorrect_reset_link: 'The reset link is incorrect or has expired. Please check your email for the correct link or request a new password reset email.',
         check_email: 'Please check your email for further instructions.',
+        coming_soon: 'Coming Soon',
+        under_construction: 'This feature is under construction. Please check back later.',
     },
     action: {
         test: 'Test',

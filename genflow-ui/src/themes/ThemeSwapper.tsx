@@ -28,6 +28,7 @@ const ThemeSwapper = (): JSX.Element => {
         const newTheme = themes[index];
         setThemeName(newTheme.name);
         setAnchorEl(null);
+        window.location.reload();
     };
     const currentTheme = themes.find((theme: Theme) => theme.name === themeName);
 

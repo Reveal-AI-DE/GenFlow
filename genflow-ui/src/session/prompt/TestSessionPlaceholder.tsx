@@ -32,6 +32,6 @@ const TestSessionPlaceholder: FC<TestSessionPlaceholderProps> = () => {
             </Box>
         </PagePlaceholder>
     );
-}
+};
 
 export default TestSessionPlaceholder;
