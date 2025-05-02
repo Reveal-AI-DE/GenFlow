@@ -2,8 +2,8 @@
   <img src="/docs/img/demo.gif" alt="GenFlow Platform" width="100%" max-width="800px">
 </p>
 <p align="center">
-  <a href="https://demo.genflow.revealai.de/" style="display: inline-block; background-color: #007fd6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-    Try GenFlow Now
+  <a href="https://demo.genflow.revealai.de/" target="_blank">
+    <img src="https://img.shields.io/badge/Try%20GenFlow%20Now-007fd6?style=for-the-badge&logoColor=white" alt="Try GenFlow Now">
   </a>
 </p>
 
@@ -48,7 +48,7 @@ We also offer enterprise support with premium features, training, and dedicated 
 
 - [Installation guide](/docs/administration/basics/installation.md)
 - [Contributing](/docs/contributing/contributing.md)
-- [Server API](#)
+- [Server API](/docs/documentation.md#api-reference)
 - [AWS Deployment Guide](#)
 - [Frequently asked questions](#)
 - [Where to ask questions](#)
