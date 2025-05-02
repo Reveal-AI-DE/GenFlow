@@ -2648,6 +2648,8 @@ components:
           $ref: '#/components/schemas/TranslationEntity'
         description:
           $ref: '#/components/schemas/TranslationEntity'
+        welcome:
+          $ref: '#/components/schemas/TranslationEntity'
         license:
           $ref: '#/components/schemas/TranslationEntity'
         version:
@@ -2656,6 +2658,7 @@ components:
       required:
       - name
       - description
+      - welcome
       - license
       - version
       title: AboutSystem
