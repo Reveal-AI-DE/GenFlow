@@ -230,7 +230,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = "/#/auth/email-confirmed"
 INCORRECT_EMAIL_CONFIRMATION_URL = "/#/auth/email-not-confirmed"
 ACCOUNT_EMAIL_VERIFICATION_SENT_REDIRECT_URL = "/#/auth/verification-sent"
-RESET_PASSWORD_URL = "/#/auth/password-reset-confirm"
+RESET_PASSWORD_URL = "/#/auth/password-reset-confirm" # nosec B105
 
 # change default allauth account adapter
 ACCOUNT_ADAPTER = "genflow.apps.iam.adapters.DefaultAccountAdapterEx"
