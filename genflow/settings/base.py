@@ -335,6 +335,43 @@ os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
 os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
 
+LOGS_ROOT = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_ROOT, exist_ok=True)
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {"format": "[%(asctime)s] %(levelname)s %(name)s: %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "filters": [],
+            "formatter": "standard",
+        },
+        "server_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "filename": os.path.join(BASE_DIR, "logs", "genflow_server.log"),
+            "formatter": "standard",
+            "maxBytes": 1024 * 1024 * 50,  # 50 MB
+            "backupCount": 5,
+        },
+    },
+    "root": {
+        "handlers": ["console", "server_file"],
+    },
+    "loggers": {
+        "genflow": {
+            "level": os.getenv("DJANGO_LOG_LEVEL", "DEBUG"),
+        },
+        "django": {
+            "level": "INFO",
+        },
+    },
+}
+
 CORS_ALLOW_HEADERS = list(default_headers) + [
     # extended upload protocol headers
     "x-team",

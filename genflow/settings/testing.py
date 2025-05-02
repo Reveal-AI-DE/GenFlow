@@ -39,3 +39,13 @@ os.makedirs(PROMPTS_MEDIA_ROOT, exist_ok=True)
 
 ASSISTANT_MEDIA_ROOT = os.path.join(MEDIA_ROOT, "assistants")
 os.makedirs(ASSISTANT_MEDIA_ROOT, exist_ok=True)
+
+LOGS_ROOT = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_ROOT, exist_ok=True)
+
+# Suppress all logs by default
+for logger in LOGGING["loggers"].values():
+    if isinstance(logger, dict) and "level" in logger:
+        logger["level"] = "ERROR"
+
+LOGGING["handlers"]["server_file"] = LOGGING["handlers"]["console"]

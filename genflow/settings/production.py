@@ -32,3 +32,19 @@ if "GF_EMAIL_HOST_PASSWORD" in os.environ and os.getenv("GF_EMAIL_HOST_PASSWORD"
 else:
     # https://github.com/pennersr/django-allauth
     ACCOUNT_EMAIL_VERIFICATION = "none"
+
+LOGGING["formatters"]["verbose_uvicorn_access"] = {
+    "()": "uvicorn.logging.AccessFormatter",
+    "format": '[{asctime}] {levelprefix} {client_addr} - "{request_line}" {status_code}',
+    "style": "{",
+}
+LOGGING["handlers"]["verbose_uvicorn_access"] = {
+    "formatter": "verbose_uvicorn_access",
+    "class": "logging.StreamHandler",
+    "stream": "ext://sys.stdout",
+}
+LOGGING["loggers"]["uvicorn.access"] = {
+    "handlers": ["verbose_uvicorn_access"],
+    "level": "INFO",
+    "propagate": False,
+}
