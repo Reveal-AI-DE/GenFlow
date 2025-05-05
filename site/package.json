@@ -1,0 +1,24 @@
+{
+  "name": "genflow-docs",
+  "version": "0.0.1",
+  "description": "Hugo dependencies that should be installed separately",
+  "main": "none.js",
+  "dependencies": {
+    "docsy": "file:themes/docsy"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Reveal-AI-DE/GenFlow.git"
+  },
+  "author": "Reveal AI",
+  "license": "Apache 2.0 License Extended",
+  "bugs": {
+    "url": "https://github.com/Reveal-AI-DE/GenFlow/issues"
+  },
+  "homepage": "https://github.com/Reveal-AI-DE/GenFlow#readme"
+}
