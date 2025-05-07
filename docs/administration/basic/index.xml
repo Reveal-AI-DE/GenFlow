@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Basic on GenFlow</title>
+    <link>/docs/administration/basic/</link>
+    <description>Recent content in Basic on GenFlow</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <atom:link href="/docs/administration/basic/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Installation Guide</title>
+      <link>/docs/administration/basic/installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/administration/basic/installation/</guid>
+      <description>Quick installation guide To start using GenFlow, you first need to install it. This guide provides installation instructions for the most commonly used operating systems. If your operating system is not listed, you should be able to adapt the steps provided to suit your system.&#xA;If you are behind a proxy server, additional configuration may be required. Please note that this guide does not cover proxy setup, as it is an advanced topic.</description>
+    </item>
+  </channel>
+</rss>

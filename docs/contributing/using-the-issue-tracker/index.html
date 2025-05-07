@@ -1,0 +1,199 @@
+<!doctype html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="google-site-verification" content="r5vgZ3u2DPckX5S-DyrpucCsEMIpOOcQt6659vBe8xU" />
+<meta name="keywords" content="Generative AI, GenAI, Low-Code, Platform, RAG, LLM, Prompts, Agents, Open Source">
+<meta name="robots" content="index, follow">
+
+
+<link rel="shortcut icon" href="/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicons/android-36x36.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicons/android-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicons/android-72x72.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicons/android-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
+
+<title>Using the issue tracker | GenFlow</title>
+<meta name="description" content="Information and rules for using the issue tracker.">
+<meta property="og:title" content="Using the issue tracker" />
+<meta property="og:description" content="Information and rules for using the issue tracker." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/docs/contributing/using-the-issue-tracker/" /><meta property="article:section" content="docs" />
+
+
+
+<meta itemprop="name" content="Using the issue tracker">
+<meta itemprop="description" content="Information and rules for using the issue tracker.">
+
+<meta itemprop="wordCount" content="56">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Using the issue tracker"/>
+<meta name="twitter:description" content="Information and rules for using the issue tracker."/>
+<link rel="preload" href="/scss/main.min.27bc098c9a8f7a1246d474f5c8afcee53760c9c7f38125d343ff52e0bf493011.css" as="style" integrity="sha256-J7wJjJqPehJG1HT1yK/O5TdgycfzgSXTQ/9S4L9JMBE=" crossorigin="anonymous">
+<link href="/scss/main.min.27bc098c9a8f7a1246d474f5c8afcee53760c9c7f38125d343ff52e0bf493011.css" rel="stylesheet" integrity="sha256-J7wJjJqPehJG1HT1yK/O5TdgycfzgSXTQ/9S4L9JMBE=" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+  crossorigin="anonymous"></script>
+
+  </head>
+  <body class="td-page">
+    <header>
+      <nav class="td-navbar navbar-dark js-navbar-scroll">
+<div class="container-fluid flex-column flex-md-row">
+  <a class="navbar-brand" href="/about/"><span class="navbar-brand__logo navbar-logo">
+                <img src="/icons/logo.png" width="42px" alt="GenFlow" class="navbar-brand__logo" />
+            </span></a>
+  <div class="td-navbar-nav-scroll ms-md-auto" style="height: auto;" id="main_navbar">
+    <ul class="navbar-nav d-flex flex-wrap" style="padding-bottom: 0;">
+      <li class="nav-item">
+        <a class="nav-link active" href="/docs/"><span>Documentation</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about/"><span>About</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://demo.genflow.revealai.de" rel="noopener"><span>Try it now</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="https://github.com/Reveal-AI-DE/GenFlow" rel="noopener"><i class='fab fa-github'></i><span>GitHub</span></a>
+      </li>
+      </ul>
+  </div>
+  <div class="d-none d-lg-block">
+    
+  </div>
+</div>
+</nav>
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <aside class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            <div id="td-sidebar-menu" class="td-sidebar__inner">
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ms-3 fas fa-bars" type="button" data-bs-toggle="collapse" data-bs-target="#td-section-nav" aria-controls="td-section-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  <nav class="td-sidebar-nav collapse" id="td-section-nav">
+    <ul class="td-sidebar-nav__section pe-md-3 ul-0">
+      <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-docs-li">
+  <a href="/docs/" class="align-left ps-0 td-sidebar-link td-sidebar-link__section tree-root" id="m-docs"><span class="">Documentation</span></a>
+  <ul class="ul-1">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docsadministration-li">
+  <a href="/docs/administration/" class="align-left ps-0 td-sidebar-link td-sidebar-link__section" id="m-docsadministration"><span class="">Administration</span></a>
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child" id="m-docsadministrationbasic-li">
+  <a href="/docs/administration/basic/" class="align-left ps-0 td-sidebar-link td-sidebar-link__section" id="m-docsadministrationbasic"><span class="">Basic</span></a>
+  <ul class="ul-3 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child collapse" id="m-docsadministrationbasicinstallation-li">
+  <a href="/docs/administration/basic/installation/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docsadministrationbasicinstallation"><span class="">Installation Guide</span></a>
+</li>
+  </ul>
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsapi-li">
+  <a href="/docs/api/" class="align-left ps-0 td-sidebar-link td-sidebar-link__section" id="m-docsapi"><span class="">API</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section with-child active-path" id="m-docscontributing-li">
+  <a href="/docs/contributing/" title="Contributing to this project" class="align-left ps-0 td-sidebar-link td-sidebar-link__section" id="m-docscontributing"><span class="">Contributing</span></a>
+  <ul class="ul-2 foldable">
+    <li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingcoding-style-li">
+  <a href="/docs/contributing/coding-style/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingcoding-style"><span class="">Coding Style</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingbranching-model-li">
+  <a href="/docs/contributing/branching-model/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingbranching-model"><span class="">Branching model</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child active-path" id="m-docscontributingusing-the-issue-tracker-li">
+  <a href="/docs/contributing/using-the-issue-tracker/" class="align-left ps-0 active td-sidebar-link td-sidebar-link__page" id="m-docscontributingusing-the-issue-tracker"><span class="td-sidebar-nav-active-item">Using the issue tracker</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingbug-report-li">
+  <a href="/docs/contributing/bug-report/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingbug-report"><span class="">Bug reports</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingfeature-requests-li">
+  <a href="/docs/contributing/feature-requests/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingfeature-requests"><span class="">Feature requests</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingpull-requests-li">
+  <a href="/docs/contributing/pull-requests/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingpull-requests"><span class="">Pull requests</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingdevelopment-environment-li">
+  <a href="/docs/contributing/development-environment/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingdevelopment-environment"><span class="">Development environment</span></a>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docscontributingrunning-tests-li">
+  <a href="/docs/contributing/running-tests/" class="align-left ps-0 td-sidebar-link td-sidebar-link__page" id="m-docscontributingrunning-tests"><span class="">Running tests</span></a>
+</li>
+  </ul>
+</li><li class="td-sidebar-nav__section-title td-sidebar-nav__section without-child" id="m-docsroadmap-li">
+  <a href="/docs/roadmap/" class="align-left ps-0 td-sidebar-link td-sidebar-link__section" id="m-docsroadmap"><span class="">Roadmap</span></a>
+</li>
+  </ul>
+</li>
+    </ul>
+  </nav>
+</div>
+
+          </aside>
+          <aside class="d-none d-xl-block col-xl-2 td-sidebar-toc d-print-none">
+            <div class="td-page-meta ms-2 pb-1 pt-2 mb-0">
+
+</div>
+
+            
+            
+
+          </aside>
+          <main class="col-12 col-md-9 col-xl-8 ps-md-5" role="main">
+            
+  
+
+            <nav aria-label="breadcrumb" class="td-breadcrumbs">
+  <ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/docs/">Documentation</a></li>
+  <li class="breadcrumb-item">
+    <a href="/docs/contributing/">Contributing</a></li>
+  <li class="breadcrumb-item active" aria-current="page">
+    Using the issue tracker</li>
+  </ol>
+</nav>
+            
+<div class="td-content">
+	<h1>Using the issue tracker</h1>
+	<div class="lead">Information and rules for using the issue tracker.</div>
+	<header class="article-meta">
+		
+</header>
+	<p>The issue tracker is the recommended platform for reporting bugs, requesting features, and submitting pull requests.
+However, please adhere to the following guidelines:</p>
+<ul>
+<li>Avoid using the issue tracker for personal support inquiries. Instead, consider contacting us.</li>
+<li>Stay on topic and maintain a respectful tone in discussions. Refrain from derailing or trolling issues, and
+respect differing viewpoints.</li>
+</ul>
+
+	
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      <footer class="td-footer row d-print-none">
+  <div class="container-fluid">
+    <div class="row mx-md-2">
+      <div class="td-footer__left col-6 col-sm-4 order-sm-1">
+        
+      </div><div class="td-footer__right col-6 col-sm-4 order-sm-3">
+        
+      </div><div class="td-footer__center col-12 col-sm-4 py-2 order-sm-2">
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <script src="/js/main.min.a73a93a1ee5d1f86473a40e17450c3e9f2a71617a6fcd2b56b2e0104370ad537.js" integrity="sha256-pzqToe5dH4ZHOkDhdFDD6fKnFhem/NK1ay4BBDcK1Tc=" crossorigin="anonymous"></script>
+<script defer src="/js/click-to-copy.min.73478a7d4807698aed7e355eb23f9890ca18fea3158604c8471746d046702bad.js" integrity="sha256-c0eKfUgHaYrtfjVesj&#43;YkMoY/qMVhgTIRxdG0EZwK60=" crossorigin="anonymous"></script>
+<script src='/js/tabpane-persist.js'></script>
+
+  </body>
+</html>

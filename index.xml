@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GenFlow</title>
+    <link>/</link>
+    <description>Recent content on GenFlow</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Coding Style</title>
+      <link>/docs/contributing/coding-style/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/coding-style/</guid>
+      <description>We follow the Airbnb JavaScript Style Guide for TypeScript code, with one exception: we use 4 spaces for indentation of nested blocks and statements.&#xA;For Python, we use Black and isort to enforce coding standards and automatically format files. You can run dev/format_python_code.sh to apply these formatters.</description>
+    </item>
+    <item>
+      <title>Installation Guide</title>
+      <link>/docs/administration/basic/installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/administration/basic/installation/</guid>
+      <description>Quick installation guide To start using GenFlow, you first need to install it. This guide provides installation instructions for the most commonly used operating systems. If your operating system is not listed, you should be able to adapt the steps provided to suit your system.&#xA;If you are behind a proxy server, additional configuration may be required. Please note that this guide does not cover proxy setup, as it is an advanced topic.</description>
+    </item>
+    <item>
+      <title>Branching model</title>
+      <link>/docs/contributing/branching-model/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/branching-model/</guid>
+      <description>The project follows a successful Git branching model, utilizing several key branches. Among them are:&#xA;origin/master: This is the primary branch, where the HEAD always represents a production-ready version of the source code.&#xA;origin/develop This serves as the main branch for ongoing development. The HEAD here reflects the latest implemented changes intended for the upcoming release. It is often referred to as the &amp;ldquo;integration branch.&amp;rdquo;</description>
+    </item>
+    <item>
+      <title>Using the issue tracker</title>
+      <link>/docs/contributing/using-the-issue-tracker/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/using-the-issue-tracker/</guid>
+      <description>The issue tracker is the recommended platform for reporting bugs, requesting features, and submitting pull requests. However, please adhere to the following guidelines:&#xA;Avoid using the issue tracker for personal support inquiries. Instead, consider contacting us. Stay on topic and maintain a respectful tone in discussions. Refrain from derailing or trolling issues, and respect differing viewpoints. </description>
+    </item>
+    <item>
+      <title>Bug reports</title>
+      <link>/docs/contributing/bug-report/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/bug-report/</guid>
+      <description>A bug is a clear and reproducible issue caused by the code in the repository. Providing detailed and well-structured bug reports is greatly appreciated—thank you for your help!&#xA;Guidelines for Bug Reports: Search for Existing Issues: Use the GitHub issue search to check if the problem has already been reported. Verify the Fix: Ensure the issue hasn’t already been resolved by testing it on the latest develop branch. Isolate the Problem: Try to narrow down the issue and, if possible, create a minimal test case to demonstrate it.</description>
+    </item>
+    <item>
+      <title>Feature requests</title>
+      <link>/docs/contributing/feature-requests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/feature-requests/</guid>
+      <description>We welcome feature requests! Before submitting your idea, ensure it aligns with the project&amp;rsquo;s scope and objectives. It&amp;rsquo;s your responsibility to present a compelling case to demonstrate the value of the proposed feature. Be sure to include detailed information and relevant context to help the developers understand its benefits.</description>
+    </item>
+    <item>
+      <title>Pull requests</title>
+      <link>/docs/contributing/pull-requests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/pull-requests/</guid>
+      <description>High-quality pull requests—whether they are patches, improvements, or new features—are greatly appreciated. To ensure they are effective, keep them focused on a single purpose and avoid including unrelated changes.&#xA;Before starting work on a significant pull request (e.g., adding new features or refactoring code), it’s a good idea to discuss your plans with the project’s developers. This helps avoid spending time on changes that may not align with the project’s goals or might not be accepted.</description>
+    </item>
+    <item>
+      <title>Development environment</title>
+      <link>/docs/contributing/development-environment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/development-environment/</guid>
+      <description>Ubuntu 24.04 Setup the dependencies: Install necessary dependencies:&#xA;sudo apt-get update &amp;amp;&amp;amp; sudo apt-get --no-install-recommends install -y build-essential curl git python3-dev python3-pip python3-venv # Install Node.js 20 and yarn curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash - sudo apt-get install -y nodejs sudo npm install --global yarn Install your favorite browser.&#xA;Install VS Code.&#xA;Install the following VScode extensions:&#xA;JavaScript Debugger Python ESLint Stylelint Trailing Spaces Code Spell Checker Make sure to use Python 3.</description>
+    </item>
+    <item>
+      <title>Running tests</title>
+      <link>/docs/contributing/running-tests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/docs/contributing/running-tests/</guid>
+      <description>Server unit tests Initial steps&#xA;Install necessary Python dependencies: pip install -r GenFlow/requirements/testing.txt Running tests&#xA;Python tests python manage.py test --settings genflow.settings.testing genflow/apps If you want to get a code coverage report, run the next command:&#xA;coverage run manage.py test --settings genflow.settings.testing genflow/apps Debugging&#xA;Run server: tests debug task in VSCode If you want to debug particular tests then change the configuration of the corresponding task in ./vscode/launch.json, for example: { &amp;#34;name&amp;#34;: &amp;#34;server: tests&amp;#34;, &amp;#34;type&amp;#34;: &amp;#34;python&amp;#34;, &amp;#34;request&amp;#34;: &amp;#34;launch&amp;#34;, &amp;#34;justMyCode&amp;#34;: false, &amp;#34;stopOnEntry&amp;#34;: false, &amp;#34;python&amp;#34;: &amp;#34;${command:python.</description>
+    </item>
+  </channel>
+</rss>
