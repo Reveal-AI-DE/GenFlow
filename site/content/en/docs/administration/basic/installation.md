@@ -1,3 +1,9 @@
++++
+title = 'Installation Guide'
+linkTitle= 'Installation Guide'
+description= 'A GenFlow installation guide for different operating systems.'
+weight= 1
++++
 # Quick installation guide
 
 To start using GenFlow, you first need to install it. This guide provides installation instructions
@@ -59,7 +65,7 @@ guide does not cover proxy setup, as it is an advanced topic.
   ```shell
   mkdir GenFlow
   cd GenFlow
-  curl -o setup.sh https://raw.githubusercontent.com/Reveal-AI-DE/GenFlow/develop/docs/administration/basics/setup.sh
+  curl -o setup.sh https://raw.githubusercontent.com/Reveal-AI-DE/GenFlow/develop/site/content/en/docs/administration/basics/setup.sh
   chmod u+x setup.sh
   ./setup.sh
   ```

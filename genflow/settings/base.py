@@ -406,7 +406,7 @@ SPECTACULAR_SETTINGS = {
     "TOS": "https://www.google.com/policies/terms/",
     "EXTERNAL_DOCS": {
         "description": "GenFlow documentation",
-        "url": "https://genflow.github.io/genflow/docs/",
+        "url": "https://docs.genflow.revealai.de/docs/",
     },
     # OTHER SETTINGS
     # https://drf-spectacular.readthedocs.io/en/latest/settings.html

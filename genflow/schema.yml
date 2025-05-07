@@ -4075,4 +4075,4 @@ components:
       description: Token-based authentication with required prefix "Token"
 externalDocs:
   description: GenFlow documentation
-  url: https://genflow.github.io/genflow/docs/
+  url: https://docs.genflow.revealai.de/docs/

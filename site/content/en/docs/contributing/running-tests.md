@@ -1,5 +1,9 @@
-## Running tests
-
++++
+title = 'Running tests'
+linkTitle= 'Running tests'
+description= 'Instructions on how to run all existence tests.'
+weight= 8
++++
 # Server unit tests
 
 **Initial steps**

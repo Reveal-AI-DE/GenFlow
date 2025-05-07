@@ -1,8 +1,9 @@
-
-# 🛣️ GenFlow Roadmap
-
-This document outlines upcoming features and enhancements planned for GenFlow.
-
++++
+title = 'Roadmap'
+linkTitle= 'Roadmap'
+description= 'This document outlines upcoming features and enhancements planned for GenFlow.'
+weight= 3
++++
 ## Planned Features
 
 - [ ] **Amazon Bedrock Integration**

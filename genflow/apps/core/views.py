@@ -106,7 +106,7 @@ class SystemViewSet(viewsets.ViewSet):
                             <li>🤖 <strong>Create an Assistant</strong> – Build a fully functional GenAI assistant powered by your prompt and knowledge base.</li>
                             <li>📊 <strong>View Usage Analytics</strong> – Monitor assistant activity, prompt performance, and user engagement by clicking on session properties.</li>
                         </ul>
-                        <p>💻 Prefer a self-hosted solution? Follow the <a href="https://github.com/Reveal-AI-DE/GenFlow/blob/develop/docs/administration/basics/installation.md" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Self-hosted Installation Guide</a>.</p>
+                        <p>💻 Prefer a self-hosted solution? Follow the <a href="https://docs.genflow.revealai.de/docs/administration/basic/installation/" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Self-hosted Installation Guide</a>.</p>
                         <p>💼 We also offer <strong>enterprise support</strong> with premium features, training, and dedicated assistance with a 24-hour SLA. <a href="https://revealai.de/contact/" target="_blank" style="color: #007BFF; text-decoration: none;">📩 Contact us</a> to learn more.</p>
                     </div>
                 """,
@@ -121,7 +121,7 @@ class SystemViewSet(viewsets.ViewSet):
                             <li>🤖 <strong>Erstellen eines Assistenten</strong> – Erstellen Sie einen voll funktionsfähigen GenAI-Assistenten, der von Ihrem Prompt und Ihrer Wissensdatenbank unterstützt wird.</li>
                             <li>📊 <strong>Ansicht der Nutzungsanalysen</strong> – Überwachen Sie die Aktivitäten des Assistenten, die Leistung der Prompts und das Benutzerengagement, indem Sie auf Sitzungsdetails klicken.</li>
                         </ul>
-                        <p>💻 Bevorzugen Sie eine selbst gehostete Lösung? Folgen Sie der <a href="https://github.com/Reveal-AI-DE/GenFlow/blob/develop/docs/administration/basics/installation.md" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Anleitung zur Selbstinstallation</a>.</p>
+                        <p>💻 Bevorzugen Sie eine selbst gehostete Lösung? Folgen Sie der <a href="https://docs.genflow.revealai.de/docs/administration/basic/installation/" target="_blank" style="color: #007BFF; text-decoration: none;">📖 Anleitung zur Selbstinstallation</a>.</p>
                         <p>💼 Wir bieten auch <strong>Unterstützung für Unternehmen</strong> mit Premium-Funktionen, Schulungen und dedizierter Unterstützung mit einer SLA von 24 Stunden. <a href="https://revealai.de/contact/" target="_blank" style="color: #007BFF; text-decoration: none;">📩 Kontaktieren Sie uns</a>, um mehr zu erfahren.</p>
                     </div>
                 """,

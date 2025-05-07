@@ -1,5 +1,9 @@
-# Development environment
-
++++
+title = 'Development environment'
+linkTitle= 'Development environment'
+description= 'Installing a development environment for different operating systems.'
+weight= 7
++++
 ## Ubuntu 24.04
 
 ### Setup the dependencies:
@@ -95,3 +99,4 @@
 - Alternative: If you changed GF_UI_HOST just enter `<YOUR_HOST_IP>:3000` in your browser.
 
 You have done! Now it is possible to insert breakpoints and debug server and client of the tool.
+

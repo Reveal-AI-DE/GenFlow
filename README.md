@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/docs/img/demo.gif" alt="GenFlow Platform" width="100%" max-width="800px">
+  <img src="/site/content/en/images/demo.gif" alt="GenFlow Platform" width="100%" max-width="800px">
 </p>
 <p align="center">
   <a href="https://demo.genflow.revealai.de/" target="_blank">
@@ -40,26 +40,26 @@ clicking on session properties.
 Ready to explore GenFlow? Try the [Online Demo](https://demo.genflow.revealai.de/) to see the platform in action
 (you will need an [API key from OpenAI](https://platform.openai.com/api-keys)).
 
-Prefer a self-hosted solution? Follow the [Self-hosted Installation Guide](docs/administration/basics/installation.md).
+Prefer a self-hosted solution? Follow the [Self-hosted Installation Guide](https://docs.genflow.revealai.de/docs/administration/basic/installation/).
 We also offer enterprise support with premium features, training, and dedicated assistance with a 24-hour SLA.
 [Contact us](#contact-) to learn more.
 
 ## Quick Start ⚡
 
-- [Installation guide](/docs/administration/basics/installation.md)
-- [Contributing](/docs/contributing/contributing.md)
-- [Server API](/docs/documentation.md#api-reference)
+- [Installation guide](https://docs.genflow.revealai.de/docs/administration/basic/installation/)
+- [Contributing](https://docs.genflow.revealai.de/docs/contributing/)
+- [Server API](https://docs.genflow.revealai.de/docs/api/)
 - [AWS Deployment Guide](#)
 - [Frequently asked questions](#)
 - [Where to ask questions](#)
 
 ## Documentation 📖
 
-Comprehensive documentation is available at [GenFlow Documentation](docs/documentation.md)
+Comprehensive documentation is available at [GenFlow Documentation](https://docs.genflow.revealai.de/docs/)
 
 ## Roadmap 🛣️
 
-Here are the planned enhancements and upcoming features for [GenFlow Roadmap](docs/roadmap.md)
+Here are the planned enhancements and upcoming features for [GenFlow Roadmap](https://docs.genflow.revealai.de/docs/roadmap/)
 #### Currently in development:
 
 - [ ] **Amazon Bedrock Integration**
@@ -75,7 +75,7 @@ Here are the planned enhancements and upcoming features for [GenFlow Roadmap](do
 
 ## Contributing 🤝
 
-We welcome contributions! Please see [GenFlow Contributing Guide](docs/contributing/contributing.md) for guidelines.
+We welcome contributions! Please see [GenFlow Contributing Guide](https://docs.genflow.revealai.de/docs/contributing/) for guidelines.
 
 ## License 📄
 

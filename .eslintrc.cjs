@@ -23,7 +23,8 @@ module.exports = {
         'keys/',
         'logs/',
         'statics/',
-        'templates/'
+        'templates/',
+        'site/themes/**'
     ],
     plugins: ['@typescript-eslint', 'security', 'no-unsanitized', 'import'],
     extends: [
