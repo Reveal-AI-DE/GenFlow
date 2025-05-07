@@ -41,7 +41,7 @@ jobs:
       - name: Build docs
         run: |
           pip install -r site/requirements.txt
-          PATH="$PWD/hugo:$PATH" python site/build_docs.py
+          PATH="$PWD/hugo:$PATH" python site/build.py
         env:
           HUGO_ENV: production
 
