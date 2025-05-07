@@ -1,8 +1,7 @@
 +++
 title= 'About'
 linkTitle= 'About'
-[menu.main]
-    weight= 2
+menu= { main= { weight= 2 } }
 +++
 
 {{< blocks/cover title="About Us" height="sm" color="primary" >}}

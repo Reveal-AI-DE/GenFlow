@@ -11,6 +11,7 @@ from typing import Optional
 
 import git
 
+
 def generate_site(repo: git.Repo, output_dir: os.PathLike):
     repo_root = Path(repo.working_tree_dir)
 
@@ -51,6 +52,7 @@ def generate_site(repo: git.Repo, output_dir: os.PathLike):
         shutil.copytree(repo_root, temp_repo_path, symlinks=True)
         temp_repo = git.Repo(temp_repo_path)
         temp_repo.git.reset(hard=True, recurse_submodules=True)
+
 
 def validate_env():
     try:

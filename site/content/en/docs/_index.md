@@ -3,8 +3,7 @@ title= 'Documentation'
 linkTitle= 'Documentation'
 description= 'Welcome to the GenFlow documentation guide.'
 no_list= true
-[menu.main]
-    weight= 1
+menu= { main= { weight= 1 } }
 +++
 ## Overview
 

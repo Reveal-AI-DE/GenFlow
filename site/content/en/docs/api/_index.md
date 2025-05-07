@@ -6,7 +6,8 @@ weight= 2
 +++
 ## Overview
 
-GenFlow server provides HTTP REST API for interaction. Each client application - be it a command line tool, browser or a script - all interact with GenFlow via HTTP requests and responses.
+GenFlow server provides HTTP REST API for interaction. Each client application -
+be it a command line tool, browser or a script - all interact with GenFlow via HTTP requests and responses.
 
 ## API documentation
 
