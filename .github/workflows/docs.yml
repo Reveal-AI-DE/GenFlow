@@ -4,7 +4,6 @@ on:
     branches:
       - 'master'
       - 'develop'
-      - 'Docs'
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -46,7 +45,7 @@ jobs:
           HUGO_ENV: production
 
       - name: Deploy
-        if: github.ref == 'refs/heads/Docs'
+        if: github.ref == 'refs/heads/develop'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
