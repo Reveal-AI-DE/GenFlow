@@ -5,7 +5,10 @@
 import React, { FC, useState } from 'react';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import { useFormContext, FieldValues } from 'react-hook-form';
-import { useTranslate, useNotify, useLogout } from 'react-admin';
+import {
+    useTranslate, useNotify,
+    useLogout, HttpError,
+} from 'react-admin';
 
 import { ChangePasswordFormData } from '@/types';
 import {
@@ -23,7 +26,7 @@ const ChangePasswordDialogActions: FC<ChangePasswordDialogActionsProps> = ({
     onClose,
 }) => {
     const [loading, setLoading] = useState(false);
-    const { handleSubmit, reset } = useFormContext();
+    const { handleSubmit, reset, setError } = useFormContext();
     const translate = useTranslate();
     const notify = useNotify();
     const logout = useLogout();
@@ -37,8 +40,20 @@ const ChangePasswordDialogActions: FC<ChangePasswordDialogActionsProps> = ({
             notify('message.change_password_success', { type: 'success' });
             logout();
         } catch (error) {
-            console.error(error);
-            notify('ra.notification.http_error', { type: 'error' });
+            const { message, body } = error as HttpError;
+            // Notify the general error message
+            notify(message, { type: 'error' });
+            // Set field-specific errors if they exist in the JSON response
+            if (body) {
+                Object.entries(body).forEach(([field, errors]) => {
+                    if (Array.isArray(errors)) {
+                        setError(field, {
+                            type: 'manual',
+                            message: errors.join(', '),
+                        });
+                    }
+                });
+            }
         } finally {
             setLoading(false);
         }
