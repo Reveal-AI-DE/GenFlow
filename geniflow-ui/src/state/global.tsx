@@ -164,7 +164,7 @@ export const GlobalState: FC<GlobalStateProps> = ({
         }
         const img = new Image();
         // eslint-disable-next-line max-len
-        img.src = `https://mwopc2qsfd.execute-api.eu-central-1.amazonaws.com/default/geniflow-telemetry?domain=${window.location.hostname}`;
+        img.src = `https://mwopc2qsfd.execute-api.eu-central-1.amazonaws.com/default/genflow-telemetry?domain=${window.location.hostname}`;
     }, [disableTelemetry]);
 
     const contextValue = useMemo(() => ({
