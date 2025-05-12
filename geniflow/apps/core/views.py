@@ -237,7 +237,7 @@ class ProviderViewSet(
             ).values()
         except Exception as e:
             slogger.glob.error(f"Error while retrieving AI provider configurations: {str(e)}")
-            return Response("Something went wrong!", status=500)
+            return Response("Something went wrong!", status=400)
 
         serializer = AIProviderConfigurationSerializer(provider_configurations, many=True)
         return Response({"results": serializer.data, "count": len(serializer.data)})
@@ -343,7 +343,7 @@ class AIModelViewSet(
             )
         except Exception as e:
             slogger.glob.error(f"Error while retrieving AI models: {str(e)}")
-            return Response("Something went wrong!", status=500)
+            return Response("Something went wrong!", status=400)
 
         serializer = ModelWithProviderEntitySerializer(models, many=True)
         return Response({"results": serializer.data, "count": len(serializer.data)})
