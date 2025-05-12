@@ -5,7 +5,7 @@
 from typing import Generator, Optional, Union, cast
 
 import tiktoken
-from openai import Stream
+from openai import Stream, OpenAIError
 from openai.types import Completion
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 
@@ -60,9 +60,9 @@ class OpenAILargeLanguageModel(LLMModelCollection):
                     max_tokens=20,
                     stream=False,
                 )
-        except Exception as ex:
-            slogger.glob.error("Error validating credentials for model {model}: {ex}")
-            raise ex
+        except OpenAIError as ex:
+            slogger.glob.error(f"Error validating credentials for model {model}: {ex}")
+            raise Exception(ex.body["message"])
 
     def get_tokens_count(
         self,
@@ -173,42 +173,46 @@ class OpenAILargeLanguageModel(LLMModelCollection):
         Calls the model with the given parameters and messages.
         """
 
-        # init model client
-        client = OpenAIClient(credentials=credentials)
+        try:
+            # init model client
+            client = OpenAIClient(credentials=credentials)
 
-        extra_model_kwargs = {}
-        if stop:
-            extra_model_kwargs["stop"] = stop
+            extra_model_kwargs = {}
+            if stop:
+                extra_model_kwargs["stop"] = stop
 
-        if user:
-            extra_model_kwargs["user"] = user
+            if user:
+                extra_model_kwargs["user"] = user
 
-        if stream:
-            extra_model_kwargs["stream_options"] = {"include_usage": True}
-        # get model mode
-        model_mode = self.get_model_mode(model=model)
+            if stream:
+                extra_model_kwargs["stream_options"] = {"include_usage": True}
+            # get model mode
+            model_mode = self.get_model_mode(model=model)
 
-        if model_mode == LLMMode.CHAT:
-            # chat model
-            return self._chat_completions(
-                model=model,
-                client=client,
-                messages=messages,
-                parameters=parameters,
-                extra_model_kwargs=extra_model_kwargs,
-                stop=stop,
-                stream=stream,
-            )
-        else:
-            # text completion model
-            return self._completions(
-                model=model,
-                client=client,
-                messages=messages,
-                parameters=parameters,
-                extra_model_kwargs=extra_model_kwargs,
-                stream=stream,
-            )
+            if model_mode == LLMMode.CHAT:
+                # chat model
+                return self._chat_completions(
+                    model=model,
+                    client=client,
+                    messages=messages,
+                    parameters=parameters,
+                    extra_model_kwargs=extra_model_kwargs,
+                    stop=stop,
+                    stream=stream,
+                )
+            else:
+                # text completion model
+                return self._completions(
+                    model=model,
+                    client=client,
+                    messages=messages,
+                    parameters=parameters,
+                    extra_model_kwargs=extra_model_kwargs,
+                    stream=stream,
+                )
+        except OpenAIError as ex:
+            slogger.glob.error(f"Error calling model {model}: {ex}")
+            raise Exception(ex.body["message"])
 
     # pylint: disable=too-many-positional-arguments
     def _chat_completions(

@@ -5,7 +5,7 @@
 import React, { FC } from 'react';
 import {
     useRecordContext, SaveButton,
-    DeleteWithConfirmButton, useNotify, useRefresh,
+    DeleteWithConfirmButton, useRefresh,
 } from 'react-admin';
 import { useFormContext } from 'react-hook-form';
 
@@ -21,7 +21,6 @@ const ProviderSetupActions: FC<ProviderSetupActionsProps> = ({
 }) => {
     const record = useRecordContext<Provider>();
     const { reset } = useFormContext();
-    const notify = useNotify();
     const refresh = useRefresh();
 
     const renderDisableButton = (provider: Provider): JSX.Element | null => {
@@ -34,13 +33,11 @@ const ProviderSetupActions: FC<ProviderSetupActionsProps> = ({
                             refresh();
                             onClose();
                         },
-                        onError: (error) => {
-                            notify((error as Error).toString(), { type: 'error' });
-                        }
                     }}
                     confirmTitle='message.delete_dialog.disable_title'
                     confirmContent='message.delete_dialog.disable_content'
-                    translateOptions={{ resource: 'provider' }}
+                    titleTranslateOptions={{ resource: 'provider' }}
+                    contentTranslateOptions={{ resource: 'provider' }}
                     redirect={false}
                 />
             );
@@ -66,10 +63,6 @@ const ProviderSetupActions: FC<ProviderSetupActionsProps> = ({
                         reset();
                         onClose();
                     },
-                    onError: (error) => {
-                        notify((error as Error).toString(), { type: 'error' });
-                        reset();
-                    }
                 }}
             />
         </>

@@ -147,6 +147,8 @@ REST_FRAMEWORK = {
     },
     "DEFAULT_METADATA_CLASS": "rest_framework.metadata.SimpleMetadata",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "NON_FIELD_ERRORS_KEY": "detail",
+    "EXCEPTION_HANDLER": "genflow.apps.core.exception_handler.custom_exception_handler",
 }
 
 REST_AUTH = {

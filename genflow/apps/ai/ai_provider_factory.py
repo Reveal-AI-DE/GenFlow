@@ -71,9 +71,7 @@ class AIProviderFactory:
         # get the provider extension
         ai_provider_extension = ai_provider_extensions.get(provider_name)
         if not ai_provider_extension:
-            message = f"Invalid AI provider: {provider_name}"
-            slogger.glob.error(message)
-            raise Exception(message)
+            raise ValueError(f"Invalid AI provider: {provider_name}")
 
         # get the provider instance
         ai_provider_instance = ai_provider_extension.ai_provider_instance
@@ -89,7 +87,8 @@ class AIProviderFactory:
         ai_provider_schema = ai_provider_instance.get_schema()
 
         if not ai_provider_schema.credential_form:
-            raise ValueError(f"AI Provider {provider_name} does not have credential_form")
+            slogger.glob.error(f"AI Provider {provider_name} does not have credential_form")
+            raise Exception(f"Invalid AI provider schema")
 
         # validate credential form
         filtered_credentials = ai_provider_schema.validate_credential_form(credentials)

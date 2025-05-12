@@ -226,9 +226,7 @@ class SessionViewSet(viewsets.ModelViewSet, FileManagementMixin):
             # Handle any exceptions that occur during the generation process
             message = ChatResponse(
                 type=ChatResponseType.ERROR,
-                data={
-                    "message": str(e),
-                },
+                data=str(e),
             )
             return Response(
                 message.model_dump(mode="json"),

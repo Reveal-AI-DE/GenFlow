@@ -188,7 +188,6 @@ class LLMModelCollection(ModelCollection):
             # ToDo: support response format
             result = self._call(model, credentials, messages, parameters, stop, stream, user)
         except Exception as e:
-            slogger.glob.error(f"Error calling model {model}: {str(e)}")
             raise e
 
         return result

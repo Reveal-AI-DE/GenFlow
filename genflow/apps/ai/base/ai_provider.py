@@ -54,16 +54,16 @@ class AIProvider(ABC):
             # read provider schema from yaml file
             yaml_data = load_yaml_file(file_path=yaml_path, ignore_error=False)
         except Exception as e:
-            message = f"Error loading provider schema for {provider_name}: {str(e)}"
-            slogger.glob.error(message)
+            message = f"Error loading AI provider schema for {provider_name}."
+            slogger.glob.error(f"{message} {str(e)}")
             raise Exception(message)
 
         try:
             # yaml_data to entity
             schema = AIProviderEntity(**yaml_data)
         except Exception as e:
-            message = f"Invalid provider schema for {provider_name}: {str(e)}"
-            slogger.glob.error(message)
+            message = f"Invalid AI provider schema for {provider_name}."
+            slogger.glob.error(f"{message} {str(e)}")
             raise Exception(message)
 
         # cache schema
