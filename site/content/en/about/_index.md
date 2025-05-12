@@ -4,8 +4,9 @@ linkTitle= 'About'
 menu= { main= { weight= 2 } }
 +++
 
-{{< blocks/cover title="About Us" height="sm" color="primary" >}}
-**GenFlow** is an open-source, low-code GenAI platform that empowers organizations to build and manage Generative
+
+{{< blocks/cover title="About Us" height="sm" color="primary" image_anchor="center" >}}
+**GeniFlow** is an open-source, low-code GenAI platform that empowers organizations to build and manage Generative
 AI assistants that automate routine writing tasks and enhance access to internal knowledge.
 {{< /blocks/cover >}}
 
@@ -13,7 +14,7 @@ AI assistants that automate routine writing tasks and enhance access to internal
 
 <div class="history col-12 mx-auto text-left">
     <p>
-        Designed for flexibility and collaboration, GenFlow enables teams to 🌟:
+        Designed for flexibility and collaboration, GeniFlow enables teams to 🌟:
     </p>
     <ul>
         <li>Create and deploy custom AI assistants tailored to their workflows.</li>

@@ -1,4 +1,4 @@
-<!-- Raise an issue to propose your change (hhttps://github.com/Reveal-AI-DE/GenFlow/issues).
+<!-- Raise an issue to propose your change (hhttps://github.com/Reveal-AI-DE/GeniFlow/issues).
 It helps to avoid duplication of efforts from multiple independent contributors.
 Discuss your ideas with maintainers to be sure that changes will be approved and merged.
 
@@ -28,5 +28,5 @@ If you're unsure about any of these, don't hesitate to ask. We're here to help! 
 ### License
 
 - [ ] I submit _my code changes_ under the same [License](
-  https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md) that covers the project.
+  https://github.com/Reveal-AI-DE/GeniFlow/blob/develop/LICENSE.md) that covers the project.
   Feel free to contact the maintainers if that's a concern.

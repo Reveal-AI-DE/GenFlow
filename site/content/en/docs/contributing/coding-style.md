@@ -1,7 +1,7 @@
 +++
 title = 'Coding Style'
 linkTitle= 'Coding Style'
-description= 'Information about coding style that is used in GenFlow development.'
+description= 'Information about coding style that is used in GeniFlow development.'
 weight= 1
 +++
 We follow the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) for TypeScript code,

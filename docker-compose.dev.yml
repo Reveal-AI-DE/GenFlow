@@ -3,11 +3,11 @@
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 services:
-  genflow_db:
+  geniflow_db:
     ports:
       - '5432:5432'
 
-  genflow_server:
+  geniflow_server:
     build:
       context: .
       args:
@@ -27,7 +27,7 @@ services:
     ports:
       - '9090:9090'
 
-  genflow_ui:
+  geniflow_ui:
     build:
       context: .
       args:

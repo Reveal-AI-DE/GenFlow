@@ -1,11 +1,11 @@
 {
-    "name": "genflow",
+    "name": "geniflow",
     "version": "0.1.0",
     "description": "Eslint && remarklint dependencies",
     "main": ".eslintrc.cjs",
     "private": true,
     "workspaces": [
-        "genflow-ui"
+        "geniflow-ui"
     ],
     "devDependencies": {
         "@babel/cli": "^7.25.6",
@@ -75,28 +75,28 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "coverage": "yarn run instrument && yarn run cp && yarn run rm",
-        "instrument": "nyc instrument genflow-ui genflow-ui_cov",
-        "cp": "cp -r genflow-ui_cov/* genflow-ui",
-        "rm": "rm -rf genflow-ui_cov",
+        "instrument": "nyc instrument geniflow-ui geniflow-ui_cov",
+        "cp": "cp -r geniflow-ui_cov/* geniflow-ui",
+        "rm": "rm -rf geniflow-ui_cov",
         "prepare": "if [ -z \"${DISABLE_HUSKY}\" ]; then yarn run setup:husky; fi && husky install",
         "setup:husky": "npx husky-init && rm -f .husky/pre-commit && echo 'npx lint-staged' > .husky/pre-commit && chmod +x .husky/pre-commit",
-        "precommit:genflow-ui": "cd genflow-ui && eslint --fix",
-        "build:genflow-ui": "yarn workspace genflow-ui run build",
-        "start:genflow-ui": "yarn workspace genflow-ui run start"
+        "precommit:geniflow-ui": "cd geniflow-ui && eslint --fix",
+        "build:geniflow-ui": "yarn workspace geniflow-ui run build",
+        "start:geniflow-ui": "yarn workspace geniflow-ui run start"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Reveal-AI-DE/GenFlow.git"
+        "url": "git+https://github.com/Reveal-AI-DE/GeniFlow.git"
     },
     "author": "Reveal AI",
     "license": "Apache 2.0 License Extended",
-    "licenseUrl": "https://github.com/Reveal-AI-DE/GenFlow/blob/develop/LICENSE.md",
+    "licenseUrl": "https://github.com/Reveal-AI-DE/GeniFlow/blob/develop/LICENSE.md",
     "bugs": {
-        "url": "https://github.com/Reveal-AI-DE/GenFlow/issues"
+        "url": "https://github.com/Reveal-AI-DE/GeniFlow/issues"
     },
     "resolutions": {
         "@types/react": "18.3.5",
         "@types/react-dom": "18.3.0"
     },
-    "homepage": "https://github.com/Reveal-AI-DE/GenFlow#readme"
+    "homepage": "https://github.com/Reveal-AI-DE/GeniFlow#readme"
 }

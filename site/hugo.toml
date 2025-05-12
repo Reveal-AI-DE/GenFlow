@@ -1,6 +1,6 @@
 baseURL = '/'
 languageCode = 'en-us'
-title = 'GenFlow'
+title = 'GeniFlow'
 theme = 'docsy'
 
 # Language settings
@@ -16,11 +16,11 @@ enableMissingTranslationPlaceholders = true
 [[menu.main]]
     name = "Try it now"
     weight = 3
-    url = "https://demo.genflow.revealai.de"
+    url = "https://demo.geniflow.de"
 [[menu.main]]
     name = "GitHub"
     weight = 4
-    url = "https://github.com/Reveal-AI-DE/GenFlow"
+    url = "https://github.com/Reveal-AI-DE/GeniFlow"
     pre = "<i class='fab fa-github'></i>"
 
 # Image processing configuration.

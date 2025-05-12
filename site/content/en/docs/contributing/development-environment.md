@@ -40,17 +40,17 @@ weight= 7
   python3 --version
   ```
 
-- Install GenFlow on your local host:
+- Install GeniFlow on your local host:
 
   ```bash
-  git clone https://github.com/Reveal-AI-DE/GenFlow
-  cd GenFlow && mkdir logs keys
+  git clone https://github.com/Reveal-AI-DE/GeniFlow
+  cd GeniFlow && mkdir logs keys
   python3 -m venv .env
   . .env/bin/activate
-  pip install -r GenFlow/requirements/development.txt -r dev/requirements.txt
+  pip install -r GeniFlow/requirements/development.txt -r dev/requirements.txt
   ```
 
-  Note that the `.txt` files in the `GenFlow/requirements` directory
+  Note that the `.txt` files in the `GeniFlow/requirements` directory
   have pinned dependencies intended for the main target OS/Python version
   (the one used in the main Dockerfile).
   If you're unable to install those dependency versions,
@@ -60,7 +60,7 @@ weight= 7
 
 - Install [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
-- Apply migrations and create a super user for GenFlow:
+- Apply migrations and create a super user for GeniFlow:
 
   ```bash
   python manage.py migrate
@@ -68,31 +68,31 @@ weight= 7
   python manage.py createsuperuser
   ```
 
-- Install npm packages for UI (run the following command from GenFlow root directory):
+- Install npm packages for UI (run the following command from GeniFlow root directory):
 
   ```bash
   yarn --frozen-lockfile
   ```
 
-### Run GenFlow
+### Run GeniFlow
 
-- Start npm UI debug server (run the following command from GenFlow root directory):
-  - If you want to run GenFlow in localhost:
+- Start npm UI debug server (run the following command from GeniFlow root directory):
+  - If you want to run GeniFlow in localhost:
     ```sh
-    yarn run start:genflow-ui
+    yarn run start:geniflow-ui
     ```
-  - If you want to access GenFlow from outside of your host:
+  - If you want to access GeniFlow from outside of your host:
     ```sh
-    GF_UI_HOST='<YOUR_HOST_IP>' GF_UI_PORT='<YOUR_PORT>' yarn run start:genflow-ui
+    GF_UI_HOST='<YOUR_HOST_IP>' GF_UI_PORT='<YOUR_PORT>' yarn run start:geniflow-ui
     ```
 - Open a new terminal window.
-- Run VScode from the virtual environment (run the following command from GenFlow root directory):
+- Run VScode from the virtual environment (run the following command from GeniFlow root directory):
 
   ```sh
   source .env/bin/activate && code
   ```
 
-- Inside VScode, Open GenFlow root dir
+- Inside VScode, Open GeniFlow root dir
 
 - Select `server: debug` configuration and run it (F5) to run REST server and its workers
 - Make sure that `Uncaught Exceptions` option under breakpoints section is unchecked

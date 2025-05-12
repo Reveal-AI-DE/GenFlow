@@ -1,13 +1,14 @@
 +++
 title= 'Documentation'
 linkTitle= 'Documentation'
-description= 'Welcome to the GenFlow documentation guide.'
+description= 'Welcome to the GeniFlow documentation guide.'
 no_list= true
 menu= { main= { weight= 1 } }
 +++
+![GeniFlow](/images/logo.png)
 ## Overview
 
-GenFlow is a low-code platform for building, managing, and deploying Generative AI assistants and prompt workflows.
+GeniFlow is a low-code platform for building, managing, and deploying Generative AI assistants and prompt workflows.
 
 ## Key Concepts
 
@@ -25,7 +26,7 @@ This section contains documents for system administrators.
 {{% blocks/feature icon="fa-terminal" title="[Contributing](/docs/contributing/)" %}}
 This section contains documents for developers.
 {{% /blocks/feature %}}
-{{% blocks/feature icon="fab fa-github" title="[GitHub Repository](https://github.com/Reveal-AI-DE/GenFlow)" %}}
+{{% blocks/feature icon="fab fa-github" title="[GitHub Repository](https://github.com/Reveal-AI-DE/GeniFlow)" %}}
 Computer Vision Annotation Tool GitHub repository.
 {{% /blocks/feature %}}
 {{< /blocks/section >}}

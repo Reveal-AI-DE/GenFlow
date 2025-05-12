@@ -10,7 +10,7 @@
             "directory": "${cwd}",
         },
         {
-            "pattern": "genflow-*"
+            "pattern": "geniflow-*"
         },
         {
             "directory": "tests",
@@ -40,7 +40,7 @@
         "decryptor",
         "encryptor",
         "filterset",
-        "genflow",
+        "geniflow",
         "letsencrypt",
         "OAEP",
         "scriv",

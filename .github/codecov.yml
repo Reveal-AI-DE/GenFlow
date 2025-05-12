@@ -3,14 +3,14 @@ comment:
 
 component_management:
   individual_components:
-    - component_id: genflow-ui
-      name: genflow-ui
+    - component_id: geniflow-ui
+      name: geniflow-ui
       paths:
-        - genflow-ui/**
-    - component_id: genflow-server
-      name: genflow-server
+        - geniflow-ui/**
+    - component_id: geniflow-server
+      name: geniflow-server
       paths:
-        - genflow/**
+        - geniflow/**
 
 codecov:
   require_ci_to_pass: true

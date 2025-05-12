@@ -4,15 +4,15 @@
 
 
 services:
-  genflow_server:
+  geniflow_server:
     labels:
-      traefik.http.routers.genflow.entrypoints: websecure
-      traefik.http.routers.genflow.tls.certresolver: lets-encrypt
+      traefik.http.routers.geniflow.entrypoints: websecure
+      traefik.http.routers.geniflow.tls.certresolver: lets-encrypt
 
-  genflow_ui:
+  geniflow_ui:
     labels:
-      traefik.http.routers.genflow-ui.entrypoints: websecure
-      traefik.http.routers.genflow-ui.tls.certresolver: lets-encrypt
+      traefik.http.routers.geniflow-ui.entrypoints: websecure
+      traefik.http.routers.geniflow-ui.tls.certresolver: lets-encrypt
 
   traefik:
     environment:
@@ -27,7 +27,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - genflow_letsencrypt:/letsencrypt
+      - geniflow_letsencrypt:/letsencrypt
 
 volumes:
-  genflow_letsencrypt:
+  geniflow_letsencrypt:

@@ -20,7 +20,7 @@ jobs:
       - uses: actions/cache@v3
         id: server-cache-action
         with:
-          path: /tmp/genflow_cache_server
+          path: /tmp/geniflow_cache_server
           key: ${{ runner.os }}-build-server-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-server-${{ needs.get-sha.outputs.sha }}
@@ -29,7 +29,7 @@ jobs:
       - uses: actions/cache@v4
         id: ui-cache-action
         with:
-          path: /tmp/genflow_cache_ui
+          path: /tmp/geniflow_cache_ui
           key: ${{ runner.os }}-build-ui-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-ui-${{ needs.get-sha.outputs.sha }}
@@ -43,21 +43,21 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          cache-from: type=local,src=/tmp/genflow_cache_server
-          cache-to: type=local,dest=/tmp/genflow_cache_server-new
+          cache-from: type=local,src=/tmp/geniflow_cache_server
+          cache-to: type=local,dest=/tmp/geniflow_cache_server-new
 
       - name: Caching GF UI
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile.ui
-          cache-from: type=local,src=/tmp/genflow_cache_ui
-          cache-to: type=local,dest=/tmp/genflow_cache_ui-new
+          cache-from: type=local,src=/tmp/geniflow_cache_ui
+          cache-to: type=local,dest=/tmp/geniflow_cache_ui-new
 
       - name: Moving cache
         run: |
-          rm -rf /tmp/genflow_cache_server
-          mv /tmp/genflow_cache_server-new /tmp/genflow_cache_server
+          rm -rf /tmp/geniflow_cache_server
+          mv /tmp/geniflow_cache_server-new /tmp/geniflow_cache_server
 
-          rm -rf /tmp/genflow_cache_ui
-          mv /tmp/genflow_cache_ui-new /tmp/genflow_cache_ui
+          rm -rf /tmp/geniflow_cache_ui
+          mv /tmp/geniflow_cache_ui-new /tmp/geniflow_cache_ui

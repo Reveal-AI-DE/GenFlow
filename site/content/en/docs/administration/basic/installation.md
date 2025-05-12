@@ -1,12 +1,12 @@
 +++
 title = 'Installation Guide'
 linkTitle= 'Installation Guide'
-description= 'A GenFlow installation guide for different operating systems.'
+description= 'A GeniFlow installation guide for different operating systems.'
 weight= 1
 +++
 # Quick installation guide
 
-To start using GenFlow, you first need to install it. This guide provides installation instructions
+To start using GeniFlow, you first need to install it. This guide provides installation instructions
 for the most commonly used operating systems.
 If your operating system is not listed, you should be able to adapt the steps provided to suit your system.
 
@@ -54,7 +54,7 @@ guide does not cover proxy setup, as it is an advanced topic.
 
   You should see a message confirming that Docker is installed and running correctly.
 
-- To access GenFlow over a network or through a different system, export `GF_HOST` environment variable
+- To access GeniFlow over a network or through a different system, export `GF_HOST` environment variable
 
   ```shell
   export GF_HOST=FQDN_or_YOUR-IP-ADDRESS
@@ -63,9 +63,9 @@ guide does not cover proxy setup, as it is an advanced topic.
 - Create new folder in your home directory, and create new file with the installation commands:
 
   ```shell
-  mkdir GenFlow
-  cd GenFlow
-  curl -o setup.sh https://raw.githubusercontent.com/Reveal-AI-DE/GenFlow/develop/site/content/en/docs/administration/basics/setup.sh
+  mkdir GeniFlow
+  cd GeniFlow
+  curl -o setup.sh https://raw.githubusercontent.com/Reveal-AI-DE/GeniFlow/develop/site/content/en/docs/administration/basic/setup.sh
   chmod u+x setup.sh
   ./setup.sh
   ```
@@ -73,13 +73,13 @@ guide does not cover proxy setup, as it is an advanced topic.
 - Create a super user to use the admin panel:
 
   ```shell
-  docker exec -it genflow_server bash -ic 'python3 ~/manage.py createsuperuser'
+  docker exec -it geniflow_server bash -ic 'python3 ~/manage.py createsuperuser'
   ```
 
   Choose a username and a password for your admin account. For more information
   please read [Django documentation](https://docs.djangoproject.com/en/2.2/ref/django-admin/#createsuperuser).
 
 - Open your browser and go to [localhost:8080](http://localhost:8080). Now you should be able to
-register new users and login to GenFlow.
+register new users and login to GeniFlow.
 
 - To access the admin panel go to [Admin Panel](http://localhost:8080/admin)
