@@ -47,6 +47,24 @@ const BW_SIDEBAR_OVERRIDE = {
     },
 };
 
+const TABS_OVERRIDE = {
+    styleOverrides: {
+        root: {
+            height: 'auto',
+        },
+    },
+};
+
+const HOUSE_TAB_OVERRIDE = {
+    styleOverrides: {
+        root: {
+            '&.Mui-selected, &.Mui-selected:hover': {
+                color: 'inherit',
+            }
+        },
+    },
+};
+
 export const themes: Theme[] = [
     { name: 'soft', light: softLightTheme, dark: softDarkTheme },
     { name: 'default', light: defaultLightTheme, dark: defaultDarkTheme },
@@ -57,6 +75,7 @@ export const themes: Theme[] = [
             components: {
                 ...bwLightTheme.components,
                 RaSidebar: BW_SIDEBAR_OVERRIDE,
+                MuiTabs: TABS_OVERRIDE,
             },
         },
         dark: {
@@ -64,11 +83,29 @@ export const themes: Theme[] = [
             components: {
                 ...bwDarkTheme.components,
                 RaSidebar: BW_SIDEBAR_OVERRIDE,
+                MuiTabs: TABS_OVERRIDE,
             },
         },
     },
     { name: 'nano', light: nanoLightTheme, dark: nanoDarkTheme },
     { name: 'radiant', light: radiantLightTheme, dark: radiantDarkTheme },
-    { name: 'house', light: houseLightTheme, dark: houseDarkTheme },
+    {
+        name: 'house',
+        light: {
+            ...houseLightTheme,
+            components: {
+                ...houseLightTheme.components,
+                MuiTab: HOUSE_TAB_OVERRIDE,
+                MuiTabs: TABS_OVERRIDE,
+            },
+        },
+        dark: {
+            ...houseDarkTheme,
+            components: {
+                ...houseDarkTheme.components,
+                MuiTabs: TABS_OVERRIDE,
+            },
+        },
+    },
     { name: 'chiptune', light: chiptuneTheme },
 ];
