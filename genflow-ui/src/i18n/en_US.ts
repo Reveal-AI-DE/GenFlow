@@ -269,7 +269,6 @@ const enUS: TranslationMessages = {
         google_login: 'Login with Google',
         use_prompt: 'Use Prompt',
         change_password: 'Change Password',
-        upload_avatar: 'Upload Avatar',
         crop: 'Crop',
         password_reset_request: 'Request Password Reset',
         password_reset: 'Reset Password',

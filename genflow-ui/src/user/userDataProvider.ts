@@ -69,4 +69,11 @@ export default <UserDataProvider> {
         }
         return false;
     },
+    remove_avatar: async (resource: string, params: any) => {
+        const url = ResourceURL(`/${resource}/${params.id}/remove_avatar`);
+        await fetchJsonWithAuthToken(url, {
+            method: 'DELETE',
+            body: JSON.stringify(params),
+        });
+    },
 };

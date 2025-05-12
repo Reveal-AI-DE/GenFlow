@@ -2566,6 +2566,27 @@ paths:
       responses:
         '204':
           description: The team has been deleted
+  /api/users/{id}/remove_avatar:
+    delete:
+      operationId: users_remove_avatar_destroy
+      description: Remove the user's avatar image
+      summary: Remove user avatar
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: Avatar removed successfully
   /api/users/{id}/upload_avatar:
     post:
       operationId: users_upload_avatar_create

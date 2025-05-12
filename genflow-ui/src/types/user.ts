@@ -3,7 +3,10 @@
 // Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 import { FieldValues } from 'react-hook-form';
-import { DataProvider, UserIdentity } from 'react-admin';
+import {
+    DataProvider, UserIdentity,
+    DeleteParams, RaRecord,
+} from 'react-admin';
 
 export interface Identity extends UserIdentity {
     first_name: string;
@@ -13,6 +16,7 @@ export interface Identity extends UserIdentity {
 };
 
 export interface UserDataProvider extends DataProvider {
+    remove_avatar: (resource: string, params: DeleteParams<RaRecord>) => Promise<void>;
     check: () => Promise<boolean>;
 };
 

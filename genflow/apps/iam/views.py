@@ -54,6 +54,13 @@ from genflow.apps.iam import serializers
             "200": OpenApiResponse(description="Avatar uploaded successfully"),
         },
     ),
+    remove_avatar=extend_schema(
+        summary="Remove user avatar",
+        description="Remove the user's avatar image",
+        responses={
+            "204": OpenApiResponse(description="Avatar removed successfully"),
+        },
+    ),
     check=extend_schema(
         summary="Check user",
         description="Check if a user exists by username",
@@ -118,6 +125,18 @@ class UserViewSet(viewsets.GenericViewSet):
         full_path = osp.join(settings.USERS_MEDIA_ROOT, str(user.id), "avatar.png")
         rel_path = osp.relpath(full_path, settings.BASE_DIR)
         fs.save(rel_path, uploaded_file)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["delete"])
+    def remove_avatar(self, request, pk=None):
+        """
+        A custom action to remove user's avatar.
+        """
+
+        user = self.get_object()
+        full_path = osp.join(settings.USERS_MEDIA_ROOT, str(user.id), "avatar.png")
+        if osp.exists(full_path):
+            fs.delete(full_path)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["POST"], serializer_class=serializers.UserCheckSerializer)

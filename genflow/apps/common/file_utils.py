@@ -106,5 +106,5 @@ def check_avatar(file) -> str:
         return f"File size exceeds the limit of {settings.GF_LIMITS['MAX_AVATAR_SIZE']} MB."
     # check type
     if file.content_type not in settings.GF_LIMITS["AVATAR_SUPPORTED_TYPES"]:
-        return "Unsupported file type."
+        return f"Unsupported file type '{file.content_type}'."
     return None

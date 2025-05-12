@@ -306,7 +306,6 @@ const deDE: TranslationMessages = {
         google_login: 'Mit Google anmelden',
         use_prompt: 'Prompt verwenden',
         change_password: 'Passwort ändern',
-        upload_avatar: 'Avatar hochladen',
         crop: 'Zuschneiden',
         password_reset_request: 'Passwort-Zurücksetzung anfordern',
         password_reset: 'Passwort zurücksetzen',

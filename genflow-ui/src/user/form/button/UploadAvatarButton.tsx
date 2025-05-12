@@ -7,21 +7,27 @@ import React, {
     useRef, SyntheticEvent, useState,
 } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveIcon from '@mui/icons-material/Remove';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
-import { useTranslate,useGetIdentity, useRefresh } from 'react-admin';
+import {
+    useTranslate,useGetIdentity, HttpError,
+    useRefresh, useNotify,
+} from 'react-admin';
 import Uploady, {
     useUploadyContext, UploadOptions, useItemFinishListener,
     useBatchAddListener, Batch, useRequestPreSend, BatchItem,
+    useItemErrorListener,
 } from '@rpldy/uploady';
 
 import { TransformedFile } from '@/types';
 import { WithTooltip, CropDialog } from '@/common';
 import { createUploadyDestination } from '@/utils';
+import { userDataProvider } from '@/user';
 
 interface UploadAvatarButtonControllerProps {
     icon: ReactNode;
-}
+};
 
 const UploadAvatarButtonController: FC<UploadAvatarButtonControllerProps> = ({
     icon,
@@ -31,6 +37,7 @@ const UploadAvatarButtonController: FC<UploadAvatarButtonControllerProps> = ({
     const [ready, setReady] = useState<boolean>(false);
     const translate = useTranslate();
     const refresh = useRefresh();
+    const notify = useNotify();
 
     const { showFileUpload, processPending } = useUploadyContext();
     // using ref so onButtonClick can stay memoized
@@ -40,7 +47,7 @@ const UploadAvatarButtonController: FC<UploadAvatarButtonControllerProps> = ({
         clearPendingOnAdd: true,
     };
 
-    const handleClick = useCallback((e: SyntheticEvent<HTMLElement>) => {
+    const handleUpload = useCallback((e: SyntheticEvent<HTMLElement>) => {
         e.stopPropagation();
         showFileUpload(uploadOptionsRef.current);
     }, [showFileUpload, uploadOptionsRef]);
@@ -64,11 +71,19 @@ const UploadAvatarButtonController: FC<UploadAvatarButtonControllerProps> = ({
         ] : items,
     }));
 
-    useItemFinishListener((it: BatchItem) => {
-        if (it.uploadStatus === 200) {
-            localStorage.removeItem('RaStoreGenFlow.identity');
-            refresh();
-        }
+    useItemFinishListener(() => {
+        localStorage.removeItem('RaStoreGenFlow.identity');
+        refresh();
+    });
+
+    useItemErrorListener((it: BatchItem) => {
+        const { data } = it.uploadResponse;
+        notify(
+            data.message || 'ra.notification.http_error',
+            {
+                type: 'error',
+            }
+        );
     });
 
     useEffect(() => {
@@ -86,15 +101,15 @@ const UploadAvatarButtonController: FC<UploadAvatarButtonControllerProps> = ({
     return (
         <>
             <WithTooltip
-                title={translate('action.upload_avatar')}
+                title={translate('action.upload')}
                 trigger={(
                     <span>
                         <IconButton
                             edge='start'
-                            aria-label={translate('action.upload_avatar')}
+                            aria-label={translate('action.upload')}
                             size='medium'
                             color='primary'
-                            onClick={handleClick}
+                            onClick={handleUpload}
                         >
                             {icon}
                         </IconButton>
@@ -115,6 +130,9 @@ type UploadAvatarButtonProps = object;
 
 const UploadAvatarButton: FC<UploadAvatarButtonProps> = () => {
     const { data: currentUser } = useGetIdentity();
+    const translate = useTranslate();
+    const refresh = useRefresh();
+    const notify = useNotify();
 
     if (!currentUser) {
         return null;
@@ -128,6 +146,23 @@ const UploadAvatarButton: FC<UploadAvatarButtonProps> = () => {
         <AddCircleOutlineIcon />
     );
 
+    const handleRemove = (e: SyntheticEvent<HTMLElement>): void => {
+        e.stopPropagation();
+        userDataProvider.remove_avatar('users', { id: currentUser.id })
+            .then(() => {
+                localStorage.removeItem('RaStoreGenFlow.identity');
+                refresh();
+            })
+            .catch((error: HttpError) => {
+                notify(
+                    error.message || 'ra.notification.http_error',
+                    {
+                        type: 'error',
+                    }
+                );
+            });
+    };
+
     return (
         <Uploady
             multiple={false}
@@ -139,6 +174,26 @@ const UploadAvatarButton: FC<UploadAvatarButtonProps> = () => {
             <UploadAvatarButtonController
                 icon={icon}
             />
+            {
+                currentUser.avatar && (
+                    <WithTooltip
+                        title={translate('ra.action.remove')}
+                        trigger={(
+                            <span>
+                                <IconButton
+                                    edge='start'
+                                    aria-label={translate('ra.action.remove')}
+                                    size='medium'
+                                    color='error'
+                                    onClick={handleRemove}
+                                >
+                                    <RemoveIcon />
+                                </IconButton>
+                            </span>
+                        )}
+                    />
+                )
+            }
         </Uploady>
     )
 };
