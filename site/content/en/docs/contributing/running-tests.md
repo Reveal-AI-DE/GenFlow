@@ -9,18 +9,18 @@ weight= 8
 **Initial steps**
 1. Install necessary Python dependencies:
    ```
-   pip install -r GenFlow/requirements/testing.txt
+   pip install -r GeniFlow/requirements/testing.txt
    ```
 
 **Running tests**
 1. Python tests
    ```
-   python manage.py test --settings genflow.settings.testing genflow/apps
+   python manage.py test --settings geniflow.settings.testing geniflow/apps
    ```
 
 If you want to get a code coverage report, run the next command:
    ```
-   coverage run manage.py test --settings genflow.settings.testing genflow/apps
+   coverage run manage.py test --settings geniflow.settings.testing geniflow/apps
    ```
 
 **Debugging**
@@ -39,8 +39,8 @@ of the corresponding task in `./vscode/launch.json`, for example:
        "args": [
            "test",
            "--settings",
-           "genflow.settings.testing",
-           "genflow/apps/core",
+           "geniflow.settings.testing",
+           "geniflow/apps/core",
        ],
        "django": true,
        "cwd": "${workspaceFolder}",

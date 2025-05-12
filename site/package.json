@@ -1,5 +1,5 @@
 {
-  "name": "genflow-docs",
+  "name": "geniflow-docs",
   "version": "0.0.1",
   "description": "Hugo dependencies that should be installed separately",
   "main": "none.js",
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Reveal-AI-DE/GenFlow.git"
+    "url": "git+https://github.com/Reveal-AI-DE/GeniFlow.git"
   },
   "author": "Reveal AI",
   "license": "Apache 2.0 License Extended",
   "bugs": {
-    "url": "https://github.com/Reveal-AI-DE/GenFlow/issues"
+    "url": "https://github.com/Reveal-AI-DE/GeniFlow/issues"
   },
-  "homepage": "https://github.com/Reveal-AI-DE/GenFlow#readme"
+  "homepage": "https://github.com/Reveal-AI-DE/GeniFlow#readme"
 }

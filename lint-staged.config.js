@@ -16,12 +16,12 @@ module.exports = (stagedFiles) => {
     const eslintFiles = micromatch(stagedFiles, eslintExtensions);
     const scssFiles = micromatch(stagedFiles, scssExtensions);
 
-    const genFowUI = containsInPath('/genflow-ui/', eslintFiles);
+    const genFowUI = containsInPath('/geniflow-ui/', eslintFiles);
 
     const mapping = {};
     const commands = [];
     mapping['npx stylelint --fix '] = scssFiles.join(' ');
-    mapping['yarn run precommit:genflow-ui '] = genFowUI.join(' ');
+    mapping['yarn run precommit:geniflow-ui '] = genFowUI.join(' ');
 
     for (const command of Object.keys(mapping)) {
         const files = mapping[command];

@@ -39,13 +39,13 @@ jobs:
           ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAMESPACE}"
 
           # SERVER IMAGE
-          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
-          docker tag "genflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
+          docker tag "geniflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "geniflow/server:latest" "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
           docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:${IMAGE_TAG}"
           docker push "${ECR_URI}/${SERVER_IMAGE_REPO}:latest"
 
           # UI IMAGE
-          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
-          docker tag "genflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:latest"
+          docker tag "geniflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
+          docker tag "geniflow/ui:latest" "${ECR_URI}/${UI_IMAGE_REPO}:latest"
           docker push "${ECR_URI}/${UI_IMAGE_REPO}:${IMAGE_TAG}"
           docker push "${ECR_URI}/${UI_IMAGE_REPO}:latest"

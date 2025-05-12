@@ -1,7 +1,7 @@
 +++
 title = 'Roadmap'
 linkTitle= 'Roadmap'
-description= 'This document outlines upcoming features and enhancements planned for GenFlow.'
+description= 'This document outlines upcoming features and enhancements planned for GeniFlow.'
 weight= 3
 +++
 ## Planned Features

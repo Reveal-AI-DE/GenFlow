@@ -3,14 +3,14 @@
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
 services:
-  genflow_ci:
-    image: genflow_ci
+  geniflow_ci:
+    image: geniflow_ci
     network_mode: host
     build:
       context: .
       dockerfile: Dockerfile.ci
     depends_on:
-      - genflow_server
+      - geniflow_server
     environment:
       CONTAINER_COVERAGE_DATA_DIR:
       GITHUB_ACTIONS:

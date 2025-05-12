@@ -1,11 +1,11 @@
 
-# 📖 GenFlow Documentation
+# 📖 GeniFlow Documentation
 
-Welcome to the GenFlow documentation guide.
+Welcome to the GeniFlow documentation guide.
 
 ## Overview
 
-GenFlow is a low-code platform for building, managing, and deploying Generative AI assistants and prompt workflows.
+GeniFlow is a low-code platform for building, managing, and deploying Generative AI assistants and prompt workflows.
 
 ## Key Concepts
 
@@ -36,4 +36,4 @@ Full API documentation can be found [here](#).
 
 For help, please contact [info@revealai.de](mailto:info@revealai.de)
 
-Happy building with GenFlow!
+Happy building with GeniFlow!

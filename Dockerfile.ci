@@ -2,9 +2,9 @@
 #
 # Licensed under the Apache License, Version 2.0 with Additional Commercial Terms.
 
-FROM genflow/server:local
+FROM geniflow/server:local
 
-ENV DJANGO_SETTINGS_MODULE=genflow.settings.testing
+ENV DJANGO_SETTINGS_MODULE=geniflow.settings.testing
 USER root
 
 RUN apt-get update && \
@@ -14,10 +14,10 @@ RUN apt-get update && \
         && \
     rm -rf /var/lib/apt/lists/*;
 
-COPY genflow/requirements/ /tmp/genflow/requirements/
+COPY geniflow/requirements/ /tmp/geniflow/requirements/
 
 RUN python3 -m ensurepip
-RUN python3 -m pip install --no-cache-dir -r /tmp/genflow/requirements/testing.txt
+RUN python3 -m pip install --no-cache-dir -r /tmp/geniflow/requirements/testing.txt
 
 COPY .coveragerc .
 

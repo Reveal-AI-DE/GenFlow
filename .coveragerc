@@ -2,10 +2,10 @@
 branch = true
 
 source =
-    genflow/apps/
+    geniflow/apps/
 
 omit =
-    genflow/settings/*
+    geniflow/settings/*
     */tests/*
     */test_*
     */_test_*
