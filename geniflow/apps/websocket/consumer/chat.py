@@ -12,7 +12,10 @@ from geniflow.apps.restriction.models import Limit
 from geniflow.apps.session.generator.chat import ChatGenerator
 from geniflow.apps.session.generator.entities import ChatResponse, ChatResponseType, GenerateRequest
 from geniflow.apps.session.models import Session, SessionMessage
-from geniflow.apps.session.serializers import GenerateRequestSerializer, SessionMessageReadSerializer
+from geniflow.apps.session.serializers import (
+    GenerateRequestSerializer,
+    SessionMessageReadSerializer,
+)
 from geniflow.apps.websocket.auth_middleware import WebSocketRequest
 from geniflow.apps.websocket.consumer import exception
 from geniflow.apps.websocket.consumer.base import BaseConsumer

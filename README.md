@@ -75,11 +75,13 @@ Here are the planned enhancements and upcoming features for [GeniFlow Roadmap](h
 
 ## Contributing 🤝
 
-We welcome contributions! Please see [GeniFlow Contributing Guide](https://docs.geniflow.revealai.de/docs/contributing/) for guidelines.
+We welcome contributions! Please see [GeniFlow Contributing Guide](https://docs.geniflow.revealai.de/docs/contributing/)
+for guidelines.
 
 ## License 📄
 
-This project is licensed under the Apache 2.0 License Extended - see the [GeniFlow LICENSE](LICENSE.md) file for details.
+This project is licensed under the Apache 2.0 License Extended - see the [GeniFlow LICENSE](LICENSE.md)
+file for details.
 
 ## Telemetry Notice 📊
 

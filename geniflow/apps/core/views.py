@@ -20,6 +20,7 @@ from rest_framework.response import Response
 import geniflow.apps.core.permissions as perms
 from geniflow.apps.ai.base.entities.shared import ModelType
 from geniflow.apps.common.file_utils import check_avatar
+from geniflow.apps.common.log import ServerLogManager
 from geniflow.apps.core.config.entities import ModelWithProviderEntity
 from geniflow.apps.core.config.provider_service import AIProviderConfigurationService
 from geniflow.apps.core.models import AboutSystem, CommonEntity, Provider
@@ -31,6 +32,8 @@ from geniflow.apps.core.serializers import (
     ProviderWriteSerializer,
 )
 from geniflow.apps.team.middleware import HttpRequestWithIamContext
+
+slogger = ServerLogManager(__name__)
 
 
 @extend_schema(tags=["system"])
@@ -233,7 +236,8 @@ class ProviderViewSet(
                 queryset=queryset
             ).values()
         except Exception as e:
-            return Response({"message": str(e)}, status=400)
+            slogger.glob.error(f"Error while retrieving AI provider configurations: {str(e)}")
+            return Response("Something went wrong!", status=500)
 
         serializer = AIProviderConfigurationSerializer(provider_configurations, many=True)
         return Response({"results": serializer.data, "count": len(serializer.data)})
@@ -338,7 +342,8 @@ class AIModelViewSet(
                 queryset=queryset, model_type=model_type, enabled_only=enabled_only
             )
         except Exception as e:
-            return Response({"message": str(e)}, status=400)
+            slogger.glob.error(f"Error while retrieving AI models: {str(e)}")
+            return Response("Something went wrong!", status=500)
 
         serializer = ModelWithProviderEntitySerializer(models, many=True)
         return Response({"results": serializer.data, "count": len(serializer.data)})

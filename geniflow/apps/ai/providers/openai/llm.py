@@ -5,7 +5,7 @@
 from typing import Generator, Optional, Union, cast
 
 import tiktoken
-from openai import Stream, OpenAIError
+from openai import OpenAIError, Stream
 from openai.types import Completion
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 

@@ -165,7 +165,9 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
             defaults=membership_data, user=user, team=team
         )
         if not created:
-            raise serializers.ValidationError(f"The user is a member of '{team.name}' team already.")
+            raise serializers.ValidationError(
+                f"The user is a member of '{team.name}' team already."
+            )
         invitation = models.Invitation.objects.create(**validated_data, membership=membership)
 
         return invitation
