@@ -4,7 +4,7 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import {
-    useDataProvider, Labeled, useNotify,
+    useDataProvider, Labeled, useNotify, HttpError,
 } from 'react-admin';
 import { useWatch } from 'react-hook-form';
 
@@ -38,11 +38,15 @@ const ModelParameterForm: FC<ModelParameterFormProps> = ({
                         name: inputName,
                     };
                 });
-            }).catch(() => notify(
-                'ra.notification.http_error',
-                {
-                    type: 'error',
-                }));
+            }).catch((error: HttpError) => {
+                const { message } = error as HttpError;
+                notify(
+                    message || 'ra.notification.http_error',
+                    {
+                        type: 'error',
+                    }
+                );
+            });
             setConfigs(convertedConfigurations);
         }
         if (modelName) {

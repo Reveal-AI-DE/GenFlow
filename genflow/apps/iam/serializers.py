@@ -156,9 +156,7 @@ class RegisterSerializerEx(RegisterSerializer):
             if email and email_address_exists(email):
                 user = self.get_dummy_user(email)
                 if not user:
-                    raise serializers.ValidationError(
-                        ("A user is already registered with this e-mail address."),
-                    )
+                    raise serializers.ValidationError("A user is already registered with this e-mail address.")
 
         return email
 

@@ -11,7 +11,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import {
     Datagrid, DateField, List, TextField, RecordContextProvider,
     FunctionField, Identifier, RowClickFunction, useDataProvider,
-    useNotify,
+    useNotify, HttpError,
 } from 'react-admin';
 import { matchPath, useLocation, useNavigate } from 'react-router';
 
@@ -57,11 +57,15 @@ const TeamList: FC<TeamListProps> = () => {
         const fetchTeam = async (): Promise<void> => {
             dataProvider.getOne('teams', { id: match?.params.id })
                 .then(({ data: team }) => setSelectedTeam(team))
-                .catch(() => notify(
-                    'ra.notification.http_error',
-                    {
-                        type: 'error',
-                    }));
+                .catch((error: HttpError) => {
+                    const { message } = error as HttpError;
+                    notify(
+                        message || 'ra.notification.http_error',
+                        {
+                            type: 'error',
+                        }
+                    );
+                });
         }
         if (match && selectedTeam === null) {
             fetchTeam();

@@ -6,7 +6,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router';
 import {
-    useTranslate, useNotify,
+    useTranslate, useNotify, HttpError,
 } from 'react-admin';
 
 import { passwordResetConfirm } from '@/user';
@@ -44,8 +44,13 @@ const PasswordResetConfirmActions: FC<PasswordResetConfirmActionsProps> = () => 
             notify('message.password_reset_success', { type: 'success' });
             navigate('/login');
         } catch (error) {
-            console.error(error);
-            notify('ra.notification.http_error', { type: 'warning' });
+            const { message } = error as HttpError;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
         } finally {
             setLoading(false);
         }

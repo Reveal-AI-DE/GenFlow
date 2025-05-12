@@ -5,7 +5,7 @@
 import React, { FC, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import {
-    useTranslate, useNotify,
+    useTranslate, useNotify, HttpError,
 } from 'react-admin';
 
 import { passwordReset } from '@/user';
@@ -26,8 +26,13 @@ const PasswordResetActions: FC<PasswordResetActionsProps> = () => {
             reset();
             notify('message.check_email', { type: 'success' });
         } catch (error) {
-            console.error(error);
-            notify('ra.notification.http_error', { type: 'warning' });
+            const { message } = error as HttpError;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
         } finally {
             setLoading(false);
         }

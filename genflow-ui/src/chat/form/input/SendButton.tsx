@@ -70,14 +70,13 @@ const SendButton: FC<SendButtonProps> = () => {
     }, attachedFile?.id);
 
     useItemErrorListener((item: BatchItem) => {
-        const message = item.uploadResponse?.data?.message;
-        if (Array.isArray(message)) {
-            notify(message[0], { type: 'error' });
-        } else if (typeof message === 'string') {
-            notify(message, { type: 'error' });
-        } else {
-            notify('ra.notification.http_error', { type: 'error' });
-        }
+        const { data } = item.uploadResponse;
+        notify(
+            data.message || 'ra.notification.http_error',
+            {
+                type: 'error',
+            }
+        );
     }, attachedFile?.id);
 
     return (

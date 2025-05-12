@@ -474,21 +474,17 @@ class FileEntitySerializer(serializers.Serializer):
         dirname = data.get("dirname")
 
         if not uploaded_file:
-            raise serializers.ValidationError({"message": "This field is required."})
+            raise serializers.ValidationError({"uploaded_file": "This field is required."})
 
         if not dirname:
-            raise serializers.ValidationError({"message": "This field is required."})
+            raise serializers.ValidationError({"dirname": "This field is required."})
 
         # check size
         if uploaded_file.size / (1024 * 1024) > settings.GF_LIMITS["MAX_FILE_SIZE"]:
-            raise serializers.ValidationError(
-                {
-                    "message": f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB."
-                }
-            )
+            raise serializers.ValidationError(f"File size exceeds the limit of {settings.GF_LIMITS["MAX_FILE_SIZE"]} MB.")
         # check type
         if uploaded_file.content_type not in settings.GF_LIMITS["FILE_SUPPORTED_TYPES"]:
-            raise serializers.ValidationError({"message": "Unsupported file type."})
+            raise serializers.ValidationError(f"Unsupported file type '{uploaded_file.content_type}'.")
 
         name = fs.get_valid_name(uploaded_file.name)
         save_path = osp.join(dirname, name)

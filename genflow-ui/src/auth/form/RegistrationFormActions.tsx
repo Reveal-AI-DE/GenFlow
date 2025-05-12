@@ -6,7 +6,7 @@ import React, { FC, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import {
-    useTranslate, useNotify,
+    useTranslate, useNotify, HttpError,
 } from 'react-admin';
 
 import { userRegister } from '@/user';
@@ -32,8 +32,13 @@ const RegistrationFormActions: FC<RegistrationFormActionsProps> = () => {
                 notify('message.register_success', { type: 'success' });
             }
         } catch (error) {
-            console.error(error);
-            notify('message.register_error', { type: 'warning' });
+            const { message } = error as HttpError;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
         } finally {
             setLoading(false);
         }

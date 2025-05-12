@@ -40,14 +40,13 @@ const AssistantFileUpload: FC<AssistantFilesUploadProps> = () => {
                     refresh();
                     break;
                 case FILE_STATES.ERROR: {
-                    const message = item.uploadResponse?.data?.message;
-                    if (Array.isArray(message)) {
-                        notify(message[0], { type: 'error' });
-                    } else if (typeof message === 'string') {
-                        notify(message, { type: 'error' });
-                    } else {
-                        notify('ra.notification.http_error', { type: 'error' });
-                    }
+                    const { data } = item.uploadResponse;
+                    notify(
+                        data.message || 'ra.notification.http_error',
+                        {
+                            type: 'error',
+                        }
+                    );
                     setRemainingFiles((prevItemCount) => (prevItemCount - 1));
                     refresh();
                     break;

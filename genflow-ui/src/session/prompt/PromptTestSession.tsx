@@ -5,7 +5,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import {
     ShowBase, CreateResult, useNotify,
-    useDataProvider, useRecordContext
+    useDataProvider, useRecordContext, HttpError,
 } from 'react-admin';
 import { matchPath, useLocation } from 'react-router';
 
@@ -52,11 +52,15 @@ const TestSession: FC<TestSessionProps> = () => {
         if (!prompt.related_test_session) {
             createTestSession().then(({ data }) => {
                 setTestSession(data);
-            }).catch(() => notify(
-                'ra.notification.http_error',
-                {
-                    type: 'error',
-                }));
+            }).catch((error: HttpError) => {
+                const { message } = error as HttpError;
+                notify(
+                    message || 'ra.notification.http_error',
+                    {
+                        type: 'error',
+                    }
+                );
+            });
         } else {
             dataProvider.getOne('sessions', { id: prompt.related_test_session }).then((response) => {
                 const { data: session } = response;
@@ -66,11 +70,15 @@ const TestSession: FC<TestSessionProps> = () => {
             }).catch(() => {
                 createTestSession().then(({ data }) => {
                     setTestSession(data);
-                }).catch(() => notify(
-                    'ra.notification.http_error',
-                    {
-                        type: 'error',
-                    }));
+                }).catch((error: HttpError) => {
+                    const { message } = error as HttpError;
+                    notify(
+                        message || 'ra.notification.http_error',
+                        {
+                            type: 'error',
+                        }
+                    );
+                });
             });
         }
     }, [prompt]);

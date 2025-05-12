@@ -8,6 +8,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import {
     useRecordContext, useDataProvider,
     useRedirect, useTranslate, useNotify,
+    HttpError,
 } from 'react-admin';
 
 import {
@@ -43,11 +44,15 @@ const AssistantCardActions: FC<AssistantCardActionsProps> = () => {
         dataProvider.create('sessions', { data }).then((response) => {
             const { data: session } = response;
             redirect('show', 'sessions', session.id);
-        }).catch(() => notify(
-            'ra.notification.http_error',
-            {
-                type: 'error',
-            }));
+        }).catch((error: HttpError) => {
+            const { message } = error;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
+        });
     };
 
     return (

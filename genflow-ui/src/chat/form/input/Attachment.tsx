@@ -15,7 +15,8 @@ import {
     useItemProgressListener, BatchItem,
 } from '@rpldy/uploady';
 import {
-    useTranslate, useDataProvider, useRecordContext, useNotify
+    useTranslate, useDataProvider, useRecordContext,
+    useNotify, HttpError,
 } from 'react-admin';
 
 import { Session } from '@/types';
@@ -93,10 +94,15 @@ const Attachment: FC<AttachmentProps> = () => {
                     fileId: attachedFile.file.name,
                 },
             }).then(() => setAttachedFile(undefined))
-                .catch(() => notify(
-                    translate('ra.notification.http_error'),
-                    { type: 'error' }
-                ));
+                .catch((error: HttpError) => {
+                    const { message } = error;
+                    notify(
+                        message || 'ra.notification.http_error',
+                        {
+                            type: 'error',
+                        }
+                    );
+                });
         }
     }
 

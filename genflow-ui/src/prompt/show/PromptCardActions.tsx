@@ -6,7 +6,7 @@ import React, { FC } from 'react';
 import IconButton from '@mui/material/IconButton';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import {
-    useRecordContext, useDataProvider,
+    useRecordContext, useDataProvider, HttpError,
     useRedirect, useTranslate, useNotify,
 } from 'react-admin';
 
@@ -40,11 +40,15 @@ const PromptCardActions: FC<PromptCardActionsProps> = () => {
         dataProvider.create('sessions', { data }).then((response) => {
             const { data: session } = response;
             redirect('show', 'sessions', session.id);
-        }).catch(() => notify(
-            'ra.notification.http_error',
-            {
-                type: 'error',
-            }));
+        }).catch((error: HttpError) => {
+            const { message } = error as HttpError;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
+        });
     };
 
     return (

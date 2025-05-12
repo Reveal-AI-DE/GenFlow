@@ -145,7 +145,7 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
         """
 
         membership_data = validated_data.pop("membership")
-        team = validated_data.pop("team")
+        team: models.Team = validated_data.pop("team")
         try:
             user = get_user_model().objects.get(email__iexact=membership_data["user"]["email"])
             del membership_data["user"]
@@ -165,9 +165,7 @@ class InvitationWriteSerializer(serializers.ModelSerializer):
             defaults=membership_data, user=user, team=team
         )
         if not created:
-            raise serializers.ValidationError(
-                {"message": "The user is a member of " "the team already."}
-            )
+            raise serializers.ValidationError(f"The user is a member of '{team.name}' team already.")
         invitation = models.Invitation.objects.create(**validated_data, membership=membership)
 
         return invitation

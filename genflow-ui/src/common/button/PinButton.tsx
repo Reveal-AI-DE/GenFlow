@@ -10,6 +10,7 @@ import { styled } from '@mui/material/styles';
 import {
     useRecordContext, useDataProvider, useNotify,
     useResourceContext, useRefresh, useTranslate,
+    HttpError,
 } from 'react-admin';
 
 import { Prompt } from '@/types';
@@ -51,11 +52,15 @@ const PinButton: FC<PinButtonProps> = ({
             }
         ).then(() => {
             refresh();
-        }).catch(() => notify(
-            'ra.notification.http_error',
-            {
-                type: 'error',
-            }));
+        }).catch((error: HttpError) => {
+            const { message } = error as HttpError;
+            notify(
+                message || 'ra.notification.http_error',
+                {
+                    type: 'error',
+                }
+            );
+        });
     };
 
     return (

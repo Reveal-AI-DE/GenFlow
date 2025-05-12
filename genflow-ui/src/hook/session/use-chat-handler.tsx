@@ -7,7 +7,7 @@ import { useRefresh, useNotify } from 'react-admin'
 
 import { FileEntity } from '@/types';
 import { SessionContext, SessionContextInterface } from '@/context';
-import { createTemporaryMessage, createGenerateRequest, truncateText } from '@/utils';
+import { createTemporaryMessage, createGenerateRequest } from '@/utils';
 import { useGenerate } from '@/hook';
 
 interface ChatHandlerHook {
@@ -64,7 +64,7 @@ const useChatHandler = (): ChatHandlerHook => {
                 refresh();
             }).catch((error) => {
                 notify(
-                    truncateText(error.message, 100, 'characters') || 'An error occurred while generating the response',
+                    error as string || 'ra.notification.http_error',
                     {
                         type: 'error',
                     }
